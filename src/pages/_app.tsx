@@ -1,8 +1,12 @@
 import { ErrorFallbackProps, ErrorComponent, ErrorBoundary, AppProps } from "@blitzjs/next"
 import { AuthenticationError, AuthorizationError } from "blitz"
 import React from "react"
+import { MantineProvider } from "@mantine/core"
 import { withBlitz } from "src/blitz-client"
-import 'src/styles/globals.css'
+import "src/styles/globals.css"
+import { Inter } from "next/font/google"
+
+const inter = Inter({ subsets: ["latin"] })
 
 function RootErrorFallback({ error }: ErrorFallbackProps) {
   if (error instanceof AuthenticationError) {
@@ -27,9 +31,18 @@ function RootErrorFallback({ error }: ErrorFallbackProps) {
 function MyApp({ Component, pageProps }: AppProps) {
   const getLayout = Component.getLayout || ((page) => page)
   return (
-    <ErrorBoundary FallbackComponent={RootErrorFallback}>
-      {getLayout(<Component {...pageProps} />)}
-    </ErrorBoundary>
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={{
+        /** Put your mantine theme override here */
+        colorScheme: "light",
+      }}
+    >
+      <ErrorBoundary FallbackComponent={RootErrorFallback}>
+        <main className={inter.className}>{getLayout(<Component {...pageProps} />)}</main>
+      </ErrorBoundary>
+    </MantineProvider>
   )
 }
 

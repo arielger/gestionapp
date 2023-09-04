@@ -1,0 +1,4 @@
+TODO:
+
+- [] Crear entidad para inmobiliaria (RealStateAgency)
+- [] Migrate to PostgreSQL (https://blitzjs.com/docs/database-overview)

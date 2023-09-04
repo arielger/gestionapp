@@ -1,11 +1,23 @@
 import { AuthenticationError, PromiseReturnType } from "blitz"
 import Link from "next/link"
-import { LabeledTextField } from "src/core/components/LabeledTextField"
-import { Form, FORM_ERROR } from "src/core/components/Form"
 import login from "src/auth/mutations/login"
 import { Login } from "src/auth/schemas"
 import { useMutation } from "@blitzjs/rpc"
 import { Routes } from "@blitzjs/next"
+import {
+  TextInput,
+  PasswordInput,
+  Checkbox,
+  Anchor,
+  Paper,
+  Title,
+  Text,
+  Container,
+  Group,
+  Button,
+  Alert,
+} from "@mantine/core"
+import { useForm, zodResolver } from "@mantine/form"
 
 type LoginFormProps = {
   onSuccess?: (user: PromiseReturnType<typeof login>) => void
@@ -13,46 +25,60 @@ type LoginFormProps = {
 
 export const LoginForm = (props: LoginFormProps) => {
   const [loginMutation] = useMutation(login)
+
+  const form = useForm({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+
+    validate: zodResolver(Login),
+  })
+
+  const onSubmit = async (values) => {
+    try {
+      const user = await loginMutation(values)
+      props.onSuccess?.(user)
+    } catch (error: any) {
+      if (error instanceof AuthenticationError) {
+        form.setErrors({ FORM_ERROR: "Las credenciales ingresadas no son correctas" })
+      } else {
+        form.setErrors({
+          FORM_ERROR: "Hubo un error. Por favor, intenta de nuevo. " + error.toString(),
+        })
+      }
+    }
+  }
+
+  console.log("form.errors", form.errors)
+
   return (
-    <div>
-      <h1>Login</h1>
+    <Container size={420} my={40}>
+      <Title align="center" sx={() => ({ fontWeight: 900 })}>
+        Ingresar
+      </Title>
+      <Text color="dimmed" size="sm" align="center" mt={5}>
+        No tienes una cuenta?{" "}
+        <Anchor size="sm" component={Link} href={Routes.SignupPage()}>
+          Crear cuenta
+        </Anchor>
+      </Text>
 
-      <Form
-        submitText="Login"
-        schema={Login}
-        initialValues={{ email: "", password: "" }}
-        onSubmit={async (values) => {
-          try {
-            const user = await loginMutation(values)
-            props.onSuccess?.(user)
-          } catch (error: any) {
-            if (error instanceof AuthenticationError) {
-              return { [FORM_ERROR]: "Sorry, those credentials are invalid" }
-            } else {
-              return {
-                [FORM_ERROR]:
-                  "Sorry, we had an unexpected error. Please try again. - " + error.toString(),
-              }
-            }
-          }
-        }}
-      >
-        <LabeledTextField name="email" label="Email" placeholder="Email" />
-        <LabeledTextField name="password" label="Password" placeholder="Password" type="password" />
-        <div>
-          <Link href={Routes.ForgotPasswordPage()}>
-            Forgot your password?
-          </Link>
-        </div>
-      </Form>
-
-      <div style={{ marginTop: "1rem" }}>
-        Or{" "}
-        <Link href={Routes.SignupPage()}>
-          Sign Up
-        </Link>
-      </div>
-    </div>
+      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+        <form onSubmit={form.onSubmit(onSubmit)}>
+          <TextInput label="Email" {...form.getInputProps("email")} required />
+          <PasswordInput label="Contraseña" {...form.getInputProps("password")} required mt="md" />
+          {form.errors.FORM_ERROR && (
+            <Alert color="red" mt={16}>
+              {form.errors.FORM_ERROR}
+            </Alert>
+          )}
+          <Button type="submit" fullWidth mt="xl">
+            Ingresar
+          </Button>
+        </form>
+      </Paper>
+    </Container>
   )
 }
 
