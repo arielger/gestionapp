@@ -1,8 +1,23 @@
+import {
+  TextInput,
+  PasswordInput,
+  Anchor,
+  Paper,
+  Title,
+  Text,
+  Container,
+  Button,
+  Alert,
+} from "@mantine/core"
+import { useMutation } from "@blitzjs/rpc"
+import { useForm, zodResolver } from "@mantine/form"
+
 import { LabeledTextField } from "src/core/components/LabeledTextField"
 import { Form, FORM_ERROR } from "src/core/components/Form"
 import signup from "src/auth/mutations/signup"
 import { Signup } from "src/auth/schemas"
-import { useMutation } from "@blitzjs/rpc"
+import Link from "next/link"
+import { Routes } from "@blitzjs/next"
 
 type SignupFormProps = {
   onSuccess?: () => void
@@ -10,33 +25,56 @@ type SignupFormProps = {
 
 export const SignupForm = (props: SignupFormProps) => {
   const [signupMutation] = useMutation(signup)
-  return (
-    <div>
-      <h1>Create an Account</h1>
 
-      <Form
-        submitText="Create Account"
-        schema={Signup}
-        initialValues={{ email: "", password: "" }}
-        onSubmit={async (values) => {
-          try {
-            await signupMutation(values)
-            props.onSuccess?.()
-          } catch (error: any) {
-            if (error.code === "P2002" && error.meta?.target?.includes("email")) {
-              // This error comes from Prisma
-              return { email: "This email is already being used" }
-            } else {
-              return { [FORM_ERROR]: error.toString() }
-            }
-          }
-        }}
-      >
-        <LabeledTextField name="email" label="Email" placeholder="Email" />
-        <LabeledTextField name="password" label="Password" placeholder="Password" type="password" />
-      </Form>
-    </div>
+  const form = useForm({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+
+    validate: zodResolver(Signup),
+  })
+
+  const onSubmit = async (values) => {
+    try {
+      await signupMutation(values)
+      props.onSuccess?.()
+    } catch (error: any) {
+      if (error.code === "P2002" && error.meta?.target?.includes("email")) {
+        // This error comes from Prisma
+        form.setErrors({ email: "El email ingresado ya esta en uso" })
+      } else {
+        form.setErrors({ [FORM_ERROR]: error.toString() })
+      }
+    }
+  }
+
+  return (
+    <Container size={420} my={40}>
+      <Title align="center" sx={() => ({ fontWeight: 900 })}>
+        Crear cuenta
+      </Title>
+      <Text color="dimmed" size="sm" align="center" mt={5}>
+        Ya tienes una cuenta?{" "}
+        <Anchor size="sm" component={Link} href={Routes.LoginPage()}>
+          Ingresar
+        </Anchor>
+      </Text>
+
+      <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+        <form onSubmit={form.onSubmit(onSubmit)}>
+          <TextInput label="Email" {...form.getInputProps("email")} required />
+          <PasswordInput label="Contraseña" {...form.getInputProps("password")} required mt="md" />
+          {form.errors.FORM_ERROR && (
+            <Alert color="red" mt={16}>
+              {form.errors.FORM_ERROR}
+            </Alert>
+          )}
+          <Button type="submit" fullWidth mt="xl">
+            Crear cuenta
+          </Button>
+        </form>
+      </Paper>
+    </Container>
   )
 }
-
-export default SignupForm

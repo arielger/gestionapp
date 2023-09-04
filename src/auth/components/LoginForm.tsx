@@ -7,13 +7,11 @@ import { Routes } from "@blitzjs/next"
 import {
   TextInput,
   PasswordInput,
-  Checkbox,
   Anchor,
   Paper,
   Title,
   Text,
   Container,
-  Group,
   Button,
   Alert,
 } from "@mantine/core"
@@ -50,8 +48,6 @@ export const LoginForm = (props: LoginFormProps) => {
     }
   }
 
-  console.log("form.errors", form.errors)
-
   return (
     <Container size={420} my={40}>
       <Title align="center" sx={() => ({ fontWeight: 900 })}>
@@ -81,5 +77,3 @@ export const LoginForm = (props: LoginFormProps) => {
     </Container>
   )
 }
-
-export default LoginForm
