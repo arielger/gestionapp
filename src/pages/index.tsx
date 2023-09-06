@@ -2,32 +2,18 @@ import { Suspense } from "react"
 import Link from "next/link"
 import Layout from "src/core/layouts/Layout"
 import { useCurrentUser } from "src/users/hooks/useCurrentUser"
-import logout from "src/auth/mutations/logout"
-import { useMutation } from "@blitzjs/rpc"
 import { Routes, BlitzPage } from "@blitzjs/next"
 import { Flex, Title, Button, Container, Text } from "@mantine/core"
+import { NavigationBar } from "src/layout/components/NavBar"
+import { DashboardLayout } from "src/layout/components/DashboardLayout"
 
 const UserInfo = () => {
   const currentUser = useCurrentUser()
-  const [logoutMutation] = useMutation(logout)
+
+  console.log("currentUser", currentUser)
 
   if (currentUser) {
-    return (
-      <>
-        <button
-          onClick={async () => {
-            await logoutMutation()
-          }}
-        >
-          Logout
-        </button>
-        <div>
-          User id: <code>{currentUser.id}</code>
-          <br />
-          User role: <code>{currentUser.role}</code>
-        </div>
-      </>
-    )
+    return <DashboardLayout />
   } else {
     return (
       <>
@@ -50,9 +36,7 @@ const Home: BlitzPage = () => {
   return (
     <Layout title="Gestionprop">
       <Suspense fallback="Loading...">
-        <Container>
-          <UserInfo />
-        </Container>
+        <UserInfo />
       </Suspense>
     </Layout>
   )
