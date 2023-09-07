@@ -50,7 +50,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   highlight: {
-    color: theme.colors[theme.primaryColor][theme.colorScheme === "dark" ? 4 : 6],
+    color: theme.colors[theme.primaryColor]![theme.colorScheme === "dark" ? 4 : 6],
   },
 
   description: {
