@@ -12,7 +12,8 @@
     "prepare": "husky install"
   },
   "prisma": {
-    "schema": "db/schema.prisma"
+    "schema": "db/schema.prisma",
+    "seed": "ts-node db/seed.ts"
   },
   "prettier": {
     "semi": false,

@@ -13,16 +13,18 @@ generator client {
 // --------------------------------------
 
 model User {
-  id             Int      @id @default(autoincrement())
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  name           String?
-  email          String   @unique
-  hashedPassword String?
-  role           String   @default("USER")
+  id              Int             @id @default(autoincrement())
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  name            String?
+  email           String          @unique
+  hashedPassword  String?
+  role            String          @default("USER")
+  realStateAgency RealStateAgency @relation(fields: [realStateAgencyId], references: [id])
 
-  tokens   Token[]
-  sessions Session[]
+  tokens            Token[]
+  sessions          Session[]
+  realStateAgencyId Int
 }
 
 model Session {
@@ -41,13 +43,11 @@ model Session {
 }
 
 model Token {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   hashedToken String
-  type        String
-  // See note below about TokenType enum
-  // type        TokenType
+  type        TokenType
   expiresAt   DateTime
   sentTo      String
 
@@ -62,11 +62,15 @@ model RealStateAgency {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
+  User      User[]
 }
 
-// NOTE: It's highly recommended to use an enum for the token type
-//       but enums only work in Postgres.
-//       See: https://blitzjs.com/docs/database-overview#switch-to-postgre-sql
-// enum TokenType {
-//   RESET_PASSWORD
-// }
+enum TokenType {
+  RESET_PASSWORD
+}
+
+model Property {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -1,4 +1,6 @@
 TODO:
 
-- [] Crear entidad para inmobiliaria (RealStateAgency)
-- [] Migrate to PostgreSQL (https://blitzjs.com/docs/database-overview)
+- [DONE] Crear entidad para inmobiliaria (RealStateAgency)
+- [DONE] Migrate to PostgreSQL (https://blitzjs.com/docs/database-overview)
+- [ ] Crear entidad para propiedad
+- [ ] Agregar form para crear propiedad

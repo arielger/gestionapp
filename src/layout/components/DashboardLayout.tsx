@@ -1,7 +1,7 @@
 import { Header, AppShell, Title } from "@mantine/core"
 import { NavigationBar } from "./NavBar"
 
-export const DashboardLayout = () => {
+export const DashboardLayout = ({ children }: { children: React.ReactElement }) => {
   return (
     <AppShell
       padding="md"
@@ -18,7 +18,7 @@ export const DashboardLayout = () => {
         },
       })}
     >
-      {/* Your application here */}
+      {children}
     </AppShell>
   )
 }

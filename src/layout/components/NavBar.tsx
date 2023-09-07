@@ -2,6 +2,8 @@ import { useState } from "react"
 import { createStyles, Navbar, getStylesRef, rem, UnstyledButton } from "@mantine/core"
 import { IconHome, IconLogout } from "@tabler/icons-react"
 import { useMutation } from "@blitzjs/rpc"
+import Link from "next/link"
+import { Routes } from "@blitzjs/next"
 
 import logout from "src/auth/mutations/logout"
 
@@ -61,7 +63,7 @@ const useStyles = createStyles((theme) => ({
   },
 }))
 
-const data = [{ link: "", label: "Propiedades", icon: IconHome }]
+const data = [{ link: Routes.PropertiesPage(), label: "Propiedades", icon: IconHome }]
 
 export function NavigationBar() {
   const { classes, cx } = useStyles()
@@ -70,18 +72,17 @@ export function NavigationBar() {
   const [logoutMutation] = useMutation(logout)
 
   const links = data.map((item) => (
-    <a
+    <Link
       className={cx(classes.link, { [classes.linkActive]: item.label === active })}
       href={item.link}
       key={item.label}
       onClick={(event) => {
-        event.preventDefault()
         setActive(item.label)
       }}
     >
       <item.icon className={classes.linkIcon} stroke={1.5} />
       <span>{item.label}</span>
-    </a>
+    </Link>
   ))
 
   return (
