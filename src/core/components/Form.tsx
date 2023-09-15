@@ -1,18 +1,18 @@
 import { ReactNode, PropsWithoutRef } from "react"
-import { Form as FinalForm, FormProps as FinalFormProps } from "react-final-form"
 import { z } from "zod"
 import { validateZodSchema } from "blitz"
-export { FORM_ERROR } from "final-form"
+import { useForm, zodResolver, UseFormReturnType } from "@mantine/form"
+import { Button } from "@mantine/core"
 
-export interface FormProps<S extends z.ZodType<any, any>>
-  extends Omit<PropsWithoutRef<JSX.IntrinsicElements["form"]>, "onSubmit"> {
+export interface FormProps<Schema extends z.ZodType<any, any>>
+  extends Omit<PropsWithoutRef<JSX.IntrinsicElements["form"]>, "onSubmit" | "children"> {
   /** All your form fields */
-  children?: ReactNode
+  children?: (UseFormReturnType) => ReactNode
   /** Text to display in the submit button */
   submitText?: string
-  schema?: S
-  onSubmit: FinalFormProps<z.infer<S>>["onSubmit"]
-  initialValues?: FinalFormProps<z.infer<S>>["initialValues"]
+  schema?: Schema
+  onSubmit: (values: z.infer<Schema>) => void
+  initialValues?: z.infer<Schema>
 }
 
 export function Form<S extends z.ZodType<any, any>>({
@@ -23,36 +23,18 @@ export function Form<S extends z.ZodType<any, any>>({
   onSubmit,
   ...props
 }: FormProps<S>) {
+  const form = useForm({
+    initialValues,
+    validate: zodResolver(schema),
+  })
+
   return (
-    <FinalForm
-      initialValues={initialValues}
-      validate={validateZodSchema(schema)}
-      onSubmit={onSubmit}
-      render={({ handleSubmit, submitting, submitError }) => (
-        <form onSubmit={handleSubmit} className="form" {...props}>
-          {/* Form fields supplied as children are rendered here */}
-          {children}
+    <form onSubmit={form.onSubmit(onSubmit)} className="form" {...props}>
+      {/* Form fields supplied as children are rendered here */}
+      {children?.(form)}
 
-          {submitError && (
-            <div role="alert" style={{ color: "red" }}>
-              {submitError}
-            </div>
-          )}
-
-          {submitText && (
-            <button type="submit" disabled={submitting}>
-              {submitText}
-            </button>
-          )}
-
-          <style global jsx>{`
-            .form > * + * {
-              margin-top: 1rem;
-            }
-          `}</style>
-        </form>
-      )}
-    />
+      {submitText && <Button type="submit">{submitText}</Button>}
+    </form>
   )
 }
 

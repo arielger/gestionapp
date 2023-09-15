@@ -12,8 +12,7 @@ import {
 import { useMutation } from "@blitzjs/rpc"
 import { useForm, zodResolver } from "@mantine/form"
 
-import { LabeledTextField } from "src/core/components/LabeledTextField"
-import { Form, FORM_ERROR } from "src/core/components/Form"
+import { FinalFormForm, FORM_ERROR } from "src/core/components/FinalFormForm"
 import signup from "src/auth/mutations/signup"
 import { Signup } from "src/auth/schemas"
 import Link from "next/link"

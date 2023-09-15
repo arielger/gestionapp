@@ -1,6 +1,6 @@
 import Layout from "src/core/layouts/Layout"
 import { LabeledTextField } from "src/core/components/LabeledTextField"
-import { Form, FORM_ERROR } from "src/core/components/Form"
+import { FinalFormForm, FORM_ERROR } from "src/core/components/FinalFormForm"
 import { ForgotPassword } from "src/auth/schemas"
 import forgotPassword from "src/auth/mutations/forgotPassword"
 import { useMutation } from "@blitzjs/rpc"
@@ -22,7 +22,7 @@ const ForgotPasswordPage: BlitzPage = () => {
           </p>
         </div>
       ) : (
-        <Form
+        <FinalFormForm
           submitText="Send Reset Password Instructions"
           schema={ForgotPassword}
           initialValues={{ email: "" }}
@@ -37,7 +37,7 @@ const ForgotPasswordPage: BlitzPage = () => {
           }}
         >
           <LabeledTextField name="email" label="Email" placeholder="Email" />
-        </Form>
+        </FinalFormForm>
       )}
     </Layout>
   )
