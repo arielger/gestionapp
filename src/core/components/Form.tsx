@@ -25,7 +25,7 @@ export function Form<S extends z.ZodType<any, any>>({
 }: FormProps<S>) {
   const form = useForm({
     initialValues,
-    validate: zodResolver(schema),
+    validate: schema ? zodResolver(schema) : undefined,
   })
 
   return (
