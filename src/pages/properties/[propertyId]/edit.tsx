@@ -33,7 +33,6 @@ export const EditProperty = () => {
 
       <div>
         <h1>Editar Property {property.id}</h1>
-        <pre>{JSON.stringify(property, null, 2)}</pre>
         <Suspense fallback={<div>Loading...</div>}>
           <PropertyForm
             submitText="Editar"
@@ -69,7 +68,7 @@ const EditPropertyPage = () => {
       </Suspense>
 
       <p>
-        <Link href={Routes.PropertiesPage()}>Propiedades</Link>
+        <Link href={Routes.PropertiesPage()}>Volver</Link>
       </p>
     </div>
   )

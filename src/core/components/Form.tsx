@@ -33,7 +33,11 @@ export function Form<S extends z.ZodType<any, any>>({
       {/* Form fields supplied as children are rendered here */}
       {children?.(form)}
 
-      {submitText && <Button type="submit">{submitText}</Button>}
+      {submitText && (
+        <Button mt="md" type="submit">
+          {submitText}
+        </Button>
+      )}
     </form>
   )
 }

@@ -9,7 +9,7 @@ import { useParam } from "@blitzjs/next"
 import Layout from "src/core/layouts/Layout"
 import getProperty from "src/properties/queries/getProperty"
 import deleteProperty from "src/properties/mutations/deleteProperty"
-import { Button } from "@mantine/core"
+import { Button, Flex, Text } from "@mantine/core"
 
 export const Property = () => {
   const router = useRouter()
@@ -25,25 +25,40 @@ export const Property = () => {
 
       <div>
         <h1>Propiedad #{property.id}</h1>
-        <pre>{JSON.stringify(property, null, 2)}</pre>
+        <Flex gap="md" direction="column">
+          <Flex direction="column">
+            <Text size="sm" color={"gray.7"}>
+              Dirección
+            </Text>
+            <Text size="md">{property.address}</Text>
+          </Flex>
 
-        <Link href={Routes.EditPropertyPage({ propertyId: property.id })}>
-          <Button>Editar</Button>
-        </Link>
+          <Flex direction="column">
+            <Text size="sm" color={"gray.7"}>
+              Fecha de creación
+            </Text>
+            <Text size="md">{property.createdAt.toLocaleDateString()}</Text>
+          </Flex>
 
-        <Button
-          color="red"
-          type="button"
-          onClick={async () => {
-            if (window.confirm("This will be deleted")) {
-              await deletePropertyMutation({ id: property.id })
-              await router.push(Routes.PropertiesPage())
-            }
-          }}
-          style={{ marginLeft: "0.5rem" }}
-        >
-          Eliminar
-        </Button>
+          <Flex gap="sm">
+            <Link href={Routes.EditPropertyPage({ propertyId: property.id })}>
+              <Button>Editar</Button>
+            </Link>
+
+            <Button
+              color="red"
+              type="button"
+              onClick={async () => {
+                if (window.confirm("This will be deleted")) {
+                  await deletePropertyMutation({ id: property.id })
+                  await router.push(Routes.PropertiesPage())
+                }
+              }}
+            >
+              Eliminar
+            </Button>
+          </Flex>
+        </Flex>
       </div>
     </>
   )

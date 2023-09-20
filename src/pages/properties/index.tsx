@@ -12,6 +12,8 @@ import getProperties from "src/properties/queries/getProperties"
 
 const ITEMS_PER_PAGE = 100
 
+// TODO: Move all the list features to a common component (when we create another entity)
+
 export const PropertiesList = () => {
   const router = useRouter()
   const page = Number(router.query.page) || 0
