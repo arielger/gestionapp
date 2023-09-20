@@ -37,16 +37,14 @@ export const EditProperty = () => {
         <Suspense fallback={<div>Loading...</div>}>
           <PropertyForm
             submitText="Editar"
-            schema={UpdatePropertySchema}
+            schema={UpdatePropertySchema.omit({ id: true })}
             initialValues={property}
             onSubmit={async (values) => {
               try {
-                console.log("values", values)
                 const updated = await updatePropertyMutation({
                   id: property.id,
                   ...values,
                 })
-                console.log("updated", updated)
                 await setQueryData(updated)
                 await router.push(Routes.ShowPropertyPage({ propertyId: updated.id }))
               } catch (error: any) {
