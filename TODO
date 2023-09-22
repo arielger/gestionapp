@@ -3,8 +3,11 @@ TODO:
 - [DONE] Crear entidad para inmobiliaria (RealStateAgency)
 - [DONE] Migrate to PostgreSQL (https://blitzjs.com/docs/database-overview)
 - [DONE] Crear entidad para propiedad
-- [ ] Migrate forms from Final form to mantine
-- [ ] Agregar form para crear propiedad
+- [DONE] Migrate forms from Final form to mantine
+- [DONE] Agregar form para crear propiedad
+- [ ] Crear entidad de inquilino
+- [ ] Crear entidad de contrato (revisar los datos)
+  - [ ] Permitir asignar uno o mas propietarios e inquilinos
 - [ ] Handle error when going to authenticated route
 
 TECH DEBT:
