@@ -40,13 +40,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       theme={{
         /** Put your mantine theme override here */
         colorScheme: "light",
+        ...inter.style,
       }}
     >
       <ErrorBoundary FallbackComponent={RootErrorFallback}>
         <Suspense fallback="Loading...">
-          <Layout>
-            <main className={inter.className}>{getLayout(<Component {...pageProps} />)}</main>
-          </Layout>
+          <Layout>{getLayout(<Component {...pageProps} />)}</Layout>
         </Suspense>
       </ErrorBoundary>
     </MantineProvider>

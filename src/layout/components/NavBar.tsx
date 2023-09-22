@@ -1,6 +1,7 @@
 import { useState } from "react"
+import { useRouter } from "next/router"
 import { createStyles, Navbar, getStylesRef, rem, UnstyledButton } from "@mantine/core"
-import { IconHome, IconLogout } from "@tabler/icons-react"
+import { IconHome, IconLogout, IconUser } from "@tabler/icons-react"
 import { useMutation } from "@blitzjs/rpc"
 import Link from "next/link"
 import { Routes } from "@blitzjs/next"
@@ -63,22 +64,26 @@ const useStyles = createStyles((theme) => ({
   },
 }))
 
-const data = [{ link: Routes.PropertiesPage(), label: "Propiedades", icon: IconHome }]
+const data = [
+  { link: Routes.PropertiesPage(), label: "Propiedades", icon: IconHome },
+  { link: Routes.RealStateOwnersPage(), label: "Propietarios", icon: IconUser },
+]
 
 export function NavigationBar() {
   const { classes, cx } = useStyles()
-  const [active, setActive] = useState("Billing")
+  const { asPath } = useRouter()
+
+  const activePathname = new URL(asPath, location.href).pathname
 
   const [logoutMutation] = useMutation(logout)
 
   const links = data.map((item) => (
     <Link
-      className={cx(classes.link, { [classes.linkActive]: item.label === active })}
+      className={cx(classes.link, {
+        [classes.linkActive]: activePathname.startsWith(item.link.pathname),
+      })}
       href={item.link}
       key={item.label}
-      onClick={(event) => {
-        setActive(item.label)
-      }}
     >
       <item.icon className={classes.linkIcon} stroke={1.5} />
       <span>{item.label}</span>

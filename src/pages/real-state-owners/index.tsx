@@ -2,17 +2,17 @@ import { Suspense } from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { ActionIcon, Button, Flex, Group, Paper, Table, Title } from "@mantine/core"
-import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 import { DataTable } from "mantine-datatable"
+import { ActionIcon, Button, Flex, Group, Title } from "@mantine/core"
+import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react"
 
 import Layout from "src/core/layouts/Layout"
-import getProperties from "src/properties/queries/getProperties"
+import getRealStateOwners from "src/real-state-owners/queries/getRealStateOwners"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 
-export const PropertiesList = () => {
+export const RealStateOwnersList = () => {
   const { items, page, count, goToPage, recordsPerPage } = usePaginatedTable({
-    query: getProperties,
+    query: getRealStateOwners,
   })
 
   return (
@@ -29,21 +29,20 @@ export const PropertiesList = () => {
             accessor: "id",
             title: "#",
             textAlignment: "right",
-            width: 60,
           },
-          { accessor: "address", title: "Dirección" },
+          { accessor: "firstName" },
+          { accessor: "lastName" },
           {
             accessor: "actions",
-            title: "Acciones",
             textAlignment: "right",
-            render: (property) => (
+            render: (owner) => (
               <Group spacing={0} position="right" noWrap>
-                <Link href={Routes.ShowPropertyPage({ propertyId: property.id })}>
+                <Link href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: owner.id })}>
                   <ActionIcon>
                     <IconEye size="1rem" stroke={1.5} />
                   </ActionIcon>
                 </Link>
-                <Link href={Routes.EditPropertyPage({ propertyId: property.id })}>
+                <Link href={Routes.EditRealStateOwnerPage({ realStateOwnerId: owner.id })}>
                   <ActionIcon>
                     <IconEdit size="1rem" stroke={1.5} />
                   </ActionIcon>
@@ -64,27 +63,27 @@ export const PropertiesList = () => {
   )
 }
 
-const PropertiesPage = () => {
+const RealStateOwnersPage = () => {
   return (
     <Layout>
       <Head>
-        <title>Propiedades</title>
+        <title>Propietarios</title>
       </Head>
 
       <div>
         <Flex justify="space-between" align="center" mb={16}>
-          <Title order={2}>Propiedades</Title>
-          <Button variant="filled" component={Link} href={Routes.NewPropertyPage()} size="md">
+          <Title order={2}>Propietarios</Title>
+          <Button variant="filled" component={Link} href={Routes.NewRealStateOwnerPage()} size="md">
             Crear
           </Button>
         </Flex>
 
         <Suspense fallback={<div>Loading...</div>}>
-          <PropertiesList />
+          <RealStateOwnersList />
         </Suspense>
       </div>
     </Layout>
   )
 }
 
-export default PropertiesPage
+export default RealStateOwnersPage
