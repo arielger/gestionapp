@@ -97,7 +97,7 @@ export function NavigationBar() {
       <Navbar.Section className={classes.footer}>
         <UnstyledButton onClick={() => logoutMutation()} className={classes.link}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />
-          <span>Logout</span>
+          <span>Cerrar sesión</span>
         </UnstyledButton>
       </Navbar.Section>
     </Navbar>
