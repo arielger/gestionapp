@@ -4,7 +4,7 @@ import { NavigationBar } from "./NavBar"
 export const DashboardLayout = ({ children }: { children: React.ReactElement }) => {
   return (
     <AppShell
-      padding="md"
+      padding="lg"
       navbar={<NavigationBar />}
       header={
         <Header height={60} p="xs">

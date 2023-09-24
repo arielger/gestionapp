@@ -9,6 +9,7 @@ import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react"
 import Layout from "src/core/layouts/Layout"
 import getRealStateOwners from "src/real-state-owners/queries/getRealStateOwners"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
+import { PageHeader } from "src/layout/components/PageHeader"
 
 export const RealStateOwnersList = () => {
   const { items, page, count, goToPage, recordsPerPage } = usePaginatedTable({
@@ -29,9 +30,10 @@ export const RealStateOwnersList = () => {
             accessor: "id",
             title: "#",
             textAlignment: "right",
+            width: 60,
           },
-          { accessor: "firstName" },
-          { accessor: "lastName" },
+          { accessor: "firstName", title: "Nombre" },
+          { accessor: "lastName", title: "Apellido" },
           {
             accessor: "actions",
             textAlignment: "right",
@@ -71,12 +73,11 @@ const RealStateOwnersPage = () => {
       </Head>
 
       <div>
-        <Flex justify="space-between" align="center" mb={16}>
-          <Title order={2}>Propietarios</Title>
+        <PageHeader title="Propietarios">
           <Button variant="filled" component={Link} href={Routes.NewRealStateOwnerPage()} size="md">
             Crear
           </Button>
-        </Flex>
+        </PageHeader>
 
         <Suspense fallback={<div>Loading...</div>}>
           <RealStateOwnersList />

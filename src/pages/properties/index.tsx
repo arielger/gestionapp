@@ -2,18 +2,31 @@ import { Suspense } from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { ActionIcon, Anchor, Flex, Group, Title, Button } from "@mantine/core"
+import { useMutation } from "@blitzjs/rpc"
+import { useRouter } from "next/router"
+import { ActionIcon, Anchor, Flex, Group, Button } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 import { DataTable } from "mantine-datatable"
 
 import Layout from "src/core/layouts/Layout"
 import getProperties from "src/properties/queries/getProperties"
+import deleteProperty from "src/properties/mutations/deleteProperty"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
+import { PageHeader } from "src/layout/components/PageHeader"
 
 export const PropertiesList = () => {
+  const router = useRouter()
+
   const { items, page, count, goToPage, recordsPerPage } = usePaginatedTable({
     query: getProperties,
   })
+
+  const [deletePropertyMutation, { isLoading }] = useMutation(deleteProperty)
+
+  const handleDelete = async (property: (typeof items)[number]) => {
+    await deletePropertyMutation({ id: property.id })
+    await router.push(Routes.PropertiesPage())
+  }
 
   return (
     <>
@@ -68,7 +81,7 @@ export const PropertiesList = () => {
                     <IconEdit size="1rem" stroke={1.5} />
                   </ActionIcon>
                 </Link>
-                <ActionIcon color="red">
+                <ActionIcon color="red" onClick={() => handleDelete(property)}>
                   <IconTrash size="1rem" stroke={1.5} />
                 </ActionIcon>
               </Group>
@@ -92,12 +105,11 @@ const PropertiesPage = () => {
       </Head>
 
       <div>
-        <Flex justify="space-between" align="center" mb={16}>
-          <Title order={2}>Propiedades</Title>
+        <PageHeader title="Propiedades">
           <Button variant="filled" component={Link} href={Routes.NewPropertyPage()} size="md">
             Crear
           </Button>
-        </Flex>
+        </PageHeader>
 
         <Suspense fallback={<div>Loading...</div>}>
           <PropertiesList />

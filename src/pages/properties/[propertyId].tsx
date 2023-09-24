@@ -10,6 +10,7 @@ import Layout from "src/core/layouts/Layout"
 import getProperty from "src/properties/queries/getProperty"
 import deleteProperty from "src/properties/mutations/deleteProperty"
 import { Anchor, Button, Flex, Text } from "@mantine/core"
+import { PageHeader } from "src/layout/components/PageHeader"
 
 export const Property = () => {
   const router = useRouter()
@@ -24,7 +25,7 @@ export const Property = () => {
       </Head>
 
       <div>
-        <h1>Propiedad #{property.id}</h1>
+        <PageHeader title={property.address}></PageHeader>
         <Flex gap="md" direction="column">
           <Flex direction="column">
             <Text size="sm" color={"gray.7"}>
@@ -44,18 +45,22 @@ export const Property = () => {
             <Text size="sm" color={"gray.7"}>
               Propietario/s
             </Text>
-            <Flex direction="column" gap="xs">
-              {property.owners.map((owner) => (
-                <Anchor
-                  key={owner.id}
-                  size="sm"
-                  component={Link}
-                  href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: owner.id })}
-                >
-                  {`${owner.firstName} ${owner.lastName}`}
-                </Anchor>
-              ))}
-            </Flex>
+            {property.owners.length > 0 ? (
+              <Flex direction="column" gap="xs">
+                {property.owners.map((owner) => (
+                  <Anchor
+                    key={owner.id}
+                    size="sm"
+                    component={Link}
+                    href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: owner.id })}
+                  >
+                    {`${owner.firstName} ${owner.lastName}`}
+                  </Anchor>
+                ))}
+              </Flex>
+            ) : (
+              <Text size="md">No asignado</Text>
+            )}
           </Flex>
 
           <Flex gap="sm">
@@ -85,10 +90,9 @@ export const Property = () => {
 const ShowPropertyPage = () => {
   return (
     <div>
-      <p>
+      {/* <p>
         <Link href={Routes.PropertiesPage()}>Volver</Link>
-      </p>
-
+      </p> */}
       <Suspense fallback={<div>Loading...</div>}>
         <Property />
       </Suspense>
