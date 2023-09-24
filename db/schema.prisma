@@ -85,3 +85,11 @@ model RealStateOwner {
   lastName   String
   properties Property[]
 }
+
+model Tenant {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  firstName String
+  lastName  String
+}

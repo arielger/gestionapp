@@ -7,12 +7,12 @@ import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 import { DataTable } from "mantine-datatable"
 
 import Layout from "src/core/layouts/Layout"
-import get__ModelNames__ from "src/__modelNames__/queries/get__ModelNames__"
+import getTenants from "src/tenants/queries/getTenants"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 
-export const __ModelNames__List = () => {
+export const TenantsList = () => {
   const { items, page, count, goToPage, recordsPerPage } = usePaginatedTable({
-    query: get__ModelNames__,
+    query: getTenants,
   })
 
   return (
@@ -31,19 +31,20 @@ export const __ModelNames__List = () => {
             textAlignment: "right",
             width: 60,
           },
-          // TEMPLATE: COMPLETE TABLE
+          { accessor: "firstName", title: "Nombre" },
+          { accessor: "lastName", title: "Apellido" },
           {
             accessor: "actions",
             title: "Acciones",
             textAlignment: "right",
-            render: (__modelName__) => (
+            render: (tenant) => (
               <Group spacing={0} position="right" noWrap>
-                <Link href={Routes.Show__ModelName__Page({ __modelName__Id: __modelName__.id })}>
+                <Link href={Routes.ShowTenantPage({ tenantId: tenant.id })}>
                   <ActionIcon>
                     <IconEye size="1rem" stroke={1.5} />
                   </ActionIcon>
                 </Link>
-                <Link href={Routes.Edit__ModelName__Page({ __modelName__Id: __modelName__.id })}>
+                <Link href={Routes.EditTenantPage({ tenantId: tenant.id })}>
                   <ActionIcon>
                     <IconEdit size="1rem" stroke={1.5} />
                   </ActionIcon>
@@ -64,27 +65,27 @@ export const __ModelNames__List = () => {
   )
 }
 
-const __ModelNames__Page = () => {
+const TenantsPage = () => {
   return (
     <Layout>
       <Head>
-        <title>__ModelNames__</title>
+        <title>Inquilinos</title>
       </Head>
 
       <div>
         <Flex justify="space-between" align="center" mb={16}>
-          <Title order={2}>__ModelNames__</Title>
+          <Title order={2}>Inquilinos</Title>
           <Button variant="filled" component={Link} href={Routes.NewPropertyPage()} size="md">
             Crear
           </Button>
         </Flex>
 
         <Suspense fallback={<div>Loading...</div>}>
-          <__ModelNames__List />
+          <TenantsList />
         </Suspense>
       </div>
     </Layout>
   )
 }
 
-export default __ModelNames__Page
+export default TenantsPage
