@@ -70,16 +70,18 @@ enum TokenType {
 }
 
 model Property {
-  id        Int      @id @default(autoincrement())
+  id        Int              @id @default(autoincrement())
   address   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  owners    RealStateOwner[]
 }
 
 model RealStateOwner {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  firstName String
-  lastName  String
+  id         Int        @id @default(autoincrement())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  firstName  String
+  lastName   String
+  properties Property[]
 }

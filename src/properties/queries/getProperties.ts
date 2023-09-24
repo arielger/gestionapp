@@ -13,7 +13,15 @@ export default resolver.pipe(
       skip,
       take,
       count: () => db.property.count({ where }),
-      query: (paginateArgs) => db.property.findMany({ ...paginateArgs, where, orderBy }),
+      query: (paginateArgs) =>
+        db.property.findMany({
+          ...paginateArgs,
+          where,
+          orderBy,
+          include: {
+            owners: true,
+          },
+        }),
     })
 
     return {

@@ -10,7 +10,7 @@ const GetProperty = z.object({
 
 export default resolver.pipe(resolver.zod(GetProperty), resolver.authorize(), async ({ id }) => {
   // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-  const property = await db.property.findFirst({ where: { id } })
+  const property = await db.property.findFirst({ where: { id }, include: { owners: true } })
 
   if (!property) throw new NotFoundError()
 

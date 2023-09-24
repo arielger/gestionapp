@@ -7,7 +7,9 @@ export default resolver.pipe(
   resolver.authorize(),
   async (input) => {
     // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-    const property = await db.property.create({ data: input })
+    const property = await db.property.create({
+      data: { ...input, owners: { connect: input.owners?.map((owner) => ({ id: owner })) } },
+    })
 
     return property
   }

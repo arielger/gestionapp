@@ -25,6 +25,11 @@ export const EditProperty = () => {
   )
   const [updatePropertyMutation] = useMutation(updateProperty)
 
+  const initialValues = {
+    ...property,
+    owners: property.owners.map((owner) => owner.id),
+  }
+
   return (
     <>
       <Head>
@@ -37,13 +42,15 @@ export const EditProperty = () => {
           <PropertyForm
             submitText="Editar"
             schema={UpdatePropertySchema.omit({ id: true })}
-            initialValues={property}
+            initialValues={initialValues}
             onSubmit={async (values) => {
               try {
+                console.log("values", values)
                 const updated = await updatePropertyMutation({
                   id: property.id,
                   ...values,
                 })
+                console.log("updated", updated)
                 await setQueryData(updated)
                 await router.push(Routes.ShowPropertyPage({ propertyId: updated.id }))
               } catch (error: any) {

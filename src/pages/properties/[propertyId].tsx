@@ -9,7 +9,7 @@ import { useParam } from "@blitzjs/next"
 import Layout from "src/core/layouts/Layout"
 import getProperty from "src/properties/queries/getProperty"
 import deleteProperty from "src/properties/mutations/deleteProperty"
-import { Button, Flex, Text } from "@mantine/core"
+import { Anchor, Button, Flex, Text } from "@mantine/core"
 
 export const Property = () => {
   const router = useRouter()
@@ -38,6 +38,24 @@ export const Property = () => {
               Fecha de creación
             </Text>
             <Text size="md">{property.createdAt.toLocaleDateString()}</Text>
+          </Flex>
+
+          <Flex direction="column">
+            <Text size="sm" color={"gray.7"}>
+              Propietario/s
+            </Text>
+            <Flex direction="column" gap="xs">
+              {property.owners.map((owner) => (
+                <Anchor
+                  key={owner.id}
+                  size="sm"
+                  component={Link}
+                  href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: owner.id })}
+                >
+                  {`${owner.firstName} ${owner.lastName}`}
+                </Anchor>
+              ))}
+            </Flex>
           </Flex>
 
           <Flex gap="sm">

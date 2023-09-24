@@ -21,6 +21,7 @@ const NewPropertyPage = () => {
           schema={CreatePropertySchema}
           initialValues={{
             address: "",
+            owners: [],
           }}
           onSubmit={async (values) => {
             try {

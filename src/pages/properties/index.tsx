@@ -2,7 +2,7 @@ import { Suspense } from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { ActionIcon, Button, Flex, Group, Paper, Table, Title } from "@mantine/core"
+import { ActionIcon, Anchor, Flex, Group, Title, Button } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 import { DataTable } from "mantine-datatable"
 
@@ -32,6 +32,26 @@ export const PropertiesList = () => {
             width: 60,
           },
           { accessor: "address", title: "Dirección" },
+          {
+            accessor: "owners",
+            title: "Propietario/s",
+            render: (property) => (
+              <Flex gap="xs">
+                {property?.owners?.length > 0
+                  ? property.owners.map((owner) => (
+                      <Anchor
+                        key={owner.id}
+                        size="sm"
+                        component={Link}
+                        href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: owner.id })}
+                      >
+                        {`${owner.firstName} ${owner.lastName}`}
+                      </Anchor>
+                    ))
+                  : "-"}
+              </Flex>
+            ),
+          },
           {
             accessor: "actions",
             title: "Acciones",
