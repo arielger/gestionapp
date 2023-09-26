@@ -11,6 +11,7 @@ import { Update__ModelName__Schema } from "src/__modelNamesPath__/schemas"
 import get__ModelName__ from "src/__modelNamesPath__/queries/get__ModelName__"
 import update__ModelName__ from "src/__modelNamesPath__/mutations/update__ModelName__"
 import { __ModelName__Form, FORM_ERROR } from "src/__modelNamesPath__/components/__ModelName__Form"
+import { PageHeader } from "src/layout/components/PageHeader"
 
 export const Edit__ModelName__ = () => {
   const router = useRouter()
@@ -35,12 +36,12 @@ export const Edit__ModelName__ = () => {
       </Head>
 
       <div>
-        <h1>Edit __ModelName__ {__modelName__.id}</h1>
+        <PageHeader title={`Editar __ModelName__ ${__modelName__.id}`} />
         <pre>{JSON.stringify(__modelName__, null, 2)}</pre>
         <Suspense fallback={<div>Loading...</div>}>
           <__ModelName__Form
             submitText="Update __ModelName__"
-            schema={Update__ModelName__Schema}
+            schema={Update__ModelName__Schema.omit({ id: true })}
             initialValues={__modelName__}
             onSubmit={async (values) => {
               try {

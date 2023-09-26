@@ -4,8 +4,9 @@ import Head from "next/head"
 import Link from "next/link"
 import { ActionIcon, Button, Flex, Group, Paper, Table, Title } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
-import { DataTable } from "mantine-datatable"
 
+import { DataTable } from "src/core/components/DataTable"
+import { PageHeader } from "src/layout/components/PageHeader"
 import Layout from "src/core/layouts/Layout"
 import get__ModelNames__ from "src/__modelNames__/queries/get__ModelNames__"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
@@ -18,11 +19,6 @@ export const __ModelNames__List = () => {
   return (
     <>
       <DataTable
-        withBorder
-        borderRadius="sm"
-        withColumnBorders
-        striped
-        highlightOnHover
         records={items}
         columns={[
           {
@@ -72,12 +68,11 @@ const __ModelNames__Page = () => {
       </Head>
 
       <div>
-        <Flex justify="space-between" align="center" mb={16}>
-          <Title order={2}>__ModelNames__</Title>
-          <Button variant="filled" component={Link} href={Routes.NewPropertyPage()} size="md">
+        <PageHeader title="__ModelNames__">
+          <Button variant="filled" component={Link} href={Routes.New__ModelName__Page()} size="md">
             Crear
           </Button>
-        </Flex>
+        </PageHeader>
 
         <Suspense fallback={<div>Loading...</div>}>
           <__ModelNames__List />

@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import { Routes } from "@blitzjs/next"
 if (process.env.parentModel) {
   import Link from "next/link"
@@ -9,11 +10,11 @@ if (process.env.parentModel) {
   import { useRouter } from "next/router"
   import { useMutation } from "@blitzjs/rpc"
 }
+import { PageHeader } from "src/layout/components/PageHeader"
 import Layout from "src/core/layouts/Layout"
 import { Create__ModelName__Schema } from "src/__modelNamesPath__/schemas"
 import create__ModelName__ from "src/__modelNamesPath__/mutations/create__ModelName__"
 import { __ModelName__Form, FORM_ERROR } from "src/__modelNamesPath__/components/__ModelName__Form"
-import { Suspense } from "react"
 
 const New__ModelName__Page = () => {
   const router = useRouter()
@@ -24,7 +25,7 @@ const New__ModelName__Page = () => {
 
   return (
     <Layout title={"Create New __ModelName__"}>
-      <h1>Create New __ModelName__</h1>
+      <PageHeader title={`Crear nueva __ModelName__`} />
       <Suspense fallback={<div>Loading...</div>}>
         <__ModelName__Form
           submitText="Create __ModelName__"

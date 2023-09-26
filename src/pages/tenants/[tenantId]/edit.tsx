@@ -37,7 +37,7 @@ export const EditTenant = () => {
         <Suspense fallback={<div>Loading...</div>}>
           <TenantForm
             submitText="Update Tenant"
-            schema={UpdateTenantSchema}
+            schema={UpdateTenantSchema.omit({ id: true })}
             initialValues={tenant}
             onSubmit={async (values) => {
               try {

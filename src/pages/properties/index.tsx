@@ -6,8 +6,8 @@ import { useMutation } from "@blitzjs/rpc"
 import { useRouter } from "next/router"
 import { ActionIcon, Anchor, Flex, Group, Button } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
-import { DataTable } from "mantine-datatable"
 
+import { DataTable } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
 import getProperties from "src/properties/queries/getProperties"
 import deleteProperty from "src/properties/mutations/deleteProperty"
@@ -31,11 +31,6 @@ export const PropertiesList = () => {
   return (
     <>
       <DataTable
-        withBorder
-        borderRadius="sm"
-        withColumnBorders
-        striped
-        highlightOnHover
         records={items}
         columns={[
           {

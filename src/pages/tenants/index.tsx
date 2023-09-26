@@ -4,11 +4,12 @@ import Head from "next/head"
 import Link from "next/link"
 import { ActionIcon, Button, Flex, Group, Paper, Table, Title } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
-import { DataTable } from "mantine-datatable"
 
+import { DataTable } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
 import getTenants from "src/tenants/queries/getTenants"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
+import { PageHeader } from "src/layout/components/PageHeader"
 
 export const TenantsList = () => {
   const { items, page, count, goToPage, recordsPerPage } = usePaginatedTable({
@@ -18,11 +19,6 @@ export const TenantsList = () => {
   return (
     <>
       <DataTable
-        withBorder
-        borderRadius="sm"
-        withColumnBorders
-        striped
-        highlightOnHover
         records={items}
         columns={[
           {
@@ -73,12 +69,11 @@ const TenantsPage = () => {
       </Head>
 
       <div>
-        <Flex justify="space-between" align="center" mb={16}>
-          <Title order={2}>Inquilinos</Title>
-          <Button variant="filled" component={Link} href={Routes.NewPropertyPage()} size="md">
+        <PageHeader title="Inquilinos">
+          <Button variant="filled" component={Link} href={Routes.NewTenantPage()} size="md">
             Crear
           </Button>
-        </Flex>
+        </PageHeader>
 
         <Suspense fallback={<div>Loading...</div>}>
           <TenantsList />

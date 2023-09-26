@@ -2,10 +2,10 @@ import { Suspense } from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { DataTable } from "mantine-datatable"
 import { ActionIcon, Button, Flex, Group, Title } from "@mantine/core"
 import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react"
 
+import { DataTable } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
 import getRealStateOwners from "src/real-state-owners/queries/getRealStateOwners"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
@@ -19,11 +19,6 @@ export const RealStateOwnersList = () => {
   return (
     <>
       <DataTable
-        withBorder
-        borderRadius="sm"
-        withColumnBorders
-        striped
-        highlightOnHover
         records={items}
         columns={[
           {

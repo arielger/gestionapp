@@ -67,6 +67,7 @@ const useStyles = createStyles((theme) => ({
 const data = [
   { link: Routes.PropertiesPage(), label: "Propiedades", icon: IconHome },
   { link: Routes.RealStateOwnersPage(), label: "Propietarios", icon: IconUser },
+  { link: Routes.TenantsPage(), label: "Inquilinos", icon: IconUser },
 ]
 
 export function NavigationBar() {

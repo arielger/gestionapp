@@ -11,6 +11,7 @@ import { UpdatePropertySchema } from "src/properties/schemas"
 import getProperty from "src/properties/queries/getProperty"
 import updateProperty from "src/properties/mutations/updateProperty"
 import { PropertyForm } from "src/properties/components/PropertyForm"
+import { PageHeader } from "src/layout/components/PageHeader"
 
 export const EditProperty = () => {
   const router = useRouter()
@@ -37,7 +38,7 @@ export const EditProperty = () => {
       </Head>
 
       <div>
-        <h1>Editar Property {property.id}</h1>
+        <PageHeader title={`Editar propiedad #${property.id}`} />
         <Suspense fallback={<div>Loading...</div>}>
           <PropertyForm
             submitText="Editar"

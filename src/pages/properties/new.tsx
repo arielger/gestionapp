@@ -7,6 +7,7 @@ import { CreatePropertySchema } from "src/properties/schemas"
 import createProperty from "src/properties/mutations/createProperty"
 import { PropertyForm } from "src/properties/components/PropertyForm"
 import { Suspense } from "react"
+import { PageHeader } from "src/layout/components/PageHeader"
 
 const NewPropertyPage = () => {
   const router = useRouter()
@@ -14,7 +15,7 @@ const NewPropertyPage = () => {
 
   return (
     <Layout title={"Nueva propiedad"}>
-      <h1>Crear nueva propiedad</h1>
+      <PageHeader title="Crear nueva propiedad" />
       <Suspense fallback={<div>Loading...</div>}>
         <PropertyForm
           submitText="Crear"
