@@ -2,26 +2,23 @@ import { paginate } from "blitz"
 import { resolver } from "@blitzjs/rpc"
 import db, { Prisma } from "db"
 
-interface GetPropertiesInput
-  extends Pick<Prisma.PropertyFindManyArgs, "where" | "orderBy" | "skip" | "take"> {}
+interface GetContractsInput
+  extends Pick<Prisma.ContractFindManyArgs, "where" | "orderBy" | "skip" | "take"> {}
 
 export default resolver.pipe(
   resolver.authorize(),
-  async ({ where, orderBy, skip = 0, take = 100 }: GetPropertiesInput) => {
+  async ({ where, orderBy, skip = 0, take = 100 }: GetContractsInput) => {
     // TODO: in multi-tenant app, you must add validation to ensure correct tenant
     const { items, hasMore, nextPage, count } = await paginate({
       skip,
       take,
-      count: () => db.property.count({ where }),
+      count: () => db.contract.count({ where }),
       query: (paginateArgs) =>
-        db.property.findMany({
+        db.contract.findMany({
           ...paginateArgs,
           where,
           orderBy,
-          include: {
-            owners: true,
-            Contract: true,
-          },
+          include: { owners: true, tenants: true },
         }),
     })
 

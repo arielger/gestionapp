@@ -61,6 +61,23 @@ export const PropertiesList = () => {
             ),
           },
           {
+            accessor: "contract",
+            title: "Estado",
+            render: (property) =>
+              property?.Contract?.length > 0 ? (
+                <Anchor
+                  size="sm"
+                  component={Link}
+                  href={Routes.ShowContractPage({
+                    propertyId: property.id,
+                    contractId: property.Contract[0]!.id,
+                  })}
+                >
+                  Ir a contrato
+                </Anchor>
+              ) : undefined,
+          },
+          {
             accessor: "actions",
             title: "Acciones",
             textAlignment: "right",

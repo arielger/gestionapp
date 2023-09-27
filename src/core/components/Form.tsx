@@ -6,7 +6,9 @@ import { Button } from "@mantine/core"
 export interface FormProps<Schema extends z.ZodType<any, any>>
   extends Omit<PropsWithoutRef<JSX.IntrinsicElements["form"]>, "onSubmit" | "children"> {
   /** All your form fields */
-  children?: (UseFormReturnType) => ReactNode
+  children?: (
+    form: UseFormReturnType<z.TypeOf<Schema>, (values: z.TypeOf<Schema>) => z.TypeOf<Schema>>
+  ) => ReactNode
   /** Text to display in the submit button */
   submitText?: string
   schema?: Schema

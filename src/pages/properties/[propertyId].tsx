@@ -80,6 +80,10 @@ export const Property = () => {
             >
               Eliminar
             </Button>
+
+            <Link href={Routes.NewContractPage({ propertyId: property.id })}>
+              <Button>Crear contrato</Button>
+            </Link>
           </Flex>
         </Flex>
       </div>
