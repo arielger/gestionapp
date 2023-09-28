@@ -1,6 +1,16 @@
 import { useState } from "react"
 import { useRouter } from "next/router"
-import { createStyles, Navbar, getStylesRef, rem, UnstyledButton } from "@mantine/core"
+import {
+  createStyles,
+  Navbar,
+  getStylesRef,
+  rem,
+  UnstyledButton,
+  Avatar,
+  Title,
+  Flex,
+  Text,
+} from "@mantine/core"
 import { IconHome, IconLogout, IconUser } from "@tabler/icons-react"
 import { useMutation } from "@blitzjs/rpc"
 import Link from "next/link"
@@ -93,6 +103,20 @@ export function NavigationBar() {
 
   return (
     <Navbar width={{ sm: 300 }} p="md">
+      <Flex align="center" mb="lg">
+        <Avatar src={"./logo.jpeg"} color="cyan" radius="sm" mr={"sm"}>
+          GG
+        </Avatar>
+        <Flex direction="column" miw={0}>
+          <Title size="h5" c="gray.8">
+            Grupo gestionar
+          </Title>
+          <Text c="dimmed" truncate="end">
+            gustavo@grupogestionar.com
+          </Text>
+        </Flex>
+      </Flex>
+
       <Navbar.Section grow>{links}</Navbar.Section>
 
       <Navbar.Section className={classes.footer}>

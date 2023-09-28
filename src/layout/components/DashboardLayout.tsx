@@ -1,4 +1,4 @@
-import { Header, AppShell, Title } from "@mantine/core"
+import { AppShell } from "@mantine/core"
 import { NavigationBar } from "./NavBar"
 
 export const DashboardLayout = ({ children }: { children: React.ReactElement }) => {
@@ -6,11 +6,6 @@ export const DashboardLayout = ({ children }: { children: React.ReactElement }) 
     <AppShell
       padding="lg"
       navbar={<NavigationBar />}
-      header={
-        <Header height={60} p="xs">
-          <Title order={2}>Gestionprop</Title>
-        </Header>
-      }
       styles={(theme) => ({
         main: {
           backgroundColor:
