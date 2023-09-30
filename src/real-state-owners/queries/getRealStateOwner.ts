@@ -11,9 +11,10 @@ const GetRealStateOwner = z.object({
 export default resolver.pipe(
   resolver.zod(GetRealStateOwner),
   resolver.authorize(),
-  async ({ id }) => {
-    // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-    const realStateOwner = await db.realStateOwner.findFirst({ where: { id } })
+  async ({ id }, ctx) => {
+    const realStateOwner = await db.realStateOwner.findFirst({
+      where: { id, organizationId: ctx.session.orgId },
+    })
 
     if (!realStateOwner) throw new NotFoundError()
 

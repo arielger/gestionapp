@@ -8,20 +8,43 @@ import db from "./index"
  */
 
 const seed = async () => {
-  const realStateAgency = await db.realStateAgency.create({
+  const orgs = ["Grupo Gestionar", "3G Propiedades"]
+
+  const organizations = await db.$transaction(
+    orgs.map((org) => db.organization.create({ data: { name: org } }))
+  )
+
+  if (!organizations[0] || !organizations[1]) {
+    throw Error("No organizations created")
+  }
+
+  await db.user.create({
     data: {
-      name: "Gestionar",
+      email: "gustavo@gestionar.com",
+      name: "Gustavo Gestionar",
+      // password = test123456
+      hashedPassword:
+        "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJHRBTVZYYzBMWmlTRUh4WjY5bTAxQVEkcnJJVE45elJOcUxjbmVNc3hLUkU2eTZsVmYzbVlHT2dqbFNaMHJOVE1GVQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
+      memberships: {
+        create: {
+          organizationId: organizations[0].id,
+        },
+      },
     },
   })
 
   await db.user.create({
     data: {
-      email: "test@test.com",
-      name: "Juan Real State",
+      email: "ariel@gestionar.com",
+      name: "Ariel Gestionar",
       // password = test123456
       hashedPassword:
         "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJHRBTVZYYzBMWmlTRUh4WjY5bTAxQVEkcnJJVE45elJOcUxjbmVNc3hLUkU2eTZsVmYzbVlHT2dqbFNaMHJOVE1GVQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
-      realStateAgencyId: realStateAgency.id,
+      memberships: {
+        create: {
+          organizationId: organizations[1].id,
+        },
+      },
     },
   })
 }

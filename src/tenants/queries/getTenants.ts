@@ -7,13 +7,20 @@ interface GetTenantsInput
 
 export default resolver.pipe(
   resolver.authorize(),
-  async ({ where, orderBy, skip = 0, take = 100 }: GetTenantsInput) => {
-    // TODO: in multi-tenant app, you must add validation to ensure correct tenant
+  async ({ where, orderBy, skip = 0, take = 100 }: GetTenantsInput, ctx) => {
     const { items, hasMore, nextPage, count } = await paginate({
       skip,
       take,
       count: () => db.tenant.count({ where }),
-      query: (paginateArgs) => db.tenant.findMany({ ...paginateArgs, where, orderBy }),
+      query: (paginateArgs) =>
+        db.tenant.findMany({
+          ...paginateArgs,
+          where: {
+            ...where,
+            organizationId: ctx.session.orgId,
+          },
+          orderBy,
+        }),
     })
 
     return {

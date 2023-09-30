@@ -5,9 +5,10 @@ import { DeleteContractSchema } from "../schemas"
 export default resolver.pipe(
   resolver.zod(DeleteContractSchema),
   resolver.authorize(),
-  async ({ id }) => {
-    // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-    const contract = await db.contract.deleteMany({ where: { id } })
+  async ({ id }, ctx) => {
+    const contract = await db.contract.deleteMany({
+      where: { id, organizationId: ctx.session.orgId },
+    })
 
     return contract
   }

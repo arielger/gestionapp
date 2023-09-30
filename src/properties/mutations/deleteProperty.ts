@@ -5,9 +5,10 @@ import { DeletePropertySchema } from "../schemas"
 export default resolver.pipe(
   resolver.zod(DeletePropertySchema),
   resolver.authorize(),
-  async ({ id }) => {
-    // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-    const property = await db.property.deleteMany({ where: { id } })
+  async ({ id }, ctx) => {
+    const property = await db.property.deleteMany({
+      where: { id, organizationId: ctx.session.orgId },
+    })
 
     return property
   }

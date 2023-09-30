@@ -8,11 +8,17 @@ const GetProperty = z.object({
   id: z.number().optional().refine(Boolean, "Required"),
 })
 
-export default resolver.pipe(resolver.zod(GetProperty), resolver.authorize(), async ({ id }) => {
-  // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-  const property = await db.property.findFirst({ where: { id }, include: { owners: true } })
+export default resolver.pipe(
+  resolver.zod(GetProperty),
+  resolver.authorize(),
+  async ({ id }, ctx) => {
+    const property = await db.property.findFirst({
+      where: { id, organizationId: ctx.session.orgId },
+      include: { owners: true },
+    })
 
-  if (!property) throw new NotFoundError()
+    if (!property) throw new NotFoundError()
 
-  return property
-})
+    return property
+  }
+)

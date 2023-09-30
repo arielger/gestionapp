@@ -5,9 +5,11 @@ import { Update__ModelName__Schema } from "../schemas"
 export default resolver.pipe(
   resolver.zod(Update__ModelName__Schema),
   resolver.authorize(),
-  async ({ id, ...data }) => {
-    // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-    const __modelName__ = await db.__modelName__.update({ where: { id }, data })
+  async ({ id, ...data }, ctx) => {
+    const __modelName__ = await db.__modelName__.update({
+      where: { id, organizationId: ctx.session.orgId },
+      data,
+    })
 
     return __modelName__
   }

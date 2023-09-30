@@ -5,10 +5,9 @@ import { UpdatePropertySchema } from "../schemas"
 export default resolver.pipe(
   resolver.zod(UpdatePropertySchema),
   resolver.authorize(),
-  async ({ id, ...data }) => {
-    // TODO: in multi-tenant app, you must add validation to ensure correct tenant
+  async ({ id, ...data }, ctx) => {
     const property = await db.property.update({
-      where: { id },
+      where: { id, organizationId: ctx.session.orgId },
       data: { ...data, owners: { set: data.owners?.map((owner) => ({ id: owner })) } },
       include: { owners: true },
     })

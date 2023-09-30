@@ -5,9 +5,10 @@ import { Delete__ModelName__Schema } from "../schemas"
 export default resolver.pipe(
   resolver.zod(Delete__ModelName__Schema),
   resolver.authorize(),
-  async ({ id }) => {
-    // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-    const __modelName__ = await db.__modelName__.deleteMany({ where: { id } })
+  async ({ id }, ctx) => {
+    const __modelName__ = await db.__modelName__.deleteMany({
+      where: { id, organizationId: ctx.session.orgId },
+    })
 
     return __modelName__
   }

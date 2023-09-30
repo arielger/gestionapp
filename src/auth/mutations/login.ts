@@ -7,7 +7,10 @@ import { Login } from "../schemas"
 
 export const authenticateUser = async (rawEmail: string, rawPassword: string) => {
   const { email, password } = Login.parse({ email: rawEmail, password: rawPassword })
-  const user = await db.user.findFirst({ where: { email } })
+  const user = await db.user.findFirst({
+    where: { email },
+    include: { memberships: true },
+  })
   if (!user) throw new AuthenticationError()
 
   const result = await SecurePassword.verify(user.hashedPassword, password)
@@ -26,7 +29,12 @@ export default resolver.pipe(resolver.zod(Login), async ({ email, password }, ct
   // This throws an error if credentials are invalid
   const user = await authenticateUser(email, password)
 
-  await ctx.session.$create({ userId: user.id, role: user.role as Role})
+  // Review - should user always have one membership?
+  await ctx.session.$create({
+    userId: user.id,
+    role: user.role as Role,
+    orgId: user.memberships[0]?.organizationId,
+  })
 
   return user
 })

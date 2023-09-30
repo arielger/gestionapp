@@ -12,19 +12,47 @@ generator client {
 
 // --------------------------------------
 
-model User {
-  id              Int             @id @default(autoincrement())
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  name            String?
-  email           String          @unique
-  hashedPassword  String?
-  role            String          @default("USER")
-  realStateAgency RealStateAgency @relation(fields: [realStateAgencyId], references: [id])
+model Organization {
+  id             Int              @id @default(autoincrement())
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  name           String
+  memberships    Membership[]
+  Property       Property[]
+  RealStateOwner RealStateOwner[]
+  Tenant         Tenant[]
+  Contract       Contract[]
+}
 
-  tokens            Token[]
-  sessions          Session[]
-  realStateAgencyId Int
+model Membership {
+  id Int @id @default(autoincrement())
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId Int
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  // TODO: Review when implementing invitations
+  // // When the user joins, we will clear out the name and email and set the user.
+  // invitedName  String?
+  // invitedEmail String?
+
+  @@unique([organizationId, userId])
+}
+
+model User {
+  id             Int      @id @default(autoincrement())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  name           String?
+  email          String   @unique
+  hashedPassword String?
+  role           String   @default("USER")
+
+  tokens      Token[]
+  sessions    Session[]
+  memberships Membership[]
 }
 
 model Session {
@@ -57,52 +85,52 @@ model Token {
   @@unique([hashedToken, type])
 }
 
-model RealStateAgency {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String
-  User      User[]
-}
-
 enum TokenType {
   RESET_PASSWORD
 }
 
 model Property {
-  id        Int              @id @default(autoincrement())
-  address   String
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  owners    RealStateOwner[]
-  Contract  Contract[]
+  id             Int              @id @default(autoincrement())
+  address        String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  owners         RealStateOwner[]
+  Contract       Contract[]
+  organization   Organization     @relation(fields: [organizationId], references: [id])
+  organizationId Int
 }
 
 model RealStateOwner {
-  id         Int        @id @default(autoincrement())
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  firstName  String
-  lastName   String
-  properties Property[]
-  contracts  Contract[]
+  id             Int          @id @default(autoincrement())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  firstName      String
+  lastName       String
+  properties     Property[]
+  contracts      Contract[]
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId Int
 }
 
 model Tenant {
-  id        Int        @id @default(autoincrement())
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  firstName String
-  lastName  String
-  contracts Contract[]
+  id             Int          @id @default(autoincrement())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  firstName      String
+  lastName       String
+  contracts      Contract[]
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId Int
 }
 
 model Contract {
-  id         Int              @id @default(autoincrement())
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
-  owners     RealStateOwner[]
-  tenants    Tenant[]
-  property   Property         @relation(fields: [propertyId], references: [id])
-  propertyId Int
+  id             Int              @id @default(autoincrement())
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  owners         RealStateOwner[]
+  tenants        Tenant[]
+  property       Property         @relation(fields: [propertyId], references: [id])
+  propertyId     Int
+  organization   Organization     @relation(fields: [organizationId], references: [id])
+  organizationId Int
 }

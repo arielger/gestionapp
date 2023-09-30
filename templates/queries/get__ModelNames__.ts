@@ -7,13 +7,21 @@ interface Get__ModelNames__Input
 
 export default resolver.pipe(
   resolver.authorize(),
-  async ({ where, orderBy, skip = 0, take = 100 }: Get__ModelNames__Input) => {
+  async ({ where, orderBy, skip = 0, take = 100 }: Get__ModelNames__Input, ctx) => {
     // TODO: in multi-tenant app, you must add validation to ensure correct tenant
     const { items, hasMore, nextPage, count } = await paginate({
       skip,
       take,
       count: () => db.__modelName__.count({ where }),
-      query: (paginateArgs) => db.__modelName__.findMany({ ...paginateArgs, where, orderBy }),
+      query: (paginateArgs) =>
+        db.__modelName__.findMany({
+          ...paginateArgs,
+          where: {
+            ...where,
+            organizationId: ctx.session.orgId,
+          },
+          orderBy,
+        }),
     })
 
     return {

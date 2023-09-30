@@ -5,11 +5,11 @@ import { CreateContractSchema } from "../schemas"
 export default resolver.pipe(
   resolver.zod(CreateContractSchema),
   resolver.authorize(),
-  async (input) => {
-    // TODO: in multi-tenant app, you must add validation to ensure correct tenant
+  async (input, ctx) => {
     const contract = await db.contract.create({
       data: {
         ...input,
+        organizationId: ctx.session.orgId,
         owners: { connect: input.owners?.map((owner) => ({ id: owner })) },
         tenants: { connect: input.tenants?.map((tenant) => ({ id: tenant })) },
       },

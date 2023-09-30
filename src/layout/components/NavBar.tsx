@@ -15,8 +15,10 @@ import { IconHome, IconLogout, IconUser } from "@tabler/icons-react"
 import { useMutation } from "@blitzjs/rpc"
 import Link from "next/link"
 import { Routes } from "@blitzjs/next"
+import { useQuery } from "@blitzjs/rpc"
 
 import logout from "src/auth/mutations/logout"
+import { useCurrentUser } from "src/users/hooks/useCurrentUser"
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -84,6 +86,8 @@ export function NavigationBar() {
   const { classes, cx } = useStyles()
   const { asPath } = useRouter()
 
+  const currentUser = useCurrentUser()
+
   const activePathname = new URL(asPath, location.href).pathname
 
   const [logoutMutation] = useMutation(logout)
@@ -109,10 +113,10 @@ export function NavigationBar() {
         </Avatar>
         <Flex direction="column" miw={0}>
           <Title size="h5" c="gray.8">
-            Grupo gestionar
+            {currentUser?.memberships?.[0]?.organization.name}
           </Title>
           <Text c="dimmed" truncate="end">
-            gustavo@grupogestionar.com
+            {currentUser?.email}
           </Text>
         </Flex>
       </Flex>

@@ -8,14 +8,17 @@ const GetContract = z.object({
   id: z.number().optional().refine(Boolean, "Required"),
 })
 
-export default resolver.pipe(resolver.zod(GetContract), resolver.authorize(), async ({ id }) => {
-  // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-  const contract = await db.contract.findFirst({
-    where: { id },
-    include: { owners: true, tenants: true },
-  })
+export default resolver.pipe(
+  resolver.zod(GetContract),
+  resolver.authorize(),
+  async ({ id }, ctx) => {
+    const contract = await db.contract.findFirst({
+      where: { id, organizationId: ctx.session.orgId },
+      include: { owners: true, tenants: true },
+    })
 
-  if (!contract) throw new NotFoundError()
+    if (!contract) throw new NotFoundError()
 
-  return contract
-})
+    return contract
+  }
+)
