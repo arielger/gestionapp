@@ -12,12 +12,12 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
   const [owners] = useQuery(getRealStateOwners, {})
 
   const tenantsList = tenants?.items.map((tenant) => ({
-    value: tenant.id,
+    value: String(tenant.id),
     label: `${tenant.firstName} ${tenant.lastName}`,
   }))
 
   const ownersList = owners?.items.map((owner) => ({
-    value: owner.id,
+    value: String(owner.id),
     label: `${owner.firstName} ${owner.lastName}`,
   }))
 
