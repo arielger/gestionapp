@@ -10,7 +10,7 @@ import Layout from "src/core/layouts/Layout"
 import { UpdateTenantSchema } from "src/tenants/schemas"
 import getTenant from "src/tenants/queries/getTenant"
 import updateTenant from "src/tenants/mutations/updateTenant"
-import { TenantForm, FORM_ERROR } from "src/tenants/components/TenantForm"
+import { TenantForm } from "src/tenants/components/TenantForm"
 
 export const EditTenant = () => {
   const router = useRouter()
@@ -49,9 +49,9 @@ export const EditTenant = () => {
                 await router.push(Routes.ShowTenantPage({ tenantId: updated.id }))
               } catch (error: any) {
                 console.error(error)
-                return {
-                  [FORM_ERROR]: error.toString(),
-                }
+                // return {
+                //   [FORM_ERROR]: error.toString(),
+                // }
               }
             }}
           />

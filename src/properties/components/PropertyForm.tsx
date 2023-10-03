@@ -11,7 +11,7 @@ export function PropertyForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
   const [owners] = useQuery(getRealStateOwners, {})
 
   const ownersList = owners?.items.map((owner) => ({
-    value: owner.id,
+    value: String(owner.id),
     label: `${owner.firstName} ${owner.lastName}`,
   }))
 

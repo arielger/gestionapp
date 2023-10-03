@@ -4,6 +4,7 @@ import Head from "next/head"
 import Link from "next/link"
 import { ActionIcon, Button, Flex, Group, Paper, Table, Title } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
+import { useRouter } from "next/router"
 
 import { DataTable } from "src/core/components/DataTable"
 import { PageHeader } from "src/layout/components/PageHeader"
@@ -12,6 +13,7 @@ import getContracts from "src/contracts/queries/getContracts"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 
 export const ContractsList = () => {
+  const router = useRouter()
   const { items, page, count, goToPage, recordsPerPage } = usePaginatedTable({
     query: getContracts,
   })
@@ -34,12 +36,22 @@ export const ContractsList = () => {
             textAlignment: "right",
             render: (contract) => (
               <Group spacing={0} position="right" noWrap>
-                <Link href={Routes.ShowContractPage({ contractId: contract.id })}>
+                <Link
+                  href={Routes.ShowContractPage({
+                    propertyId: router.query.propertyId as string,
+                    contractId: contract.id,
+                  })}
+                >
                   <ActionIcon>
                     <IconEye size="1rem" stroke={1.5} />
                   </ActionIcon>
                 </Link>
-                <Link href={Routes.EditContractPage({ contractId: contract.id })}>
+                <Link
+                  href={Routes.EditContractPage({
+                    propertyId: router.query.propertyId as string,
+                    contractId: contract.id,
+                  })}
+                >
                   <ActionIcon>
                     <IconEdit size="1rem" stroke={1.5} />
                   </ActionIcon>
@@ -61,6 +73,8 @@ export const ContractsList = () => {
 }
 
 const ContractsPage = () => {
+  const router = useRouter()
+
   return (
     <Layout>
       <Head>
@@ -69,7 +83,14 @@ const ContractsPage = () => {
 
       <div>
         <PageHeader title="Contracts">
-          <Button variant="filled" component={Link} href={Routes.NewContractPage()} size="md">
+          <Button
+            variant="filled"
+            component={Link}
+            href={Routes.NewContractPage({
+              propertyId: router.query.propertyId as string,
+            })}
+            size="md"
+          >
             Crear
           </Button>
         </PageHeader>
