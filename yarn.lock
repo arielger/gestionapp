@@ -1023,10 +1023,10 @@
     "@babel/helper-validator-identifier" "^7.22.5"
     to-fast-properties "^2.0.0"
 
-"@blitzjs/auth@2.0.0-beta.32":
-  version "2.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/@blitzjs/auth/-/auth-2.0.0-beta.32.tgz#5059f7b80e66152b3e1769788d24d58b32cef52c"
-  integrity sha512-1GdcqqFrmWyh2LaFuXxmrM4FDWkwvLxICCm0Bbf0qXb8v0tke48m1/1/NVJdR7t8wSQmSSQxTYZAqncZA8WEQg==
+"@blitzjs/auth@2.0.0-beta.33":
+  version "2.0.0-beta.33"
+  resolved "https://registry.yarnpkg.com/@blitzjs/auth/-/auth-2.0.0-beta.33.tgz#b85ce5aa99b46b9e51bbe81b20083e55decead89"
+  integrity sha512-q2VfyUudonqWzuBfjgcZX3wRXWA0XhY6lQ1BZ4aaiRcDU3UB43kVM6ZHHtUSIynJ5UaNoBuxCkFXhWwgDD2awA==
   dependencies:
     "@types/b64-lite" "1.3.0"
     "@types/cookie-session" "2.0.44"
@@ -1083,12 +1083,12 @@
     vinyl "2.2.1"
     zod "3.20.2"
 
-"@blitzjs/next@2.0.0-beta.32":
-  version "2.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/@blitzjs/next/-/next-2.0.0-beta.32.tgz#f10facff39a58b2ee0d262e61bcfa1fc0dcbdcd1"
-  integrity sha512-rSIX4J+PHGhTMea8Bu2Xd6yGkqtjYoO15DQAEHkidgBL5fMA7F0ZlHDw5KkRMGPMuAoh7F4wYy4xvzVOOzXxBQ==
+"@blitzjs/next@2.0.0-beta.33":
+  version "2.0.0-beta.33"
+  resolved "https://registry.yarnpkg.com/@blitzjs/next/-/next-2.0.0-beta.33.tgz#f1b3dc4d88ca88ef011d7f31cd1b4397736e6ead"
+  integrity sha512-HPRP68ADYDkBRkRyJ/7TLNaYO92SEEfe7kyfWrydLF6NWeJjBMj8RqpRZMT1m8dsVeid3xioCul1i5333cTkpQ==
   dependencies:
-    "@blitzjs/rpc" "2.0.0-beta.32"
+    "@blitzjs/rpc" "2.0.0-beta.33"
     "@types/hoist-non-react-statics" "3.3.1"
     debug "4.3.3"
     fs-extra "10.0.1"
@@ -1096,10 +1096,10 @@
     superjson "1.11.0"
     supports-color "8.1.1"
 
-"@blitzjs/rpc@2.0.0-beta.32":
-  version "2.0.0-beta.32"
-  resolved "https://registry.yarnpkg.com/@blitzjs/rpc/-/rpc-2.0.0-beta.32.tgz#f27559b0ce70dd6e474df5fa19fc56af5686aaac"
-  integrity sha512-NPO80BNOWR+B5UUT6xitvpJ7z11gVvL2bEAGRme7deOGeBLHmXWwvGZ+LwPcJkUNXOKUxg4DgKGlWARxF0+h7g==
+"@blitzjs/rpc@2.0.0-beta.33":
+  version "2.0.0-beta.33"
+  resolved "https://registry.yarnpkg.com/@blitzjs/rpc/-/rpc-2.0.0-beta.33.tgz#9a0799bdd8116d15e75a154fd1aed394ad10321b"
+  integrity sha512-ZVyakSxf+xRekfOtXa+eg8NQ7wJP6O8uHmANrkOPEfH5sh1HVA7+dAMUALX0vgSlr4MHKX609YbPe22ObRAtog==
   dependencies:
     "@swc/core" "1.3.7"
     "@tanstack/react-query" "4.24.4"

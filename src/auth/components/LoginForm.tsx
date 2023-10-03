@@ -22,7 +22,7 @@ type LoginFormProps = {
 }
 
 export const LoginForm = (props: LoginFormProps) => {
-  const [loginMutation] = useMutation(login)
+  const [loginMutation, { isLoading, error }] = useMutation(login)
 
   const form = useForm({
     initialValues: {
@@ -69,7 +69,7 @@ export const LoginForm = (props: LoginFormProps) => {
               {form.errors.FORM_ERROR}
             </Alert>
           )}
-          <Button type="submit" fullWidth mt="xl">
+          <Button type="submit" fullWidth mt="xl" loading={isLoading}>
             Ingresar
           </Button>
         </form>
