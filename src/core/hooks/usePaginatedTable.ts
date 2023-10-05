@@ -13,10 +13,11 @@ export const usePaginatedTable = <T>({
 }) => {
   const router = useRouter()
   const page = Number(router.query.page) || 0
-  const [{ items, count }] = usePaginatedQuery(query, {
+  const [{ items, count }, { isLoading }] = usePaginatedQuery(query, {
     orderBy: { id: "asc" },
     skip: recordsPerPage * page,
     take: recordsPerPage,
+    suspense: false,
   })
 
   // We discount 1 from the page because the router starts at 0
@@ -28,5 +29,6 @@ export const usePaginatedTable = <T>({
     page,
     goToPage,
     recordsPerPage,
+    isLoading,
   }
 }

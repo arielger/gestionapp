@@ -11,7 +11,7 @@ import { PageHeader } from "src/layout/components/PageHeader"
 
 const NewPropertyPage = () => {
   const router = useRouter()
-  const [createPropertyMutation] = useMutation(createProperty)
+  const [createPropertyMutation, { isLoading }] = useMutation(createProperty)
 
   return (
     <Layout title={"Nueva propiedad"}>
@@ -35,6 +35,7 @@ const NewPropertyPage = () => {
               // }
             }
           }}
+          isLoading={isLoading}
         />
       </Suspense>
       <p>

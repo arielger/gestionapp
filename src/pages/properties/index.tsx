@@ -17,11 +17,11 @@ import { PageHeader } from "src/layout/components/PageHeader"
 export const PropertiesList = () => {
   const router = useRouter()
 
-  const { items, page, count, goToPage, recordsPerPage } = usePaginatedTable({
+  const { items, page, count, goToPage, recordsPerPage, isLoading } = usePaginatedTable({
     query: getProperties,
   })
 
-  const [deletePropertyMutation, { isLoading }] = useMutation(deleteProperty)
+  const [deletePropertyMutation] = useMutation(deleteProperty)
 
   const handleDelete = async (property: (typeof items)[number]) => {
     await deletePropertyMutation({ id: property.id })
@@ -31,6 +31,7 @@ export const PropertiesList = () => {
   return (
     <>
       <DataTable
+        fetching={isLoading}
         records={items}
         columns={[
           {
@@ -122,10 +123,7 @@ const PropertiesPage = () => {
             Crear
           </Button>
         </PageHeader>
-
-        <Suspense fallback={<div>Loading...</div>}>
-          <PropertiesList />
-        </Suspense>
+        <PropertiesList />
       </div>
     </Layout>
   )

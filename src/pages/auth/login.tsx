@@ -19,4 +19,6 @@ const LoginPage: BlitzPage = () => {
   )
 }
 
+LoginPage.redirectAuthenticatedTo = "/"
+
 export default LoginPage

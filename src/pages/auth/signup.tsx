@@ -14,4 +14,6 @@ const SignupPage: BlitzPage = () => {
   )
 }
 
+SignupPage.redirectAuthenticatedTo = "/"
+
 export default SignupPage

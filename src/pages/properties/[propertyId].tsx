@@ -9,7 +9,7 @@ import { useParam } from "@blitzjs/next"
 import Layout from "src/core/layouts/Layout"
 import getProperty from "src/properties/queries/getProperty"
 import deleteProperty from "src/properties/mutations/deleteProperty"
-import { Anchor, Button, Flex, Text } from "@mantine/core"
+import { Anchor, Button, Flex, Text, Title } from "@mantine/core"
 import { PageHeader } from "src/layout/components/PageHeader"
 
 export const Property = () => {
@@ -25,6 +25,7 @@ export const Property = () => {
       </Head>
 
       <div>
+        <Title order={5}>Propiedad #{property.id}</Title>
         <PageHeader title={property.address}></PageHeader>
         <Flex gap="md" direction="column">
           <Flex direction="column">

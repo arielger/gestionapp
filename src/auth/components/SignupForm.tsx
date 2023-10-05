@@ -23,7 +23,7 @@ type SignupFormProps = {
 }
 
 export const SignupForm = (props: SignupFormProps) => {
-  const [signupMutation] = useMutation(signup)
+  const [signupMutation, { isLoading }] = useMutation(signup)
 
   const form = useForm({
     initialValues: {
@@ -43,7 +43,7 @@ export const SignupForm = (props: SignupFormProps) => {
         // This error comes from Prisma
         form.setErrors({ email: "El email ingresado ya esta en uso" })
       } else {
-        form.setErrors({ [FORM_ERROR]: error.toString() })
+        form.setErrors({ [FORM_ERROR]: `Hubo un error creando tu cuenta. ${error.toString()}` })
       }
     }
   }
@@ -69,7 +69,7 @@ export const SignupForm = (props: SignupFormProps) => {
               {form.errors.FORM_ERROR}
             </Alert>
           )}
-          <Button type="submit" fullWidth mt="xl">
+          <Button type="submit" fullWidth mt="xl" loading={isLoading}>
             Crear cuenta
           </Button>
         </form>
