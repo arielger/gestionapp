@@ -1,8 +1,8 @@
-import { useCurrentUser } from "src/users/hooks/useCurrentUser"
 import { DashboardLayout } from "src/layout/components/DashboardLayout"
+import { useSession } from "@blitzjs/auth"
 
 export const Layout = ({ children }: { children: React.ReactElement }) => {
-  const currentUser = useCurrentUser()
+  const session = useSession()
 
-  return currentUser ? <DashboardLayout>{children}</DashboardLayout> : <>{children}</>
+  return session.userId ? <DashboardLayout>{children}</DashboardLayout> : <>{children}</>
 }
