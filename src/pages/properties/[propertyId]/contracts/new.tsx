@@ -13,18 +13,18 @@ import { ContractForm } from "src/contracts/components/ContractForm"
 const NewContractPage = () => {
   const router = useRouter()
   const propertyId = useParam("propertyId", "number")
-  const [createContractMutation] = useMutation(createContract)
+  const [createContractMutation, { isLoading }] = useMutation(createContract)
 
   return (
     <Layout title={"Create New Contract"}>
       <PageHeader title={`Crear nuevo contrato`} />
       <Suspense fallback={<div>Loading...</div>}>
         <ContractForm
+          isLoading={isLoading}
           submitText="Crear contrato"
           schema={CreateContractSchema.omit({ propertyId: true })}
           // initialValues={{}}
           onSubmit={async (values) => {
-            console.log("values", values)
             try {
               const contract = await createContractMutation({ ...values, propertyId: propertyId! })
               await router.push(

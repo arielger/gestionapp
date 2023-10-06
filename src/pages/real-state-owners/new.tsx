@@ -10,7 +10,7 @@ import { Suspense } from "react"
 
 const NewRealStateOwnerPage = () => {
   const router = useRouter()
-  const [createRealStateOwnerMutation] = useMutation(createRealStateOwner)
+  const [createRealStateOwnerMutation, { isLoading }] = useMutation(createRealStateOwner)
 
   return (
     <Layout title={"Nuevo propietario"}>
@@ -20,6 +20,7 @@ const NewRealStateOwnerPage = () => {
           submitText="Crear"
           schema={CreateRealStateOwnerSchema}
           // initialValues={{}}
+          isLoading={isLoading}
           onSubmit={async (values) => {
             try {
               const realStateOwner = await createRealStateOwnerMutation(values)

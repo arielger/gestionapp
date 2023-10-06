@@ -1,11 +1,11 @@
-import { Suspense } from "react"
+import React from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
 import { useMutation } from "@blitzjs/rpc"
 import { useRouter } from "next/router"
-import { ActionIcon, Anchor, Flex, Group, Button } from "@mantine/core"
-import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
+import { ActionIcon, Anchor, Flex, Group, Button, Text, Badge } from "@mantine/core"
+import { IconEdit, IconTrash, IconEye, IconExternalLink, IconCheck } from "@tabler/icons-react"
 
 import { DataTable } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
@@ -49,12 +49,16 @@ export const PropertiesList = () => {
                 {property?.owners?.length > 0
                   ? property.owners.map((owner) => (
                       <Anchor
+                        color="black"
                         key={owner.id}
                         size="sm"
                         component={Link}
                         href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: owner.id })}
                       >
-                        {`${owner.firstName} ${owner.lastName}`}
+                        <Flex align="center" gap={4}>
+                          <Text>{`${owner.firstName} ${owner.lastName}`}</Text>
+                          <IconExternalLink color="gray" size={16} />
+                        </Flex>
                       </Anchor>
                     ))
                   : "-"}
@@ -74,9 +78,20 @@ export const PropertiesList = () => {
                     contractId: property.Contract[0]!.id,
                   })}
                 >
-                  Ir a contrato
+                  <Badge
+                    leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
+                    variant="light"
+                    color="green"
+                    radius="xs"
+                  >
+                    Alquilada
+                  </Badge>
                 </Anchor>
-              ) : undefined,
+              ) : (
+                <Badge opacity={0.5} variant="light" color="gray" radius="xs">
+                  No alquilada
+                </Badge>
+              ),
           },
           {
             accessor: "actions",

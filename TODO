@@ -9,7 +9,9 @@ TODO:
 - [DONE] Crear entidad de inquilino
 - [DONE] Crear entidad de contrato
 - [DONE] Multitenancy
-- [ ] Initial page should redirect to owners page
+- [DONE] Initial page should redirect to owners page
+- [] Revisar todos los flujos
+
 - [ ] Add loading state for all actions / pages
 - [ ] Agregar busqueda de propietarios en formularios de propiedad
   - [ ] Permitir asignar uno o mas propietarios e inquilinos
@@ -18,3 +20,11 @@ TODO:
 TECH DEBT:
 
 - [ ] Check eslint errors in hook (prevent pushing code with eslint errors)
+
+ORDER TO REVIEW PAGES
+
+- List
+- Detail
+- Create new
+- Edit
+- Delete
