@@ -9,6 +9,7 @@ import { PropertyForm } from "src/properties/components/PropertyForm"
 import { Suspense } from "react"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { Paper } from "@mantine/core"
+import { z } from "zod"
 
 const NewPropertyPage = () => {
   const router = useRouter()
@@ -21,14 +22,19 @@ const NewPropertyPage = () => {
         <Paper shadow="xs" p="xl">
           <PropertyForm
             submitText="Crear"
-            schema={CreatePropertySchema}
+            schema={CreatePropertySchema.extend({
+              owners: z.array(z.string()),
+            })}
             initialValues={{
               address: "",
               owners: [],
             }}
             onSubmit={async (values) => {
               try {
-                const property = await createPropertyMutation(values)
+                const property = await createPropertyMutation({
+                  ...values,
+                  owners: values.owners?.map((o) => Number(o)),
+                })
                 await router.push(Routes.ShowPropertyPage({ propertyId: property.id }))
               } catch (error: any) {
                 console.error(error)

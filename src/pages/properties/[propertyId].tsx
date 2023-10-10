@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useQuery, useMutation } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
-import { Anchor, Button, Flex, Text, Paper, Badge } from "@mantine/core"
+import { Anchor, Button, Flex, Text, Paper, Badge, Center, Loader } from "@mantine/core"
 import { IconCheck, IconExternalLink } from "@tabler/icons-react"
 
 import Layout from "src/core/layouts/Layout"
@@ -16,34 +16,40 @@ import { DetailsList } from "src/core/components/DetailsList"
 
 export const Property = () => {
   const router = useRouter()
-  const propertyId = useParam("propertyId", "number")
+  const propertyId = useParam("propertyId", "number")!
   const [deletePropertyMutation] = useMutation(deleteProperty)
-  const [property] = useQuery(getProperty, { id: propertyId })
+  const [property, { isLoading }] = useQuery(
+    getProperty,
+    { id: propertyId },
+    {
+      suspense: false,
+    }
+  )
 
   return (
     <>
       <Head>
-        <title>Propiedad {property.id}</title>
+        <title>Propiedad {propertyId}</title>
       </Head>
 
       <div>
         <PageHeader
-          title={property.address}
+          title={property?.address ?? "..."}
           breadcrumbs={[
             <Anchor component={Link} href={Routes.PropertiesPage()} key="properties">
               Propiedades
             </Anchor>,
             <Anchor
               component={Link}
-              href={Routes.ShowPropertyPage({ propertyId: property.id })}
+              href={Routes.ShowPropertyPage({ propertyId: propertyId })}
               key="property"
             >
-              #{property.id}
+              #{propertyId}
             </Anchor>,
           ]}
         >
           <Flex gap="sm">
-            <Link href={Routes.EditPropertyPage({ propertyId: property.id })}>
+            <Link href={Routes.EditPropertyPage({ propertyId: propertyId })}>
               <Button>Editar</Button>
             </Link>
 
@@ -52,7 +58,7 @@ export const Property = () => {
               type="button"
               onClick={async () => {
                 if (window.confirm("This will be deleted")) {
-                  await deletePropertyMutation({ id: property.id })
+                  await deletePropertyMutation({ id: propertyId })
                   await router.push(Routes.PropertiesPage())
                 }
               }}
@@ -61,7 +67,7 @@ export const Property = () => {
             </Button>
 
             {!property?.Contract?.length && (
-              <Link href={Routes.NewContractPage({ propertyId: property.id })}>
+              <Link href={Routes.NewContractPage({ propertyId: propertyId })}>
                 <Button>Crear contrato</Button>
               </Link>
             )}
@@ -69,66 +75,72 @@ export const Property = () => {
         </PageHeader>
         <Paper shadow="xs" p="xl">
           {/* TODO: Prevent repeating elements with properties table - move to general file */}
-          <DetailsList
-            details={[
-              { title: "Dirección", value: property.address },
-              {
-                title: "Fecha de creación",
-                value: property.createdAt.toLocaleDateString(),
-              },
-              {
-                title: "Propietario/s",
-                value:
-                  property.owners.length > 0 ? (
-                    <Flex direction="column" gap={4}>
-                      {property.owners.map((owner) => (
-                        <Anchor
-                          color="black"
-                          key={owner.id}
-                          size="sm"
-                          component={Link}
-                          href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: owner.id })}
-                        >
-                          <Flex align="center" gap={4}>
-                            <Text size="md">{`${owner.firstName} ${owner.lastName}`}</Text>
-                            <IconExternalLink color="gray" size={16} />
-                          </Flex>
-                        </Anchor>
-                      ))}
-                    </Flex>
-                  ) : (
-                    <Text size="md">No asignado</Text>
-                  ),
-              },
-              {
-                title: "Estado",
-                value:
-                  property?.Contract?.length > 0 ? (
-                    <Anchor
-                      size="sm"
-                      component={Link}
-                      href={Routes.ShowContractPage({
-                        propertyId: property.id,
-                        contractId: property.Contract[0]!.id,
-                      })}
-                    >
-                      <Badge
-                        leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
-                        variant="light"
-                        color="green"
-                        radius="xs"
+          {isLoading || !property ? (
+            <Center>
+              <Loader />
+            </Center>
+          ) : (
+            <DetailsList
+              details={[
+                { title: "Dirección", value: property.address },
+                {
+                  title: "Fecha de creación",
+                  value: property.createdAt.toLocaleDateString(),
+                },
+                {
+                  title: "Propietario/s",
+                  value:
+                    property.owners.length > 0 ? (
+                      <Flex direction="column" gap={4}>
+                        {property.owners.map((owner) => (
+                          <Anchor
+                            color="black"
+                            key={owner.id}
+                            size="sm"
+                            component={Link}
+                            href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: owner.id })}
+                          >
+                            <Flex align="center" gap={4}>
+                              <Text size="md">{`${owner.firstName} ${owner.lastName}`}</Text>
+                              <IconExternalLink color="gray" size={16} />
+                            </Flex>
+                          </Anchor>
+                        ))}
+                      </Flex>
+                    ) : (
+                      <Text size="md">No asignado</Text>
+                    ),
+                },
+                {
+                  title: "Estado",
+                  value:
+                    property?.Contract?.length > 0 ? (
+                      <Anchor
+                        size="sm"
+                        component={Link}
+                        href={Routes.ShowContractPage({
+                          propertyId: property.id,
+                          contractId: property.Contract[0]!.id,
+                        })}
                       >
-                        Alquilada
+                        <Badge
+                          leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
+                          variant="light"
+                          color="green"
+                          radius="xs"
+                        >
+                          Alquilada
+                        </Badge>
+                      </Anchor>
+                    ) : (
+                      <Badge opacity={0.5} variant="light" color="gray" radius="xs">
+                        No alquilada
                       </Badge>
-                    </Anchor>
-                  ) : (
-                    <Badge opacity={0.5} variant="light" color="gray" radius="xs">
-                      No alquilada
-                    </Badge>
-                  ),
-              },
-            ]}
-          />
+                    ),
+                },
+              ]}
+            />
+          )}
         </Paper>
       </div>
     </>
@@ -136,11 +148,7 @@ export const Property = () => {
 }
 
 const ShowPropertyPage = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Property />
-    </Suspense>
-  )
+  return <Property />
 }
 
 ShowPropertyPage.authenticate = true

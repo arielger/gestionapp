@@ -6,20 +6,14 @@ import { z } from "zod"
 import { Form, FormProps } from "src/core/components/Form"
 import getTenants from "src/tenants/queries/getTenants"
 import getRealStateOwners from "src/real-state-owners/queries/getRealStateOwners"
+import { personToSelectItem } from "src/real-state-owners/utils"
 
 export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>) {
   const [tenants] = useQuery(getTenants, {})
   const [owners] = useQuery(getRealStateOwners, {})
 
-  const tenantsList = tenants?.items.map((tenant) => ({
-    value: String(tenant.id),
-    label: `${tenant.firstName} ${tenant.lastName}`,
-  }))
-
-  const ownersList = owners?.items.map((owner) => ({
-    value: String(owner.id),
-    label: `${owner.firstName} ${owner.lastName}`,
-  }))
+  const tenantsList = tenants?.items.map(personToSelectItem)
+  const ownersList = owners?.items.map(personToSelectItem)
 
   return (
     <Form<S> {...props}>

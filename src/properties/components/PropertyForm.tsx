@@ -1,21 +1,24 @@
 import React, { useState } from "react"
 import { useQuery } from "@blitzjs/rpc"
-import { Flex, TextInput } from "@mantine/core"
+import { Flex, SelectItem, TextInput } from "@mantine/core"
 import { MultiSelect } from "@mantine/core"
 import { useThrottle } from "@react-hook/throttle"
 
 import getRealStateOwners from "src/real-state-owners/queries/getRealStateOwners"
 import { z } from "zod"
 import Form, { FormProps } from "src/core/components/Form"
+import { personToSelectItem } from "src/real-state-owners/utils"
 
-export function PropertyForm<S extends z.ZodType<any, any>>(props: FormProps<S>) {
+export function PropertyForm<S extends z.ZodType<any, any>>({
+  initialValues,
+  // Value used to initialize the labels for owners (when editing)
+  ownersInitialValues = [],
+  ...props
+}: FormProps<S> & {
+  ownersInitialValues?: SelectItem[]
+}) {
   const [ownersSearchTextDebounced, setOwnersSearchTextDebounced] = useThrottle("", 0.5)
-  const [selectedOwners, setSelectedOwners] = useState<
-    {
-      value: string
-      label: string
-    }[]
-  >([])
+  const [selectedOwners, setSelectedOwners] = useState<SelectItem[]>([])
 
   const [owners] = useQuery(
     getRealStateOwners,
@@ -34,19 +37,22 @@ export function PropertyForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
   )
 
   const ownersList = [
+    ...ownersInitialValues,
     ...selectedOwners,
-    ...(owners?.items.map((owner) => ({
-      value: String(owner.id),
-      label: `${owner.firstName} ${owner.lastName}`,
-    })) ?? []),
+    ...(owners?.items.map(personToSelectItem) ?? []),
   ]
   const filteredOwnersList = ownersList.filter(
     (owner, index) => ownersList.findIndex((o) => o.value === owner.value) === index
   )
 
+  const mappedInitialValues = {
+    ...initialValues,
+    owners: initialValues?.owners.map((ownerId) => String(ownerId)),
+  }
+
   return (
     <>
-      <Form {...props}>
+      <Form initialValues={mappedInitialValues} {...props}>
         {(form) => {
           return (
             <Flex direction="column" gap="sm">
