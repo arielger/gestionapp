@@ -9,6 +9,7 @@ import Layout from "src/core/layouts/Layout"
 import { CreateContractSchema } from "src/contracts/schemas"
 import createContract from "src/contracts/mutations/createContract"
 import { ContractForm } from "src/contracts/components/ContractForm"
+import { Paper } from "@mantine/core"
 
 const NewContractPage = () => {
   const router = useRouter()
@@ -16,28 +17,34 @@ const NewContractPage = () => {
   const [createContractMutation, { isLoading }] = useMutation(createContract)
 
   return (
-    <Layout title={"Create New Contract"}>
+    <Layout title={"Crear nuevo contrato"}>
       <PageHeader title={`Crear nuevo contrato`} />
       <Suspense fallback={<div>Loading...</div>}>
-        <ContractForm
-          isLoading={isLoading}
-          submitText="Crear contrato"
-          schema={CreateContractSchema.omit({ propertyId: true })}
-          // initialValues={{}}
-          onSubmit={async (values) => {
-            try {
-              const contract = await createContractMutation({ ...values, propertyId: propertyId! })
-              await router.push(
-                Routes.ShowContractPage({
+        <Paper shadow="xs" p="xl">
+          <ContractForm
+            isLoading={isLoading}
+            submitText="Crear"
+            schema={CreateContractSchema.omit({ propertyId: true })}
+            // initialValues={{}}
+            onSubmit={async (values) => {
+              console.log("values", values)
+              try {
+                const contract = await createContractMutation({
+                  ...values,
                   propertyId: propertyId!,
-                  contractId: contract.id,
                 })
-              )
-            } catch (error: any) {
-              console.error(error)
-            }
-          }}
-        />
+                await router.push(
+                  Routes.ShowContractPage({
+                    propertyId: propertyId!,
+                    contractId: contract.id,
+                  })
+                )
+              } catch (error: any) {
+                console.error(error)
+              }
+            }}
+          />
+        </Paper>
       </Suspense>
       <p>
         <Link href={Routes.ContractsPage({ propertyId: propertyId! })}>Contracts</Link>

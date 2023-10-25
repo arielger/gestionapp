@@ -38,7 +38,7 @@ export const EditContract = () => {
   return (
     <>
       <Head>
-        <title>Edit Contract {contract.id}</title>
+        <title>Editar contrato #{contract.id}</title>
       </Head>
 
       <div>

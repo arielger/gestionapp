@@ -133,4 +133,8 @@ model Contract {
   propertyId     Int
   organization   Organization     @relation(fields: [organizationId], references: [id])
   organizationId Int
+  startDate      DateTime
+  endDate        DateTime
+  periods        Int
+  rentAmount     Float
 }

@@ -2,8 +2,10 @@ import { ErrorFallbackProps, ErrorComponent, ErrorBoundary, AppProps } from "@bl
 import { AuthenticationError, AuthorizationError } from "blitz"
 import React, { Suspense } from "react"
 import { MantineProvider } from "@mantine/core"
+import { DatesProvider } from "@mantine/dates"
 import { withBlitz } from "src/blitz-client"
 import { Inter } from "next/font/google"
+import "dayjs/locale/es"
 
 import "src/styles/globals.css"
 import { Layout } from "src/layout/components/Layout"
@@ -43,11 +45,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         ...inter.style,
       }}
     >
-      <ErrorBoundary FallbackComponent={RootErrorFallback}>
-        <Suspense fallback="Loading...">
-          <Layout>{getLayout(<Component {...pageProps} />)}</Layout>
-        </Suspense>
-      </ErrorBoundary>
+      <DatesProvider settings={{ locale: "es", firstDayOfWeek: 1 }}>
+        <ErrorBoundary FallbackComponent={RootErrorFallback}>
+          <Suspense fallback="Loading...">
+            <Layout>{getLayout(<Component {...pageProps} />)}</Layout>
+          </Suspense>
+        </ErrorBoundary>
+      </DatesProvider>
     </MantineProvider>
   )
 }

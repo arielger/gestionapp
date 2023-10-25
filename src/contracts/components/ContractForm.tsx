@@ -1,5 +1,6 @@
 import React from "react"
-import { MultiSelect } from "@mantine/core"
+import { Flex, MultiSelect, NumberInput } from "@mantine/core"
+import { DatePickerInput } from "@mantine/dates"
 import { useQuery } from "@blitzjs/rpc"
 import { z } from "zod"
 
@@ -19,7 +20,7 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
     <Form<S> {...props}>
       {(form) => {
         return (
-          <>
+          <Flex direction="column" gap="sm">
             {/* TODO: review -> values not initializing properly */}
             {/* template: <__component__ name="__fieldName__" label="__Field_Name__" placeholder="__Field_Name__"  type="__inputType__" /> */}
             <MultiSelect
@@ -34,7 +35,10 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
               maxSelectedValues={5}
               {...form.getInputProps("tenants")}
             />
-          </>
+            <DatePickerInput label="Inicio" {...form.getInputProps("startDate")} />
+            <DatePickerInput label="Fin" {...form.getInputProps("endDate")} />
+            <NumberInput label="Periodos" />
+          </Flex>
         )
       }}
     </Form>
