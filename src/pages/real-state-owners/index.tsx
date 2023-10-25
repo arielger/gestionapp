@@ -1,4 +1,3 @@
-import { Suspense } from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
@@ -12,13 +11,14 @@ import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 import { PageHeader } from "src/layout/components/PageHeader"
 
 export const RealStateOwnersList = () => {
-  const { items, page, count, goToPage, recordsPerPage } = usePaginatedTable({
+  const { items, page, count, goToPage, recordsPerPage, isLoading } = usePaginatedTable({
     query: getRealStateOwners,
   })
 
   return (
     <>
       <DataTable
+        fetching={isLoading}
         records={items}
         columns={[
           {
@@ -74,9 +74,7 @@ const RealStateOwnersPage = () => {
           </Button>
         </PageHeader>
 
-        <Suspense fallback={<div>Loading...</div>}>
-          <RealStateOwnersList />
-        </Suspense>
+        <RealStateOwnersList />
       </div>
     </Layout>
   )

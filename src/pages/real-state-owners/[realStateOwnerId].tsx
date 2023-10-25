@@ -1,73 +1,99 @@
-import { Suspense } from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { useRouter } from "next/router"
-import { useQuery, useMutation } from "@blitzjs/rpc"
+// import { useRouter } from "next/router"
+import { useQuery } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
 
-import Layout from "src/core/layouts/Layout"
 import getRealStateOwner from "src/real-state-owners/queries/getRealStateOwner"
-import deleteRealStateOwner from "src/real-state-owners/mutations/deleteRealStateOwner"
+// import deleteRealStateOwner from "src/real-state-owners/mutations/deleteRealStateOwner"
+import { PageHeader } from "src/layout/components/PageHeader"
+import { getPersonFullName } from "src/real-state-owners/utils"
+import { Anchor, Button, Center, Flex, Loader, Paper } from "@mantine/core"
+import { DetailsList } from "src/core/components/DetailsList"
 
 export const RealStateOwner = () => {
-  const router = useRouter()
-  const realStateOwnerId = useParam("realStateOwnerId", "number")
-  const [deleteRealStateOwnerMutation] = useMutation(deleteRealStateOwner)
-  const [realStateOwner] = useQuery(getRealStateOwner, {
-    id: realStateOwnerId,
-  })
+  // const router = useRouter()
+  const realStateOwnerId = useParam("realStateOwnerId", "number")!
+  // const [deleteRealStateOwnerMutation] = useMutation(deleteRealStateOwner)
+  const [realStateOwner, { isLoading }] = useQuery(
+    getRealStateOwner,
+    {
+      id: realStateOwnerId,
+    },
+    {
+      suspense: false,
+    }
+  )
 
   return (
     <>
       <Head>
-        <title>RealStateOwner {realStateOwner.id}</title>
+        <title>Propietario {realStateOwnerId}</title>
       </Head>
 
       <div>
-        <h1>RealStateOwner {realStateOwner.id}</h1>
-        <pre>{JSON.stringify(realStateOwner, null, 2)}</pre>
-
-        <Link
-          href={Routes.EditRealStateOwnerPage({
-            realStateOwnerId: realStateOwner.id,
-          })}
+        <PageHeader
+          title={realStateOwner ? getPersonFullName(realStateOwner) : "..."}
+          breadcrumbs={[
+            <Anchor component={Link} href={Routes.PropertiesPage()} key="properties">
+              Propietarios
+            </Anchor>,
+            <Anchor
+              component={Link}
+              href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: realStateOwnerId })}
+              key="property"
+            >
+              #{realStateOwnerId}
+            </Anchor>,
+          ]}
         >
-          Edit
-        </Link>
+          <Flex gap="sm">
+            <Link href={Routes.EditRealStateOwnerPage({ realStateOwnerId: realStateOwnerId })}>
+              <Button>Editar</Button>
+            </Link>
 
-        <button
-          type="button"
-          onClick={async () => {
-            if (window.confirm("This will be deleted")) {
-              await deleteRealStateOwnerMutation({ id: realStateOwner.id })
-              await router.push(Routes.RealStateOwnersPage())
-            }
-          }}
-          style={{ marginLeft: "0.5rem" }}
-        >
-          Delete
-        </button>
+            {/* <Button
+              color="red"
+              type="button"
+              onClick={async () => {
+                if (window.confirm("This will be deleted")) {
+                  await deletePropertyMutation({ id: propertyId })
+                  await router.push(Routes.PropertiesPage())
+                }
+              }}
+            >
+              Eliminar
+            </Button> */}
+          </Flex>
+        </PageHeader>
+
+        <Paper shadow="xs" p="xl">
+          {isLoading || !realStateOwner ? (
+            <Center>
+              <Loader />
+            </Center>
+          ) : (
+            <DetailsList
+              details={[
+                { title: "Nombre", value: realStateOwner.firstName },
+                {
+                  title: "Apellido",
+                  value: realStateOwner.lastName,
+                },
+              ]}
+            />
+          )}
+        </Paper>
       </div>
     </>
   )
 }
 
 const ShowRealStateOwnerPage = () => {
-  return (
-    <div>
-      <p>
-        <Link href={Routes.RealStateOwnersPage()}>RealStateOwners</Link>
-      </p>
-
-      <Suspense fallback={<div>Loading...</div>}>
-        <RealStateOwner />
-      </Suspense>
-    </div>
-  )
+  return <RealStateOwner />
 }
 
 ShowRealStateOwnerPage.authenticate = true
-ShowRealStateOwnerPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default ShowRealStateOwnerPage
