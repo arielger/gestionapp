@@ -14,7 +14,14 @@ export default resolver.pipe(
   async ({ id }, ctx) => {
     const property = await db.property.findFirst({
       where: { id, organizationId: ctx.session.orgId },
-      include: { owners: true, Contract: true },
+      include: {
+        owners: true,
+        Contract: {
+          include: {
+            tenants: true,
+          },
+        },
+      },
     })
 
     if (!property) throw new NotFoundError()

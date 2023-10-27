@@ -5,7 +5,7 @@ export const DetailsList = ({
 }: {
   details: {
     title: string
-    value: string | React.ReactElement
+    value: string | number | React.ReactElement
   }[]
 }) => {
   return (

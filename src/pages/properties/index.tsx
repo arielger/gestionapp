@@ -4,8 +4,8 @@ import Head from "next/head"
 import Link from "next/link"
 import { useMutation } from "@blitzjs/rpc"
 import { useRouter } from "next/router"
-import { ActionIcon, Anchor, Flex, Group, Button, Text, Badge } from "@mantine/core"
-import { IconEdit, IconTrash, IconEye, IconExternalLink, IconCheck } from "@tabler/icons-react"
+import { ActionIcon, Anchor, Group, Button, Badge } from "@mantine/core"
+import { IconEdit, IconTrash, IconEye, IconCheck } from "@tabler/icons-react"
 
 import { DataTable } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
@@ -13,6 +13,7 @@ import getProperties from "src/properties/queries/getProperties"
 import deleteProperty from "src/properties/mutations/deleteProperty"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 import { PageHeader } from "src/layout/components/PageHeader"
+import { PersonList } from "src/real-state-owners/components/PersonList"
 
 export const PropertiesList = () => {
   const router = useRouter()
@@ -45,24 +46,10 @@ export const PropertiesList = () => {
             accessor: "owners",
             title: "Propietario/s",
             render: (property) => (
-              <Flex gap="xs">
-                {property?.owners?.length > 0
-                  ? property.owners.map((owner) => (
-                      <Anchor
-                        color="black"
-                        key={owner.id}
-                        size="sm"
-                        component={Link}
-                        href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: owner.id })}
-                      >
-                        <Flex align="center" gap={4}>
-                          <Text>{`${owner.firstName} ${owner.lastName}`}</Text>
-                          <IconExternalLink color="gray" size={16} />
-                        </Flex>
-                      </Anchor>
-                    ))
-                  : "-"}
-              </Flex>
+              <PersonList
+                list={property?.owners ?? []}
+                handlePress={(id) => Routes.ShowRealStateOwnerPage({ realStateOwnerId: id })}
+              />
             ),
           },
           {

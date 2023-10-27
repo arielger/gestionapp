@@ -13,6 +13,7 @@ import getProperty from "src/properties/queries/getProperty"
 import deleteProperty from "src/properties/mutations/deleteProperty"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { DetailsList } from "src/core/components/DetailsList"
+import { PersonList } from "src/real-state-owners/components/PersonList"
 
 export const Property = () => {
   const router = useRouter()
@@ -25,6 +26,9 @@ export const Property = () => {
       suspense: false,
     }
   )
+
+  // TODO: should check date to know if it's rented
+  const currentContract = property?.Contract?.[0]
 
   return (
     <>
@@ -89,55 +93,73 @@ export const Property = () => {
                 },
                 {
                   title: "Propietario/s",
-                  value:
-                    property.owners.length > 0 ? (
-                      <Flex direction="column" gap={4}>
-                        {property.owners.map((owner) => (
+                  value: (
+                    <PersonList
+                      list={property.owners ?? []}
+                      handlePress={(id) => Routes.ShowRealStateOwnerPage({ realStateOwnerId: id })}
+                    />
+                  ),
+                },
+                ...(currentContract
+                  ? [
+                      {
+                        title: "Estado",
+                        value: (
                           <Anchor
-                            color="black"
-                            key={owner.id}
                             size="sm"
                             component={Link}
-                            href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: owner.id })}
+                            href={Routes.ShowContractPage({
+                              propertyId: property.id,
+                              contractId: currentContract.id,
+                            })}
                           >
-                            <Flex align="center" gap={4}>
-                              <Text size="md">{`${owner.firstName} ${owner.lastName}`}</Text>
-                              <IconExternalLink color="gray" size={16} />
-                            </Flex>
+                            <Badge
+                              leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
+                              variant="light"
+                              color="green"
+                              radius="xs"
+                            >
+                              Alquilada
+                            </Badge>
                           </Anchor>
-                        ))}
-                      </Flex>
-                    ) : (
-                      <Text size="md">No asignado</Text>
-                    ),
-                },
-                {
-                  title: "Estado",
-                  value:
-                    property?.Contract?.length > 0 ? (
-                      <Anchor
-                        size="sm"
-                        component={Link}
-                        href={Routes.ShowContractPage({
-                          propertyId: property.id,
-                          contractId: property.Contract[0]!.id,
-                        })}
-                      >
-                        <Badge
-                          leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
-                          variant="light"
-                          color="green"
-                          radius="xs"
-                        >
-                          Alquilada
-                        </Badge>
-                      </Anchor>
-                    ) : (
-                      <Badge opacity={0.5} variant="light" color="gray" radius="xs">
-                        No alquilada
-                      </Badge>
-                    ),
-                },
+                        ),
+                      },
+                      {
+                        title: "Inquilino/s",
+                        value: (
+                          <PersonList
+                            list={currentContract.tenants ?? []}
+                            handlePress={(id) => Routes.ShowTenantPage({ tenantId: id })}
+                          />
+                        ),
+                      },
+                      {
+                        title: "Inicio",
+                        value: currentContract.startDate.toLocaleString(),
+                      },
+                      {
+                        title: "Fin",
+                        value: currentContract.startDate.toLocaleString(),
+                      },
+                      {
+                        title: "Periodos",
+                        value: currentContract.periods,
+                      },
+                      {
+                        title: "Monto",
+                        value: new Intl.NumberFormat().format(currentContract.rentAmount),
+                      },
+                    ]
+                  : [
+                      {
+                        title: "Estado",
+                        value: (
+                          <Badge opacity={0.5} variant="light" color="gray" radius="xs">
+                            No alquilada
+                          </Badge>
+                        ),
+                      },
+                    ]),
               ]}
             />
           )}

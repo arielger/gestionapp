@@ -37,7 +37,8 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
             />
             <DatePickerInput label="Inicio" {...form.getInputProps("startDate")} />
             <DatePickerInput label="Fin" {...form.getInputProps("endDate")} />
-            <NumberInput label="Periodos" />
+            <NumberInput label="Periodos" {...form.getInputProps("periods")} />
+            <NumberInput label="Monto" {...form.getInputProps("rentAmount")} />
           </Flex>
         )
       }}
