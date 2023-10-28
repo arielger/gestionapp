@@ -34,6 +34,7 @@ export const EditProperty = () => {
     owners: property?.owners ? property.owners.map((owner) => owner.id) : [],
   }
 
+  // TODO: Fix property edit - form errors not working properly
   return (
     <>
       <Head>
@@ -56,12 +57,10 @@ export const EditProperty = () => {
               isLoading={isLoadingUpdate}
               onSubmit={async (values) => {
                 try {
-                  console.log("values", values)
                   const updated = await updatePropertyMutation({
                     id: property.id,
                     ...values,
                   })
-                  console.log("updated", updated)
                   await setQueryData(updated)
                   await router.push(Routes.ShowPropertyPage({ propertyId: updated.id }))
                 } catch (error: any) {

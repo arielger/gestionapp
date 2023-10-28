@@ -9,7 +9,14 @@ export default resolver.pipe(
     const property = await db.property.update({
       where: { id, organizationId: ctx.session.orgId },
       data: { ...data, owners: { set: data.owners?.map((owner) => ({ id: owner })) } },
-      include: { owners: true },
+      include: {
+        owners: true,
+        Contract: {
+          include: {
+            tenants: true,
+          },
+        },
+      },
     })
 
     return property
