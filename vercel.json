@@ -1,8 +1,0 @@
-{
-  "crons": [
-    {
-      "path": "/api/rent-debts",
-      "schedule": "0/5 * * * *"
-    }
-  ]
-}
