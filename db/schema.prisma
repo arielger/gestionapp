@@ -22,6 +22,7 @@ model Organization {
   RealStateOwner RealStateOwner[]
   Tenant         Tenant[]
   Contract       Contract[]
+  Activity       Activity[]
 }
 
 model Membership {
@@ -137,4 +138,22 @@ model Contract {
   endDate        DateTime
   periods        Int
   rentAmount     Float
+  Activity       Activity[]
+}
+
+enum ActivityType {
+  RENT
+}
+
+model Activity {
+  id             Int          @id @default(autoincrement())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId Int
+  amount         Float
+  isDebit        Boolean
+  type           ActivityType
+  contract       Contract     @relation(fields: [contractId], references: [id])
+  contractId     Int
 }
