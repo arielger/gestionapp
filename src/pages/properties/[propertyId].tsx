@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useQuery, useMutation } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
-import { Anchor, Button, Flex, Text, Paper, Badge, Center, Loader } from "@mantine/core"
+import { Anchor, Button, Flex, Paper, Badge, Center, Loader, Table } from "@mantine/core"
 import { IconCheck, IconExternalLink } from "@tabler/icons-react"
 
 import Layout from "src/core/layouts/Layout"
@@ -14,11 +14,15 @@ import deleteProperty from "src/properties/mutations/deleteProperty"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { DetailsList } from "src/core/components/DetailsList"
 import { PersonList } from "src/real-state-owners/components/PersonList"
+import createActivity from "src/activities/mutations/createActivity"
+import { ActivityType } from "@prisma/client"
 
 export const Property = () => {
   const router = useRouter()
   const propertyId = useParam("propertyId", "number")!
   const [deletePropertyMutation] = useMutation(deleteProperty)
+  const [createActivityMutation, { isLoading: isLoadingCreateActivity }] =
+    useMutation(createActivity)
   const [property, { isLoading }] = useQuery(
     getProperty,
     { id: propertyId },
@@ -148,6 +152,52 @@ export const Property = () => {
                       {
                         title: "Monto",
                         value: new Intl.NumberFormat().format(currentContract.rentAmount),
+                      },
+                      // TODO: improve
+                      {
+                        title: "Balance",
+                        value: currentContract.activities.length ? (
+                          <Table>
+                            <thead>
+                              <tr>
+                                <th>Fecha</th>
+                                <th>Tipo</th>
+                                <th>Monto</th>
+                                <th>Acciones</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {currentContract.activities.map((activity) => (
+                                <tr key={activity.id}>
+                                  <td>{activity.createdAt.toLocaleString()}</td>
+                                  <td>{activity.type}</td>
+                                  <td>
+                                    {activity.isDebit ? "+" : "-"}
+                                    {new Intl.NumberFormat().format(activity.amount)}
+                                  </td>
+                                  <td>
+                                    {/* TODO: remove, testing only */}
+                                    <Button
+                                      loading={isLoadingCreateActivity}
+                                      onClick={async () => {
+                                        await createActivityMutation({
+                                          type: ActivityType.RENT,
+                                          amount: activity.amount,
+                                          contractId: currentContract.id,
+                                          isDebit: false,
+                                        })
+                                      }}
+                                    >
+                                      Pagar alquiler
+                                    </Button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </Table>
+                        ) : (
+                          "No hay actividades"
+                        ),
                       },
                     ]
                   : [
