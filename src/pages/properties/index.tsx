@@ -1,11 +1,11 @@
-import React from "react"
+import React, { useState } from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
 import { useMutation } from "@blitzjs/rpc"
 import { useRouter } from "next/router"
-import { ActionIcon, Anchor, Group, Button, Badge } from "@mantine/core"
-import { IconEdit, IconTrash, IconEye, IconCheck } from "@tabler/icons-react"
+import { ActionIcon, Anchor, Group, Button, Badge, TextInput } from "@mantine/core"
+import { IconEdit, IconTrash, IconEye, IconCheck, IconSearch } from "@tabler/icons-react"
 
 import { DataTable } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
@@ -18,8 +18,24 @@ import { PersonList } from "src/real-state-owners/components/PersonList"
 export const PropertiesList = () => {
   const router = useRouter()
 
+  const [filters, setFilters] = useState({
+    address: "",
+  })
+
   const { items, page, count, goToPage, recordsPerPage, isLoading } = usePaginatedTable({
     query: getProperties,
+    queryParams: {
+      where: {
+        ...(filters.address
+          ? {
+              address: {
+                contains: filters.address,
+                mode: "insensitive",
+              },
+            }
+          : {}),
+      },
+    },
   })
 
   const [deletePropertyMutation] = useMutation(deleteProperty)
@@ -41,7 +57,26 @@ export const PropertiesList = () => {
             textAlignment: "right",
             width: 60,
           },
-          { accessor: "address", title: "Dirección" },
+          {
+            accessor: "address",
+            title: "Dirección",
+            filter: (
+              <TextInput
+                label="Dirección"
+                description="Mostrar propiedades cuya dirección incluya el siguiente texto:"
+                placeholder="Buscar propiedades..."
+                icon={<IconSearch size={16} />}
+                value={filters.address}
+                onChange={(e) =>
+                  setFilters((filters) => ({
+                    ...filters,
+                    address: e.currentTarget.value,
+                  }))
+                }
+              />
+            ),
+            filtering: filters.address !== "",
+          },
           {
             accessor: "owners",
             title: "Propietario/s",
