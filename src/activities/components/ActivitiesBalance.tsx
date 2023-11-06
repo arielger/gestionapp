@@ -2,10 +2,21 @@ import { Table, Text } from "@mantine/core"
 import { Activity, ActivityPersonType, ActivityType } from "@prisma/client"
 
 const activityTypeTranslations: Record<ActivityType, string> = {
-  RENT: "Alquiler *mes*",
+  RENT: "Alquiler {month}",
 }
 
-const emptyTableCells = [<td></td>, <td></td>, <td></td>]
+const getActivityTitle = (activity: Activity): string => {
+  if (activity.type === ActivityType.RENT) {
+    return activityTypeTranslations.RENT.replace(
+      "{month}",
+      activity.createdAt.toLocaleString("default", { month: "long" })
+    )
+  }
+
+  return activityTypeTranslations[activity.type]
+}
+
+const emptyTableCells = [<td key="empty-1"></td>, <td key="empty-2"></td>, <td key="empty-3"></td>]
 
 export const ActivitiesBalance = ({ activities }: { activities: Activity[] }) => {
   return (
@@ -13,8 +24,8 @@ export const ActivitiesBalance = ({ activities }: { activities: Activity[] }) =>
       <thead>
         <tr>
           <th colSpan={2}>General</th>
-          <th colSpan={3}>Propietario</th>
           <th colSpan={3}>Inquilino</th>
+          <th colSpan={3}>Propietario</th>
         </tr>
         <tr>
           <th>Fecha</th>
@@ -30,28 +41,32 @@ export const ActivitiesBalance = ({ activities }: { activities: Activity[] }) =>
       <tbody>
         {
           activities.reduce(
-            (rowsWithBalances, activity) => {
+            (acc, activity) => {
               const detailsTableCells = [
                 <td key="created-at">{activity.createdAt.toLocaleString()}</td>,
-                <td key="activity-type">{activityTypeTranslations[activity.type]}</td>,
+                <td key="activity-type">{getActivityTitle(activity)}</td>,
               ]
 
               const isTenantMovement = activity.assignedTo === ActivityPersonType.TENANT
 
-              // TODO: complete logic
-              let ownerBalance = rowsWithBalances.ownerBalance + activity.amount
-              let tenantBalance = rowsWithBalances.tenantBalance + activity.amount
+              let ownerBalance =
+                acc.ownerBalance + (activity.isDebit ? -activity.amount : activity.amount)
+              let tenantBalance =
+                acc.tenantBalance + (activity.isDebit ? -activity.amount : activity.amount)
 
+              // if the activity is of type credit we show it in second place
               const cells = [
-                ...(!activity.isDebit ? [<td></td>] : []),
+                ...(!activity.isDebit ? [<td key="empty-cell"></td>] : []),
                 <td key="amount">
                   <Text c={activity.isDebit ? "red" : "green"}>
                     {activity.isDebit ? "-" : "+"}
                     {new Intl.NumberFormat().format(activity.amount)}
                   </Text>
                 </td>,
-                ...(activity.isDebit ? [<td></td>] : []),
-                <td>{isTenantMovement ? tenantBalance : ownerBalance}</td>,
+                ...(activity.isDebit ? [<td key="empty-cell"></td>] : []),
+                <td key="balance">
+                  {new Intl.NumberFormat().format(isTenantMovement ? tenantBalance : ownerBalance)}
+                </td>,
               ]
 
               const row = (
@@ -67,7 +82,7 @@ export const ActivitiesBalance = ({ activities }: { activities: Activity[] }) =>
               )
 
               return {
-                rows: [...rowsWithBalances, row],
+                rows: [...acc.rows, row],
                 ownerBalance,
                 tenantBalance,
               }
