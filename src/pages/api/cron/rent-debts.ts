@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 
-import db, { ActivityType } from "db"
+import db, { ActivityPersonType, ActivityType } from "db"
 
 type ResponseData = {
   message: string
@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   const contracts = await db.contract.findMany({
     where: {
-      Activity: {
+      activities: {
         none: {
           createdAt: { gte: startOfCurrentMonth },
         },
@@ -30,6 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     isDebit: true,
     type: ActivityType.RENT,
     contractId: contract.id,
+    assignedTo: ActivityPersonType.TENANT,
   }))
 
   const result = await db.activity.createMany({

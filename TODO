@@ -1,30 +1,16 @@
 TODO:
 
-- [DONE] Crear entidad para inmobiliaria (RealStateAgency)
-- [DONE] Migrate to PostgreSQL (https://blitzjs.com/docs/database-overview)
-- [DONE] Crear entidad para propiedad
-- [DONE] Migrate forms from Final form to mantine
-- [DONE] Agregar form para crear propiedad
-- [DONE] Agregar eliminar propiedad
-- [DONE] Crear entidad de inquilino
-- [DONE] Crear entidad de contrato
-- [DONE] Multitenancy
-- [DONE] Initial page should redirect to owners page
+- [] Improve balance view (property details)
 - [] Revisar todos los flujos
 
-- [ ] Add loading state for all actions / pages
-- [ ] Agregar busqueda de propietarios en formularios de propiedad
-  - [ ] Permitir asignar uno o mas propietarios e inquilinos
+  - List
+  - Detail
+  - Create new
+  - Edit
+  - Delete
+
 - [ ] Handle error when going to authenticated route
 
 TECH DEBT:
 
 - [ ] Check eslint errors in hook (prevent pushing code with eslint errors)
-
-ORDER TO REVIEW PAGES
-
-- List
-- Detail
-- Create new
-- Edit
-- Delete

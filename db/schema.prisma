@@ -145,15 +145,21 @@ enum ActivityType {
   RENT
 }
 
+enum ActivityPersonType {
+  OWNER
+  TENANT
+}
+
 model Activity {
-  id             Int          @id @default(autoincrement())
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  id             Int                @id @default(autoincrement())
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  organization   Organization       @relation(fields: [organizationId], references: [id])
   organizationId Int
   amount         Float
   isDebit        Boolean
   type           ActivityType
-  contract       Contract     @relation(fields: [contractId], references: [id])
+  contract       Contract           @relation(fields: [contractId], references: [id])
   contractId     Int
+  assignedTo     ActivityPersonType
 }
