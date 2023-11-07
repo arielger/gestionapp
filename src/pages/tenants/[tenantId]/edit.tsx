@@ -12,6 +12,7 @@ import getTenant from "src/tenants/queries/getTenant"
 import updateTenant from "src/tenants/mutations/updateTenant"
 import { TenantForm } from "src/tenants/components/TenantForm"
 import { Paper } from "@mantine/core"
+import { PageHeader } from "src/layout/components/PageHeader"
 
 export const EditTenant = () => {
   const router = useRouter()
@@ -24,20 +25,20 @@ export const EditTenant = () => {
       staleTime: Infinity,
     }
   )
-  const [updateTenantMutation] = useMutation(updateTenant)
+  const [updateTenantMutation, { isLoading }] = useMutation(updateTenant)
 
   return (
     <>
       <Head>
-        <title>Edit Tenant {tenant.id}</title>
+        <title>Editar inquilino #{tenant.id}</title>
       </Head>
 
       <div>
-        <h1>Edit Tenant {tenant.id}</h1>
-        <pre>{JSON.stringify(tenant, null, 2)}</pre>
+        <PageHeader title={`Editar inquilino #${tenant.id}`} />
         <Suspense fallback={<div>Loading...</div>}>
           <Paper shadow="xs" p="xl">
             <TenantForm
+              isLoading={isLoading}
               submitText="Editar"
               schema={UpdateTenantSchema.omit({ id: true })}
               initialValues={tenant}
@@ -72,7 +73,7 @@ const EditTenantPage = () => {
       </Suspense>
 
       <p>
-        <Link href={Routes.TenantsPage()}>Tenants</Link>
+        <Link href={Routes.TenantsPage()}>Volver</Link>
       </p>
     </div>
   )

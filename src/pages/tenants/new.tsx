@@ -12,17 +12,17 @@ import { Paper } from "@mantine/core"
 
 const NewTenantPage = () => {
   const router = useRouter()
-  const [createTenantMutation] = useMutation(createTenant)
+  const [createTenantMutation, { isLoading }] = useMutation(createTenant)
 
   return (
-    <Layout title={"Create New Tenant"}>
+    <Layout title={"Nuevo inquilino"}>
       <PageHeader title="Crear nuevo inquilino" />
       <Suspense fallback={<div>Loading...</div>}>
         <Paper shadow="xs" p="xl">
           <TenantForm
             submitText="Crear"
             schema={CreateTenantSchema}
-            // initialValues={{}}
+            isLoading={isLoading}
             onSubmit={async (values) => {
               try {
                 const tenant = await createTenantMutation(values)
@@ -38,7 +38,7 @@ const NewTenantPage = () => {
         </Paper>
       </Suspense>
       <p>
-        <Link href={Routes.TenantsPage()}>Tenants</Link>
+        <Link href={Routes.TenantsPage()}>Volver</Link>
       </p>
     </Layout>
   )
