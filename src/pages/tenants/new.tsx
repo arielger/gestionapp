@@ -8,6 +8,7 @@ import createTenant from "src/tenants/mutations/createTenant"
 import { TenantForm } from "src/tenants/components/TenantForm"
 import { Suspense } from "react"
 import { PageHeader } from "src/layout/components/PageHeader"
+import { Paper } from "@mantine/core"
 
 const NewTenantPage = () => {
   const router = useRouter()
@@ -17,22 +18,24 @@ const NewTenantPage = () => {
     <Layout title={"Create New Tenant"}>
       <PageHeader title="Crear nuevo inquilino" />
       <Suspense fallback={<div>Loading...</div>}>
-        <TenantForm
-          submitText="Create Tenant"
-          schema={CreateTenantSchema}
-          // initialValues={{}}
-          onSubmit={async (values) => {
-            try {
-              const tenant = await createTenantMutation(values)
-              await router.push(Routes.ShowTenantPage({ tenantId: tenant.id }))
-            } catch (error: any) {
-              console.error(error)
-              // return {
-              //   [FORM_ERROR]: error.toString(),
-              // }
-            }
-          }}
-        />
+        <Paper shadow="xs" p="xl">
+          <TenantForm
+            submitText="Crear"
+            schema={CreateTenantSchema}
+            // initialValues={{}}
+            onSubmit={async (values) => {
+              try {
+                const tenant = await createTenantMutation(values)
+                await router.push(Routes.ShowTenantPage({ tenantId: tenant.id }))
+              } catch (error: any) {
+                console.error(error)
+                // return {
+                //   [FORM_ERROR]: error.toString(),
+                // }
+              }
+            }}
+          />
+        </Paper>
       </Suspense>
       <p>
         <Link href={Routes.TenantsPage()}>Tenants</Link>

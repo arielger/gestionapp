@@ -11,6 +11,7 @@ import { UpdateTenantSchema } from "src/tenants/schemas"
 import getTenant from "src/tenants/queries/getTenant"
 import updateTenant from "src/tenants/mutations/updateTenant"
 import { TenantForm } from "src/tenants/components/TenantForm"
+import { Paper } from "@mantine/core"
 
 export const EditTenant = () => {
   const router = useRouter()
@@ -35,26 +36,28 @@ export const EditTenant = () => {
         <h1>Edit Tenant {tenant.id}</h1>
         <pre>{JSON.stringify(tenant, null, 2)}</pre>
         <Suspense fallback={<div>Loading...</div>}>
-          <TenantForm
-            submitText="Update Tenant"
-            schema={UpdateTenantSchema.omit({ id: true })}
-            initialValues={tenant}
-            onSubmit={async (values) => {
-              try {
-                const updated = await updateTenantMutation({
-                  id: tenant.id,
-                  ...values,
-                })
-                await setQueryData(updated)
-                await router.push(Routes.ShowTenantPage({ tenantId: updated.id }))
-              } catch (error: any) {
-                console.error(error)
-                // return {
-                //   [FORM_ERROR]: error.toString(),
-                // }
-              }
-            }}
-          />
+          <Paper shadow="xs" p="xl">
+            <TenantForm
+              submitText="Editar"
+              schema={UpdateTenantSchema.omit({ id: true })}
+              initialValues={tenant}
+              onSubmit={async (values) => {
+                try {
+                  const updated = await updateTenantMutation({
+                    id: tenant.id,
+                    ...values,
+                  })
+                  await setQueryData(updated)
+                  await router.push(Routes.ShowTenantPage({ tenantId: updated.id }))
+                } catch (error: any) {
+                  console.error(error)
+                  // return {
+                  //   [FORM_ERROR]: error.toString(),
+                  // }
+                }
+              }}
+            />
+          </Paper>
         </Suspense>
       </div>
     </>
