@@ -12,6 +12,7 @@ import deleteTenant from "src/tenants/mutations/deleteTenant"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { Anchor, Button, Center, Flex, Loader, Paper } from "@mantine/core"
 import { DetailsList } from "src/core/components/DetailsList"
+import { getPersonFullName } from "src/real-state-owners/utils"
 
 export const Tenant = () => {
   const router = useRouter()
@@ -22,12 +23,14 @@ export const Tenant = () => {
   return (
     <>
       <Head>
-        <title>Tenant {tenant.id}</title>
+        <title>
+          Inquilino #{tenant.id} {tenant ? `(${getPersonFullName(tenant)})` : ""}
+        </title>
       </Head>
 
       <div>
         <PageHeader
-          title={`Inquilino #${tenant.id}`}
+          title={tenant ? getPersonFullName(tenant) : "..."}
           breadcrumbs={[
             <Anchor component={Link} href={Routes.TenantsPage()} key="tenants">
               Inquilinos

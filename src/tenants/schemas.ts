@@ -1,17 +1,15 @@
 import { z } from "zod"
 
+import { CreatePersonSchema, UpdatePersonSchema } from "src/real-state-owners/schemas"
+
 export const CreateTenantSchema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  email: z.string().email().optional().nullable(),
   // template: __fieldName__: z.__zodType__(),
+  ...CreatePersonSchema,
 })
 export const UpdateTenantSchema = z.object({
-  id: z.number(),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  email: z.string().email().optional().nullable(),
   // template: __fieldName__: z.__zodType__(),
+  id: z.number(),
+  ...UpdatePersonSchema,
 })
 
 export const DeleteTenantSchema = z.object({

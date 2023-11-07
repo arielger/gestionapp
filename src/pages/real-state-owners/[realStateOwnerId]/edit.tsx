@@ -11,6 +11,8 @@ import { UpdateRealStateOwnerSchema } from "src/real-state-owners/schemas"
 import getRealStateOwner from "src/real-state-owners/queries/getRealStateOwner"
 import updateRealStateOwner from "src/real-state-owners/mutations/updateRealStateOwner"
 import { RealStateOwnerForm } from "src/real-state-owners/components/RealStateOwnerForm"
+import { PageHeader } from "src/layout/components/PageHeader"
+import { Paper } from "@mantine/core"
 
 export const EditRealStateOwner = () => {
   const router = useRouter()
@@ -23,42 +25,45 @@ export const EditRealStateOwner = () => {
       staleTime: Infinity,
     }
   )
-  const [updateRealStateOwnerMutation] = useMutation(updateRealStateOwner)
+  const [updateRealStateOwnerMutation, { isLoading: isLoadingUpdate }] =
+    useMutation(updateRealStateOwner)
 
   return (
     <>
       <Head>
-        <title>Edit RealStateOwner {realStateOwner.id}</title>
+        <title>Editar propietario #{realStateOwner.id}</title>
       </Head>
 
       <div>
-        <h1>Edit RealStateOwner {realStateOwner.id}</h1>
-        <pre>{JSON.stringify(realStateOwner, null, 2)}</pre>
+        <PageHeader title={`Editar propietario #${realStateOwner.id}`} />
         <Suspense fallback={<div>Loading...</div>}>
-          <RealStateOwnerForm
-            submitText="Update RealStateOwner"
-            schema={UpdateRealStateOwnerSchema.omit({ id: true })}
-            initialValues={realStateOwner}
-            onSubmit={async (values) => {
-              try {
-                const updated = await updateRealStateOwnerMutation({
-                  id: realStateOwner.id,
-                  ...values,
-                })
-                await setQueryData(updated)
-                await router.push(
-                  Routes.ShowRealStateOwnerPage({
-                    realStateOwnerId: updated.id,
+          <Paper shadow="xs" p="xl">
+            <RealStateOwnerForm
+              isLoading={isLoadingUpdate}
+              submitText="Editar"
+              schema={UpdateRealStateOwnerSchema.omit({ id: true })}
+              initialValues={realStateOwner}
+              onSubmit={async (values) => {
+                try {
+                  const updated = await updateRealStateOwnerMutation({
+                    id: realStateOwner.id,
+                    ...values,
                   })
-                )
-              } catch (error: any) {
-                console.error(error)
-                // return {
-                //   [FORM_ERROR]: error.toString(),
-                // }
-              }
-            }}
-          />
+                  await setQueryData(updated)
+                  await router.push(
+                    Routes.ShowRealStateOwnerPage({
+                      realStateOwnerId: updated.id,
+                    })
+                  )
+                } catch (error: any) {
+                  console.error(error)
+                  // return {
+                  //   [FORM_ERROR]: error.toString(),
+                  // }
+                }
+              }}
+            />
+          </Paper>
         </Suspense>
       </div>
     </>
@@ -68,12 +73,10 @@ export const EditRealStateOwner = () => {
 const EditRealStateOwnerPage = () => {
   return (
     <div>
-      <Suspense fallback={<div>Loading...</div>}>
-        <EditRealStateOwner />
-      </Suspense>
+      <EditRealStateOwner />
 
       <p>
-        <Link href={Routes.RealStateOwnersPage()}>RealStateOwners</Link>
+        <Link href={Routes.RealStateOwnersPage()}>Volver</Link>
       </p>
     </div>
   )

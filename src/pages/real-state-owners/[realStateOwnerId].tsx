@@ -29,7 +29,10 @@ export const RealStateOwner = () => {
   return (
     <>
       <Head>
-        <title>Propietario {realStateOwnerId}</title>
+        <title>
+          Propietario #{realStateOwnerId}{" "}
+          {realStateOwner ? `(${getPersonFullName(realStateOwner)})` : ""}
+        </title>
       </Head>
 
       <div>
@@ -76,10 +79,15 @@ export const RealStateOwner = () => {
           ) : (
             <DetailsList
               details={[
+                // TODO: this can be moved to a general person data
                 { title: "Nombre", value: realStateOwner.firstName },
                 {
                   title: "Apellido",
                   value: realStateOwner.lastName,
+                },
+                {
+                  title: "Email",
+                  value: realStateOwner.email ?? "-",
                 },
               ]}
             />
