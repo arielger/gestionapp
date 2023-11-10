@@ -16,5 +16,5 @@ TODO:
 
 TECH DEBT:
 
-- [ ] Check eslint errors in hook (prevent pushing code with eslint errors)
+- [OK] Check eslint errors in hook (prevent pushing code with eslint errors)
 - [ ] Create production database + migrations
