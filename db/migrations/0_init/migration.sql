@@ -1,6 +1,12 @@
 -- CreateEnum
 CREATE TYPE "TokenType" AS ENUM ('RESET_PASSWORD');
 
+-- CreateEnum
+CREATE TYPE "ActivityType" AS ENUM ('RENT');
+
+-- CreateEnum
+CREATE TYPE "ActivityPersonType" AS ENUM ('OWNER', 'TENANT');
+
 -- CreateTable
 CREATE TABLE "Organization" (
     "id" SERIAL NOT NULL,
@@ -69,6 +75,7 @@ CREATE TABLE "Property" (
     "address" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "organizationId" INTEGER NOT NULL,
 
     CONSTRAINT "Property_pkey" PRIMARY KEY ("id")
 );
@@ -80,6 +87,8 @@ CREATE TABLE "RealStateOwner" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
+    "organizationId" INTEGER NOT NULL,
+    "email" TEXT,
 
     CONSTRAINT "RealStateOwner_pkey" PRIMARY KEY ("id")
 );
@@ -91,6 +100,8 @@ CREATE TABLE "Tenant" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
+    "organizationId" INTEGER NOT NULL,
+    "email" TEXT,
 
     CONSTRAINT "Tenant_pkey" PRIMARY KEY ("id")
 );
@@ -101,8 +112,28 @@ CREATE TABLE "Contract" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "propertyId" INTEGER NOT NULL,
+    "organizationId" INTEGER NOT NULL,
+    "startDate" TIMESTAMP(3) NOT NULL,
+    "endDate" TIMESTAMP(3) NOT NULL,
+    "periods" INTEGER NOT NULL,
+    "rentAmount" DOUBLE PRECISION NOT NULL,
 
     CONSTRAINT "Contract_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Activity" (
+    "id" SERIAL NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "organizationId" INTEGER NOT NULL,
+    "amount" DOUBLE PRECISION NOT NULL,
+    "isDebit" BOOLEAN NOT NULL,
+    "type" "ActivityType" NOT NULL,
+    "contractId" INTEGER NOT NULL,
+    "assignedTo" "ActivityPersonType" NOT NULL,
+
+    CONSTRAINT "Activity_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -122,6 +153,9 @@ CREATE TABLE "_ContractToTenant" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Membership_organizationId_userId_key" ON "Membership"("organizationId", "userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
@@ -163,7 +197,25 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Token" ADD CONSTRAINT "Token_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Property" ADD CONSTRAINT "Property_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "RealStateOwner" ADD CONSTRAINT "RealStateOwner_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Tenant" ADD CONSTRAINT "Tenant_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Contract" ADD CONSTRAINT "Contract_propertyId_fkey" FOREIGN KEY ("propertyId") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Contract" ADD CONSTRAINT "Contract_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Activity" ADD CONSTRAINT "Activity_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Activity" ADD CONSTRAINT "Activity_contractId_fkey" FOREIGN KEY ("contractId") REFERENCES "Contract"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_PropertyToRealStateOwner" ADD CONSTRAINT "_PropertyToRealStateOwner_A_fkey" FOREIGN KEY ("A") REFERENCES "Property"("id") ON DELETE CASCADE ON UPDATE CASCADE;

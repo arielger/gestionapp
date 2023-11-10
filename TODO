@@ -18,3 +18,4 @@ TECH DEBT:
 
 - [OK] Check eslint errors in hook (prevent pushing code with eslint errors)
 - [ ] Create production database + migrations
+  - database

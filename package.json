@@ -40,6 +40,7 @@
     "@tabler/icons-react": "2.32.0",
     "blitz": "2.0.0-beta.32",
     "dayjs": "1.11.10",
+    "dotenv-cli": "7.3.0",
     "final-form": "4.20.9",
     "mantine-datatable": "2.9.13",
     "next": "^13.3.4",
