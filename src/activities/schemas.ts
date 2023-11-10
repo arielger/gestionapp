@@ -1,4 +1,4 @@
-import { ActivityType } from "@prisma/client"
+import { ActivityPersonType, ActivityType } from "@prisma/client"
 import { z } from "zod"
 
 export const CreateActivitySchema = z.object({
@@ -7,6 +7,7 @@ export const CreateActivitySchema = z.object({
   isDebit: z.boolean(),
   type: z.nativeEnum(ActivityType),
   contractId: z.number(),
+  assignedTo: z.nativeEnum(ActivityPersonType),
 })
 export const UpdateActivitySchema = z.object({
   id: z.number(),
