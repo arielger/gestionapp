@@ -11,7 +11,7 @@ export default resolver.pipe(
       createSession: z.boolean().default(true),
     })
   ),
-  async ({ email, password, organizationId, createSession }, ctx) => {
+  async ({ email, password, name, organizationId, createSession }, ctx) => {
     const organization = await db.organization.findFirst({
       where: {
         id: organizationId,
@@ -25,6 +25,7 @@ export default resolver.pipe(
     const hashedPassword = await SecurePassword.hash(password.trim())
     const user = await db.user.create({
       data: {
+        name,
         email: email.toLowerCase().trim(),
         hashedPassword,
         role: "USER",
