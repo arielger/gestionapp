@@ -125,9 +125,9 @@ export function Hero() {
           >
             Ingresar
           </Button>
-          <Button component={Link} href={Routes.SignupPage()} className={classes.control} size="lg">
+          {/* <Button component={Link} href={Routes.SignupPage()} className={classes.control} size="lg">
             Crear cuenta
-          </Button>
+          </Button> */}
         </div>
       </div>
     </Container>
