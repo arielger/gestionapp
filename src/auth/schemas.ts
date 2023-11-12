@@ -14,6 +14,8 @@ export const password = z
 export const Signup = z.object({
   email,
   password,
+  // used to set org id in custom script
+  organizationId: z.number().int().positive(),
 })
 
 export const Login = z.object({
