@@ -8,7 +8,6 @@ interface GetActivitiesInput
 export default resolver.pipe(
   resolver.authorize(),
   async ({ where, orderBy, skip = 0, take = 100 }: GetActivitiesInput, ctx) => {
-    // TODO: in multi-tenant app, you must add validation to ensure correct tenant
     const { items, hasMore, nextPage, count } = await paginate({
       skip,
       take,
@@ -19,6 +18,9 @@ export default resolver.pipe(
           where: {
             ...where,
             organizationId: ctx.session.orgId,
+          },
+          include: {
+            customDetails: true,
           },
           orderBy,
         }),

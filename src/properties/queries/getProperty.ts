@@ -19,7 +19,6 @@ export default resolver.pipe(
         Contract: {
           include: {
             tenants: true,
-            activities: true,
           },
         },
       },

@@ -13,7 +13,7 @@ export interface FormProps<Schema extends z.ZodType<any, any>>
   submitText?: string
   schema?: Schema
   onSubmit: (values: z.infer<Schema>) => void
-  initialValues?: z.infer<Schema>
+  initialValues?: Partial<z.infer<Schema>>
   isLoading?: boolean
 }
 

@@ -1,15 +1,24 @@
 import { resolver } from "@blitzjs/rpc"
-import db from "db"
-import { CreateActivitySchema } from "../schemas"
+import db, { ActivityType } from "db"
+import { CreateActivityMutationSchema } from "../schemas"
 
 export default resolver.pipe(
-  resolver.zod(CreateActivitySchema),
+  resolver.zod(CreateActivityMutationSchema),
   resolver.authorize(),
-  async (input, ctx) => {
+  async ({ input }, ctx) => {
+    const { details, ...activityData } = input
+
     const activity = await db.activity.create({
       data: {
-        ...input,
+        ...activityData,
         organizationId: ctx.session.orgId,
+        ...(input.type === ActivityType.CUSTOM
+          ? {
+              ActivityCustomDetails: {
+                create: details,
+              },
+            }
+          : {}),
       },
     })
 
