@@ -47,7 +47,7 @@ export function PropertyForm<S extends z.ZodType<any, any>>({
 
   const mappedInitialValues = {
     ...initialValues,
-    owners: initialValues?.owners.map((ownerId) => String(ownerId)),
+    owners: initialValues?.owners?.map((ownerId) => String(ownerId)),
   }
 
   return (

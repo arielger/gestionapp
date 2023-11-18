@@ -3,30 +3,45 @@ import { resolver } from "@blitzjs/rpc"
 import db from "db"
 import { Role } from "types"
 import { Signup } from "../schemas"
+import { z } from "zod"
 
-export default resolver.pipe(resolver.zod(Signup), async ({ email, password }, ctx) => {
-  // TODO: Review - right now we are asigning the first real state agency as the user membership
-  const firstRealStateAgency = await db.organization.findFirst()
+export default resolver.pipe(
+  resolver.zod(
+    Signup.extend({
+      createSession: z.boolean().default(true),
+    })
+  ),
+  async ({ email, password, name, organizationId, createSession }, ctx) => {
+    const organization = await db.organization.findFirst({
+      where: {
+        id: organizationId,
+      },
+    })
 
-  if (!firstRealStateAgency) {
-    throw new Error("No real state agency found.")
+    if (!organization) {
+      throw new Error(`No organization with the id ${organizationId} found.`)
+    }
+
+    const hashedPassword = await SecurePassword.hash(password.trim())
+    const user = await db.user.create({
+      data: {
+        name,
+        email: email.toLowerCase().trim(),
+        hashedPassword,
+        role: "USER",
+        memberships: { create: { organization: { connect: { id: organization?.id } } } },
+      },
+      select: { id: true, name: true, email: true, role: true },
+    })
+
+    if (createSession) {
+      await ctx.session.$create({
+        userId: user.id,
+        role: user.role as Role,
+        orgId: organization.id,
+      })
+    }
+
+    return user
   }
-
-  const hashedPassword = await SecurePassword.hash(password.trim())
-  const user = await db.user.create({
-    data: {
-      email: email.toLowerCase().trim(),
-      hashedPassword,
-      role: "USER",
-      memberships: { create: { organization: { connect: { id: firstRealStateAgency?.id } } } },
-    },
-    select: { id: true, name: true, email: true, role: true },
-  })
-
-  await ctx.session.$create({
-    userId: user.id,
-    role: user.role as Role,
-    orgId: firstRealStateAgency.id,
-  })
-  return user
-})
+)

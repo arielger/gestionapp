@@ -9,17 +9,19 @@ import "dayjs/locale/es"
 
 import "src/styles/globals.css"
 import { Layout } from "src/layout/components/Layout"
+import { useQueryErrorResetBoundary } from "@blitzjs/rpc"
+import { LoginForm } from "src/auth/components/LoginForm"
 
 const inter = Inter({ subsets: ["latin"] })
 
-function RootErrorFallback({ error }: ErrorFallbackProps) {
+function RootErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps) {
   if (error instanceof AuthenticationError) {
-    return <div>Error: You are not authenticated</div>
+    return <LoginForm onSuccess={resetErrorBoundary} />
   } else if (error instanceof AuthorizationError) {
     return (
       <ErrorComponent
         statusCode={error.statusCode}
-        title="Sorry, you are not authorized to access this"
+        title="Lo sentimos, no estas autorizado a ingresar a esta página"
       />
     )
   } else {
@@ -35,6 +37,10 @@ function RootErrorFallback({ error }: ErrorFallbackProps) {
 function MyApp({ Component, pageProps }: AppProps) {
   const getLayout = Component.getLayout || ((page) => page)
 
+  // This ensures the Blitz useQuery hooks will automatically refetch
+  // data any time you reset the error boundary
+  const { reset } = useQueryErrorResetBoundary()
+
   return (
     <MantineProvider
       withGlobalStyles
@@ -46,7 +52,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <DatesProvider settings={{ locale: "es", firstDayOfWeek: 1 }}>
-        <ErrorBoundary FallbackComponent={RootErrorFallback}>
+        <ErrorBoundary FallbackComponent={RootErrorFallback} onReset={reset}>
           <Suspense fallback="Loading...">
             <Layout>{getLayout(<Component {...pageProps} />)}</Layout>
           </Suspense>

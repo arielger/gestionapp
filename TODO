@@ -1,7 +1,8 @@
 TODO:
 
 - [OK] Improve tenant details and edit view
-- [] Fix typescript errors
+- [OK] Fix typescript errors
+- [OK] Add custom activity types
 - [] i18n form validation to spanish
 - [] Improve balance view (property details)
 - [] Revisar todos los flujos
@@ -17,5 +18,5 @@ TODO:
 TECH DEBT:
 
 - [OK] Check eslint errors in hook (prevent pushing code with eslint errors)
-- [ ] Create production database + migrations
+- [OK] Create production database + migrations
   - database

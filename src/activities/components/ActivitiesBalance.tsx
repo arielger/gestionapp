@@ -1,11 +1,17 @@
 import { Table, Text } from "@mantine/core"
-import { Activity, ActivityPersonType, ActivityType } from "@prisma/client"
+import { ActivityPersonType, ActivityType } from "@prisma/client"
+import { ActivityWithDetails } from "../queries/types"
 
-const activityTypeTranslations: Record<ActivityType, string> = {
+const activityTypeTranslations = {
   RENT: "Alquiler {month}",
+  CUSTOM: "Manual",
 }
 
-const getActivityTitle = (activity: Activity): string => {
+const getActivityTitle = (activity: ActivityWithDetails): string | undefined => {
+  if (activity.type === ActivityType.CUSTOM) {
+    return activity?.customDetails?.title
+  }
+
   if (activity.type === ActivityType.RENT) {
     return activityTypeTranslations.RENT.replace(
       "{month}",
@@ -13,12 +19,12 @@ const getActivityTitle = (activity: Activity): string => {
     )
   }
 
-  return activityTypeTranslations[activity.type]
+  return "Actividad"
 }
 
 const emptyTableCells = [<td key="empty-1"></td>, <td key="empty-2"></td>, <td key="empty-3"></td>]
 
-export const ActivitiesBalance = ({ activities }: { activities: Activity[] }) => {
+export const ActivitiesBalance = ({ activities }: { activities: ActivityWithDetails[] }) => {
   return (
     <Table withBorder withColumnBorders>
       <thead>
@@ -44,15 +50,19 @@ export const ActivitiesBalance = ({ activities }: { activities: Activity[] }) =>
             (acc, activity) => {
               const detailsTableCells = [
                 <td key="created-at">{activity.createdAt.toLocaleString()}</td>,
-                <td key="activity-type">{getActivityTitle(activity)}</td>,
+                <td key="activity-type">{getActivityTitle(activity) ?? "-"}</td>,
               ]
 
+              const isOwnerMovement = activity.assignedTo === ActivityPersonType.OWNER
               const isTenantMovement = activity.assignedTo === ActivityPersonType.TENANT
 
+              // todo: move to function
               let ownerBalance =
-                acc.ownerBalance + (activity.isDebit ? -activity.amount : activity.amount)
+                acc.ownerBalance +
+                (isOwnerMovement ? (activity.isDebit ? -activity.amount : activity.amount) : 0)
               let tenantBalance =
-                acc.tenantBalance + (activity.isDebit ? -activity.amount : activity.amount)
+                acc.tenantBalance +
+                (isTenantMovement ? (activity.isDebit ? -activity.amount : activity.amount) : 0)
 
               // if the activity is of type credit we show it in second place
               const cells = [

@@ -53,12 +53,12 @@ export const LoginForm = (props: LoginFormProps) => {
       <Title align="center" sx={() => ({ fontWeight: 900 })}>
         Ingresar
       </Title>
-      <Text color="dimmed" size="sm" align="center" mt={5}>
+      {/* <Text color="dimmed" size="sm" align="center" mt={5}>
         No tienes una cuenta?{" "}
         <Anchor size="sm" component={Link} href={Routes.SignupPage()}>
           Crear cuenta
         </Anchor>
-      </Text>
+      </Text> */}
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <form onSubmit={form.onSubmit(onSubmit)}>

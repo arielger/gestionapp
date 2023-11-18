@@ -9,7 +9,9 @@
     "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "dev-env": "yarn run dotenv -e .env.development.local",
+    "prod-env": "yarn run dotenv -e .env.production.local"
   },
   "prisma": {
     "schema": "db/schema.prisma",
@@ -25,9 +27,9 @@
     ]
   },
   "dependencies": {
-    "@blitzjs/auth": "2.0.0-beta.33",
-    "@blitzjs/next": "2.0.0-beta.33",
-    "@blitzjs/rpc": "2.0.0-beta.33",
+    "@blitzjs/auth": "2.0.0-beta.35",
+    "@blitzjs/next": "2.0.0-beta.35",
+    "@blitzjs/rpc": "2.0.0-beta.35",
     "@emotion/react": "11.11.1",
     "@emotion/server": "11.11.0",
     "@mantine/core": "6.0.19",
@@ -38,18 +40,18 @@
     "@prisma/client": "5",
     "@react-hook/throttle": "2.2.0",
     "@tabler/icons-react": "2.32.0",
-    "blitz": "2.0.0-beta.32",
+    "blitz": "2.0.0-beta.35",
     "dayjs": "1.11.10",
     "dotenv-cli": "7.3.0",
     "final-form": "4.20.9",
     "mantine-datatable": "2.9.13",
-    "next": "^13.3.4",
+    "next": "^13.5.6",
     "prisma": "5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-final-form": "6.5.9",
     "secure-password": "4.0.0",
-    "zod": "3.20.2"
+    "zod": "3.22.4"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "12.0.8",
