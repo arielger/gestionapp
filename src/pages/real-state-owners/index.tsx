@@ -9,26 +9,18 @@ import Layout from "src/core/layouts/Layout"
 import getRealStateOwners from "src/real-state-owners/queries/getRealStateOwners"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 import { PageHeader } from "src/layout/components/PageHeader"
+import { personTableCommonColumns } from "src/real-state-owners/config"
 
 export const RealStateOwnersList = () => {
-  const { items, page, count, goToPage, recordsPerPage, isLoading } = usePaginatedTable({
+  const { tableProps } = usePaginatedTable({
     query: getRealStateOwners,
   })
 
   return (
     <>
       <DataTable
-        fetching={isLoading}
-        records={items}
         columns={[
-          {
-            accessor: "id",
-            title: "#",
-            textAlignment: "right",
-            width: 60,
-          },
-          { accessor: "firstName", title: "Nombre" },
-          { accessor: "lastName", title: "Apellido" },
+          ...personTableCommonColumns,
           {
             accessor: "actions",
             textAlignment: "right",
@@ -51,10 +43,7 @@ export const RealStateOwnersList = () => {
             ),
           },
         ]}
-        page={page + 1}
-        onPageChange={(newPage) => goToPage(newPage)}
-        totalRecords={count}
-        recordsPerPage={recordsPerPage}
+        {...tableProps}
       />
     </>
   )
