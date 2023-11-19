@@ -22,7 +22,7 @@ export const PropertiesList = () => {
     address: "",
   })
 
-  const { items, page, count, goToPage, recordsPerPage, isLoading } = usePaginatedTable({
+  const { tableProps, items } = usePaginatedTable({
     query: getProperties,
     queryParams: {
       where: {
@@ -48,8 +48,6 @@ export const PropertiesList = () => {
   return (
     <>
       <DataTable
-        fetching={isLoading}
-        records={items}
         columns={[
           {
             accessor: "id",
@@ -138,10 +136,7 @@ export const PropertiesList = () => {
             ),
           },
         ]}
-        page={page + 1}
-        onPageChange={(newPage) => goToPage(newPage)}
-        totalRecords={count}
-        recordsPerPage={recordsPerPage}
+        {...tableProps}
       />
     </>
   )

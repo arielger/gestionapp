@@ -12,14 +12,14 @@ import get__ModelNames__ from "src/__modelNames__/queries/get__ModelNames__"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 
 export const __ModelNames__List = () => {
-  const { items, page, count, goToPage, recordsPerPage } = usePaginatedTable({
+  const { tableProps } = usePaginatedTable({
     query: get__ModelNames__,
   })
 
   return (
     <>
       <DataTable
-        records={items}
+        {...tableProps}
         columns={[
           {
             accessor: "id",
@@ -51,10 +51,6 @@ export const __ModelNames__List = () => {
             ),
           },
         ]}
-        page={page + 1}
-        onPageChange={(newPage) => goToPage(newPage)}
-        totalRecords={count}
-        recordsPerPage={recordsPerPage}
       />
     </>
   )
