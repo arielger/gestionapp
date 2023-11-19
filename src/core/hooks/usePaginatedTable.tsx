@@ -1,6 +1,7 @@
 import { usePaginatedQuery } from "@blitzjs/rpc"
 import { DataTableProps } from "mantine-datatable"
 import { useRouter } from "next/router"
+import { IconSquareX } from "@tabler/icons-react"
 
 export const usePaginatedTable = <T,>({
   query,
@@ -16,13 +17,19 @@ export const usePaginatedTable = <T,>({
 }) => {
   const router = useRouter()
   const page = Number(router.query.page) || 0
-  const [{ items, count }, { isLoading, isFetching, isPreviousData }] = usePaginatedQuery(query, {
-    orderBy: { id: "asc" },
-    skip: recordsPerPage * page,
-    take: recordsPerPage,
-    suspense: false,
-    ...queryParams,
-  })
+  const [data, { isLoading, isFetching, isPreviousData, isError }] = usePaginatedQuery(
+    query,
+    {
+      orderBy: { id: "asc" },
+      skip: recordsPerPage * page,
+      take: recordsPerPage,
+      ...queryParams,
+    },
+    {
+      suspense: false,
+      useErrorBoundary: false,
+    }
+  )
 
   // We discount 1 from the page because the router starts at 0
   const goToPage = (page: number) => router.push({ query: { page: page - 1 } })
@@ -35,16 +42,23 @@ export const usePaginatedTable = <T,>({
     // pagination props
     page: page + 1,
     onPageChange: (newPage) => goToPage(newPage),
-    totalRecords: count,
+    totalRecords: data?.count,
     recordsPerPage,
 
     // status props
     fetching: isTableFetching,
-    records: items,
+    records: data?.items ?? [],
+
+    ...(isError
+      ? {
+          noRecordsIcon: <IconSquareX />,
+          noRecordsText: "Hubo un error al obtener el listado solicitado",
+        }
+      : {}),
   } satisfies Partial<DataTableProps<T>>
 
   return {
     tableProps,
-    items,
+    items: data?.items ?? [],
   }
 }

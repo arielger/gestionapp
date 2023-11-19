@@ -14,7 +14,7 @@ export default resolver.pipe(
         organizationId: ctx.session.orgId,
         ...(input.type === ActivityType.CUSTOM
           ? {
-              ActivityCustomDetails: {
+              customDetails: {
                 create: details,
               },
             }
