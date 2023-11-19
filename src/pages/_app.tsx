@@ -25,6 +25,7 @@ function RootErrorFallback({ error, resetErrorBoundary }: ErrorFallbackProps) {
       />
     )
   } else {
+    console.log("error", error)
     return (
       <ErrorComponent
         statusCode={(error as any)?.statusCode || 400}

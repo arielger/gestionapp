@@ -23,8 +23,9 @@ export default resolver.pipe(
           include: {
             owners: true,
             Contract: true,
+            test: true,
           },
-        }),
+        } as any),
     })
 
     return {

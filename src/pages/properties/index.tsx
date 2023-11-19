@@ -1,8 +1,8 @@
 import React, { useState } from "react"
-import { Routes } from "@blitzjs/next"
+import { Routes, ErrorBoundary, ErrorComponent } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { useMutation } from "@blitzjs/rpc"
+import { useMutation, useQueryErrorResetBoundary } from "@blitzjs/rpc"
 import { useRouter } from "next/router"
 import { ActionIcon, Anchor, Group, Button, Badge, TextInput } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye, IconCheck, IconSearch } from "@tabler/icons-react"
@@ -22,7 +22,7 @@ export const PropertiesList = () => {
     address: "",
   })
 
-  const { items, page, count, goToPage, recordsPerPage, isLoading } = usePaginatedTable({
+  const { tableProps, items } = usePaginatedTable({
     query: getProperties,
     queryParams: {
       where: {
@@ -48,8 +48,6 @@ export const PropertiesList = () => {
   return (
     <>
       <DataTable
-        fetching={isLoading}
-        records={items}
         columns={[
           {
             accessor: "id",
@@ -138,16 +136,31 @@ export const PropertiesList = () => {
             ),
           },
         ]}
-        page={page + 1}
-        onPageChange={(newPage) => goToPage(newPage)}
-        totalRecords={count}
-        recordsPerPage={recordsPerPage}
+        {...tableProps}
       />
     </>
   )
 }
 
+function RootErrorFallback({ error, resetErrorBoundary }) {
+  console.log("error 1", error)
+  if (error.name === "AuthorizationError") {
+    return (
+      <ErrorComponent
+        statusCode={error.statusCode}
+        title="Sorry, you are not authorized to access this"
+      />
+    )
+  } else {
+    return (
+      <ErrorComponent statusCode={error.statusCode || 400} title={error.message || error.name} />
+    )
+  }
+}
+
 const PropertiesPage = () => {
+  const { reset } = useQueryErrorResetBoundary()
+
   return (
     <Layout>
       <Head>
@@ -160,7 +173,9 @@ const PropertiesPage = () => {
             Crear
           </Button>
         </PageHeader>
-        <PropertiesList />
+        <ErrorBoundary FallbackComponent={RootErrorFallback} onReset={reset}>
+          <PropertiesList />
+        </ErrorBoundary>
       </div>
     </Layout>
   )
