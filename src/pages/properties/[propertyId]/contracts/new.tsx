@@ -27,7 +27,6 @@ const NewContractPage = () => {
             schema={CreateContractSchema.omit({ propertyId: true })}
             // initialValues={{}}
             onSubmit={async (values) => {
-              console.log("values", values)
               try {
                 const contract = await createContractMutation({
                   ...values,

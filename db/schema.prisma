@@ -172,7 +172,7 @@ model Activity {
 
 model ActivityCustomDetails {
   id         Int      @id @default(autoincrement())
-  activity   Activity @relation(fields: [activityId], references: [id])
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   activityId Int      @unique
   title      String
 }

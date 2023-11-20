@@ -3,6 +3,7 @@ TODO:
 - [OK] Improve tenant details and edit view
 - [OK] Fix typescript errors
 - [OK] Add custom activity types
+- [] Delete activities
 - [] i18n form validation to spanish
 - [] Improve balance view (property details)
 - [] Revisar todos los flujos

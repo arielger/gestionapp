@@ -1,10 +1,10 @@
 import { useMutation, useQuery } from "@blitzjs/rpc"
-import { Text, Modal, Button, Paper, Title, Flex } from "@mantine/core"
+import { Text, Modal, Button, Paper, Title, Flex, ActionIcon } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { notifications } from "@mantine/notifications"
 import { DataTable } from "mantine-datatable"
 import { Activity, ActivityPersonType, ActivityType } from "@prisma/client"
-import { IconCheck } from "@tabler/icons-react"
+import { IconCheck, IconTrash } from "@tabler/icons-react"
 
 import { ActivityTransactionType } from "../config"
 import createActivity from "../mutations/createActivity"
@@ -12,6 +12,7 @@ import getActivities from "../queries/getActivities"
 import { ActivityWithDetails } from "../queries/types"
 import { CreateActivityFormSchema } from "../schemas"
 import { ActivityForm } from "./ActivityForm"
+import deleteActivity from "../mutations/deleteActivity"
 
 const activityTypeTranslations = {
   RENT: "Alquiler {month}",
@@ -104,6 +105,21 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
   const [opened, { open, close }] = useDisclosure(false)
   const [createActivityMutation, { isLoading: isLoadingCreateActivity }] =
     useMutation(createActivity)
+
+  const [deleteActivityMutation] = useMutation(deleteActivity)
+
+  const handleDeleteActivity = async (activity: Activity) => {
+    await deleteActivityMutation({ id: activity.id })
+
+    void refetchActivities()
+
+    notifications.show({
+      title: "Actividad eliminada exitosamente",
+      message: "",
+      color: "green",
+      icon: <IconCheck />,
+    })
+  }
 
   return (
     <Paper shadow="xs" p="xl" mt="md">
@@ -236,6 +252,15 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
                     assignedTo: ActivityPersonType.OWNER,
                     type: "total",
                   }),
+              },
+              {
+                accessor: "actions",
+                title: "Acciones",
+                render: (activity) => (
+                  <ActionIcon color="red" onClick={() => handleDeleteActivity(activity)}>
+                    <IconTrash size="1rem" stroke={1.5} />
+                  </ActionIcon>
+                ),
               },
             ],
           },
