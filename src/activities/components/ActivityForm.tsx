@@ -1,5 +1,15 @@
-import { Flex, NativeSelect, NumberInput, TextInput, SegmentedControl, Input } from "@mantine/core"
+import {
+  Flex,
+  NativeSelect,
+  NumberInput,
+  TextInput,
+  SegmentedControl,
+  Input,
+  Center,
+  Box,
+} from "@mantine/core"
 import { ActivityPersonType, ActivityType } from "@prisma/client"
+import { IconTransferIn, IconTransferOut } from "@tabler/icons-react"
 import React from "react"
 import { Form, FormProps } from "src/core/components/Form"
 
@@ -17,8 +27,24 @@ export function ActivityForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
               <SegmentedControl
                 fullWidth
                 data={[
-                  { label: "Debito", value: ActivityTransactionType.DEBIT },
-                  { label: "Credito", value: ActivityTransactionType.CREDIT },
+                  {
+                    label: (
+                      <Center c="red">
+                        <IconTransferOut size="1rem" />
+                        <Box ml={10}>Debito</Box>
+                      </Center>
+                    ),
+                    value: ActivityTransactionType.DEBIT,
+                  },
+                  {
+                    label: (
+                      <Center c="teal">
+                        <IconTransferIn size="1rem" />
+                        <Box ml={10}>Credito</Box>
+                      </Center>
+                    ),
+                    value: ActivityTransactionType.CREDIT,
+                  },
                 ]}
                 {...form.getInputProps("transactionType")}
               />
@@ -26,10 +52,12 @@ export function ActivityForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
             <Input.Wrapper label="Asignar al">
               <SegmentedControl
                 fullWidth
-                data={Object.values(ActivityPersonType).map((activityPersonType) => ({
-                  value: activityPersonType,
-                  label: activityPersonLabels[activityPersonType],
-                }))}
+                data={[ActivityPersonType.TENANT, ActivityPersonType.OWNER].map(
+                  (activityPersonType) => ({
+                    value: activityPersonType,
+                    label: activityPersonLabels[activityPersonType],
+                  })
+                )}
                 {...form.getInputProps("assignedTo")}
               />
             </Input.Wrapper>

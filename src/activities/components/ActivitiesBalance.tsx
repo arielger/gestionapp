@@ -1,18 +1,20 @@
 import { useMutation, useQuery } from "@blitzjs/rpc"
-import { Text, Modal, Button, Paper, Title, Flex, ActionIcon } from "@mantine/core"
+import { Text, Modal, Button, Paper, Title, Flex, ActionIcon, Group } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { notifications } from "@mantine/notifications"
 import { DataTable } from "mantine-datatable"
 import { Activity, ActivityPersonType, ActivityType } from "@prisma/client"
-import { IconCheck, IconTrash } from "@tabler/icons-react"
+import { IconCheck, IconEdit, IconTrash } from "@tabler/icons-react"
 
 import { ActivityTransactionType } from "../config"
 import createActivity from "../mutations/createActivity"
 import getActivities from "../queries/getActivities"
 import { ActivityWithDetails } from "../queries/types"
-import { CreateActivityFormSchema } from "../schemas"
+import { CreateActivityFormSchema, ActivityFormSchemaType } from "../schemas"
 import { ActivityForm } from "./ActivityForm"
 import deleteActivity from "../mutations/deleteActivity"
+import updateActivity from "../mutations/updateActivity"
+import { useState } from "react"
 
 const activityTypeTranslations = {
   RENT: "Alquiler {month}",
@@ -41,7 +43,7 @@ const renderBalanceMovementCell = ({
   }
 
   return (
-    <Text c={activity.isDebit ? "red" : "green"}>
+    <Text c={activity.isDebit ? "red" : "teal"}>
       {activity.isDebit ? "-" : "+"}
       {new Intl.NumberFormat().format(activity.amount)}
     </Text>
@@ -103,11 +105,37 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
   )
 
   const [opened, { open, close }] = useDisclosure(false)
+  const [selectedActivity, setSelectedActivity] = useState<
+    (ActivityFormSchemaType & { id: number }) | null
+  >(null)
+
   const [createActivityMutation, { isLoading: isLoadingCreateActivity }] =
     useMutation(createActivity)
 
-  const [deleteActivityMutation] = useMutation(deleteActivity)
+  const [updateActivityMutation, { isLoading: isLoadingUpdateActivity }] =
+    useMutation(updateActivity)
+  const handleOpenEditActivity = (activity: ActivityWithDetails) => {
+    const { isDebit, type, customDetails, ...activityData } = activity
 
+    // todo: create a mapper fn to transform from form to backend and backend to form
+    setSelectedActivity({
+      ...activityData,
+      transactionType: isDebit ? ActivityTransactionType.DEBIT : ActivityTransactionType.CREDIT,
+      ...(type === ActivityType.CUSTOM
+        ? {
+            type: ActivityType.CUSTOM,
+            details: {
+              title: customDetails?.title ?? "",
+            },
+          }
+        : {
+            type,
+          }),
+    })
+    open()
+  }
+
+  const [deleteActivityMutation] = useMutation(deleteActivity)
   const handleDeleteActivity = async (activity: Activity) => {
     await deleteActivityMutation({ id: activity.id })
 
@@ -127,17 +155,23 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
         <Title order={2}>Balance</Title>
         <Button onClick={open}>Crear nueva</Button>
       </Flex>
-      <Modal opened={opened} onClose={close} title="Crear actividad">
+      <Modal
+        opened={opened}
+        onClose={close}
+        title={selectedActivity ? "Editar actividad" : "Crear actividad"}
+      >
         <ActivityForm
-          submitText="Crear"
-          initialValues={{
-            transactionType: ActivityTransactionType.DEBIT,
-            type: ActivityType.CUSTOM,
-            assignedTo: ActivityPersonType.TENANT,
-            details: {
-              title: "",
-            },
-          }}
+          submitText={selectedActivity ? "Guardar" : "Crear"}
+          initialValues={
+            selectedActivity ?? {
+              transactionType: ActivityTransactionType.DEBIT,
+              type: ActivityType.CUSTOM,
+              assignedTo: ActivityPersonType.TENANT,
+              details: {
+                title: "",
+              },
+            }
+          }
           schema={CreateActivityFormSchema}
           onSubmit={async (input) => {
             const { transactionType, ...activityData } = input
@@ -145,16 +179,33 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
             const isDebit = transactionType === ActivityTransactionType.DEBIT
 
             try {
-              await createActivityMutation({
-                input: { ...activityData, isDebit, contractId },
-              })
+              const input = { ...activityData, isDebit, contractId }
+              if (selectedActivity) {
+                await updateActivityMutation({
+                  input: {
+                    ...input,
+                    id: selectedActivity.id,
+                  },
+                })
 
-              notifications.show({
-                title: "Actividad creada exitosamente",
-                message: "Ya podes ver la nueva actividad en el balance",
-                color: "green",
-                icon: <IconCheck />,
-              })
+                notifications.show({
+                  title: "Actividad modificada exitosamente",
+                  message: "Ya podes ver los cambios en el balance",
+                  color: "green",
+                  icon: <IconCheck />,
+                })
+              } else {
+                await createActivityMutation({
+                  input,
+                })
+
+                notifications.show({
+                  title: "Actividad creada exitosamente",
+                  message: "Ya podes ver la nueva actividad en el balance",
+                  color: "green",
+                  icon: <IconCheck />,
+                })
+              }
 
               void refetchActivities()
 
@@ -166,10 +217,12 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
               // }
             }
           }}
-          isLoading={isLoadingCreateActivity}
+          isLoading={isLoadingCreateActivity || isLoadingUpdateActivity}
         />
       </Modal>
       <DataTable
+        fetching={isLoadingActivities}
+        minHeight={200}
         groups={[
           {
             id: "general",
@@ -257,9 +310,14 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
                 accessor: "actions",
                 title: "Acciones",
                 render: (activity) => (
-                  <ActionIcon color="red" onClick={() => handleDeleteActivity(activity)}>
-                    <IconTrash size="1rem" stroke={1.5} />
-                  </ActionIcon>
+                  <Group spacing={0} position="right" noWrap>
+                    <ActionIcon onClick={() => handleOpenEditActivity(activity)}>
+                      <IconEdit size="1rem" stroke={1.5} />
+                    </ActionIcon>
+                    <ActionIcon color="red" onClick={() => handleDeleteActivity(activity)}>
+                      <IconTrash size="1rem" stroke={1.5} />
+                    </ActionIcon>
+                  </Group>
                 ),
               },
             ],

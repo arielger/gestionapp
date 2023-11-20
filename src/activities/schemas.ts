@@ -10,7 +10,7 @@ const CreateActivityBaseSchema = z.object({
 
 const CreateActivityRentSchema = {
   type: z.literal(ActivityType.RENT),
-  details: z.never(),
+  details: z.undefined(),
 }
 
 const CreateActivityCustomSchema = {
@@ -31,6 +31,8 @@ export const CreateActivityFormSchema = z.discriminatedUnion("type", [
   CreateActivityBaseFormSchema.extend(CreateActivityCustomSchema),
 ])
 
+export type ActivityFormSchemaType = z.infer<typeof CreateActivityFormSchema>
+
 // Mutation schemas
 
 const CreateActivityBaseMutationSchema = CreateActivityBaseSchema.extend({
@@ -47,9 +49,17 @@ export const CreateActivityMutationSchema = z.object({
   ]),
 })
 
-export const UpdateActivitySchema = z.object({
-  id: z.number(),
-  // template: __fieldName__: z.__zodType__(),
+export const UpdateActivityMutationSchema = z.object({
+  input: z
+    .discriminatedUnion("type", [
+      CreateActivityBaseMutationSchema.extend(CreateActivityRentSchema),
+      CreateActivityBaseMutationSchema.extend(CreateActivityCustomSchema),
+    ])
+    .and(
+      z.object({
+        id: z.number(),
+      })
+    ),
 })
 
 export const DeleteActivitySchema = z.object({
