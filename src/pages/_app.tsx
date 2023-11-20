@@ -3,6 +3,7 @@ import { AuthenticationError, AuthorizationError } from "blitz"
 import React, { Suspense } from "react"
 import { MantineProvider } from "@mantine/core"
 import { DatesProvider } from "@mantine/dates"
+import { Notifications } from "@mantine/notifications"
 import { withBlitz } from "src/blitz-client"
 import { Inter } from "next/font/google"
 import "dayjs/locale/es"
@@ -52,6 +53,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       }}
     >
       <DatesProvider settings={{ locale: "es", firstDayOfWeek: 1 }}>
+        <Notifications autoClose={5000} />
         <ErrorBoundary FallbackComponent={RootErrorFallback} onReset={reset}>
           <Suspense fallback="Loading...">
             <Layout>{getLayout(<Component {...pageProps} />)}</Layout>

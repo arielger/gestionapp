@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useQuery, useMutation } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
-import { Anchor, Button, Flex, Paper, Badge, Center, Loader, Title } from "@mantine/core"
+import { Anchor, Button, Flex, Paper, Badge, Center, Loader } from "@mantine/core"
 import { IconCheck } from "@tabler/icons-react"
 
 import Layout from "src/core/layouts/Layout"
@@ -13,12 +13,7 @@ import deleteProperty from "src/properties/mutations/deleteProperty"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { DetailsList } from "src/core/components/DetailsList"
 import { PersonList } from "src/real-state-owners/components/PersonList"
-import createActivity from "src/activities/mutations/createActivity"
 import { ActivitiesBalance } from "src/activities/components/ActivitiesBalance"
-import { ActivityForm } from "src/activities/components/ActivityForm"
-import { CreateActivityFormSchema } from "src/activities/schemas"
-import { ActivityPersonType, ActivityType } from "@prisma/client"
-import getActivities from "src/activities/queries/getActivities"
 
 export const Property = () => {
   const router = useRouter()
@@ -35,18 +30,7 @@ export const Property = () => {
   // TODO: should check date to know if it's rented
   const currentContract = property?.Contract?.[0]
 
-  const [activities, { isLoading: isLoadingActivities }] = useQuery(
-    getActivities,
-    { contractId: currentContract?.id },
-    {
-      suspense: false,
-      enabled: !!currentContract?.id,
-    }
-  )
-
   const [deletePropertyMutation] = useMutation(deleteProperty)
-  const [createActivityMutation, { isLoading: isLoadingCreateActivity }] =
-    useMutation(createActivity)
 
   return (
     <>
@@ -182,41 +166,7 @@ export const Property = () => {
             />
           )}
         </Paper>
-        {currentContract && activities?.items?.length ? (
-          <>
-            <Paper shadow="xs" p="xl" mt="md">
-              <Title order={2}>Crear actividad</Title>
-              <ActivityForm
-                submitText="Crear"
-                initialValues={{
-                  isDebit: false,
-                  type: ActivityType.CUSTOM,
-                  assignedTo: ActivityPersonType.TENANT,
-                  details: {} as any,
-                }}
-                schema={CreateActivityFormSchema}
-                onSubmit={async (values) => {
-                  try {
-                    const activity = await createActivityMutation({
-                      input: { ...values, contractId: currentContract.id },
-                    })
-                    console.log("activity", activity)
-                  } catch (error: any) {
-                    console.error(error)
-                    // return {
-                    //   [FORM_ERROR]: error.toString(),
-                    // }
-                  }
-                }}
-                isLoading={isLoadingCreateActivity}
-              />
-            </Paper>
-            <Paper shadow="xs" p="xl" mt="md">
-              <Title order={2}>Balance</Title>
-              <ActivitiesBalance activities={activities.items} />
-            </Paper>
-          </>
-        ) : undefined}
+        {currentContract && <ActivitiesBalance contractId={currentContract.id} />}
       </div>
     </>
   )
