@@ -1,10 +1,53 @@
-import { Table, Text } from "@mantine/core"
-import { ActivityPersonType, ActivityType } from "@prisma/client"
+import { useMutation, useQuery } from "@blitzjs/rpc"
+import { Text, Modal, Button, Paper, Title, Flex, ActionIcon, Group } from "@mantine/core"
+import { useDisclosure } from "@mantine/hooks"
+import { notifications } from "@mantine/notifications"
+import { DataTable } from "mantine-datatable"
+import { Activity, ActivityPersonType, ActivityType } from "@prisma/client"
+import { IconCheck, IconEdit, IconTrash } from "@tabler/icons-react"
+
+import { ActivityTransactionType } from "../config"
+import createActivity from "../mutations/createActivity"
+import getActivities from "../queries/getActivities"
 import { ActivityWithDetails } from "../queries/types"
+import { CreateActivityFormSchema, ActivityFormSchemaType } from "../schemas"
+import { ActivityForm } from "./ActivityForm"
+import deleteActivity from "../mutations/deleteActivity"
+import updateActivity from "../mutations/updateActivity"
+import { useState } from "react"
 
 const activityTypeTranslations = {
   RENT: "Alquiler {month}",
   CUSTOM: "Manual",
+}
+
+const renderBalanceMovementCell = ({
+  activity,
+  assignedTo,
+  type,
+}: {
+  activity: Activity
+  assignedTo: ActivityPersonType
+  type: "debit" | "credit" | "total"
+}) => {
+  const isDebitOrCredit = type === "debit" || type === "credit"
+
+  if (
+    assignedTo !== activity.assignedTo ||
+    (isDebitOrCredit && activity.isDebit !== (type === "debit"))
+  )
+    return null
+
+  if (type === "total") {
+    return new Intl.NumberFormat().format(activity[activity.assignedTo].balance)
+  }
+
+  return (
+    <Text c={activity.isDebit ? "red" : "teal"}>
+      {activity.isDebit ? "-" : "+"}
+      {new Intl.NumberFormat().format(activity.amount)}
+    </Text>
+  )
 }
 
 const getActivityTitle = (activity: ActivityWithDetails): string | undefined => {
@@ -22,85 +65,266 @@ const getActivityTitle = (activity: ActivityWithDetails): string | undefined => 
   return "Actividad"
 }
 
-const emptyTableCells = [<td key="empty-1"></td>, <td key="empty-2"></td>, <td key="empty-3"></td>]
+export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
+  const [activitiesData, { isLoading: isLoadingActivities, refetch: refetchActivities }] = useQuery(
+    getActivities,
+    { contractId },
+    {
+      suspense: false,
+      enabled: !!contractId,
+    }
+  )
 
-export const ActivitiesBalance = ({ activities }: { activities: ActivityWithDetails[] }) => {
-  return (
-    <Table withBorder withColumnBorders>
-      <thead>
-        <tr>
-          <th colSpan={2}>General</th>
-          <th colSpan={3}>Inquilino</th>
-          <th colSpan={3}>Propietario</th>
-        </tr>
-        <tr>
-          <th>Fecha</th>
-          <th>Tipo</th>
-          <th>Debe</th>
-          <th>Haber</th>
-          <th>Saldo</th>
-          <th>Debe</th>
-          <th>Haber</th>
-          <th>Saldo</th>
-        </tr>
-      </thead>
-      <tbody>
-        {
-          activities.reduce(
-            (acc, activity) => {
-              const detailsTableCells = [
-                <td key="created-at">{activity.createdAt.toLocaleString()}</td>,
-                <td key="activity-type">{getActivityTitle(activity) ?? "-"}</td>,
-              ]
+  const activities = activitiesData?.items ?? []
 
-              const isOwnerMovement = activity.assignedTo === ActivityPersonType.OWNER
-              const isTenantMovement = activity.assignedTo === ActivityPersonType.TENANT
+  const activitiesWithMovements = activities?.reduce(
+    (acc, activity) => {
+      const isOwnerMovement = activity.assignedTo === ActivityPersonType.OWNER
+      const newOwnerBalance = isOwnerMovement
+        ? acc.ownerBalance + (activity.isDebit ? -activity.amount : activity.amount)
+        : acc.ownerBalance
+      const newTenantBalance = !isOwnerMovement
+        ? acc.tenantBalance + (activity.isDebit ? -activity.amount : activity.amount)
+        : acc.tenantBalance
 
-              // todo: move to function
-              let ownerBalance =
-                acc.ownerBalance +
-                (isOwnerMovement ? (activity.isDebit ? -activity.amount : activity.amount) : 0)
-              let tenantBalance =
-                acc.tenantBalance +
-                (isTenantMovement ? (activity.isDebit ? -activity.amount : activity.amount) : 0)
+      const activityWithBalance = {
+        ...activity,
+        [activity.assignedTo]: {
+          balance: isOwnerMovement ? newOwnerBalance : newTenantBalance,
+          [activity.isDebit ? "debit" : "credit"]: activity.amount,
+        },
+      }
 
-              // if the activity is of type credit we show it in second place
-              const cells = [
-                ...(!activity.isDebit ? [<td key="empty-cell"></td>] : []),
-                <td key="amount">
-                  <Text c={activity.isDebit ? "red" : "green"}>
-                    {activity.isDebit ? "-" : "+"}
-                    {new Intl.NumberFormat().format(activity.amount)}
-                  </Text>
-                </td>,
-                ...(activity.isDebit ? [<td key="empty-cell"></td>] : []),
-                <td key="balance">
-                  {new Intl.NumberFormat().format(isTenantMovement ? tenantBalance : ownerBalance)}
-                </td>,
-              ]
+      return {
+        rows: [...acc.rows, activityWithBalance],
+        ownerBalance: newOwnerBalance,
+        tenantBalance: newTenantBalance,
+      }
+    },
+    { rows: [], ownerBalance: 0, tenantBalance: 0 }
+  )
 
-              const row = (
-                <tr key={activity.id}>
-                  {[
-                    ...detailsTableCells,
-                    // we show the tenant balance data first
-                    ...(isTenantMovement
-                      ? [...cells, ...emptyTableCells]
-                      : [...emptyTableCells, ...cells]),
-                  ]}
-                </tr>
-              )
+  const [opened, { open, close }] = useDisclosure(false)
+  const [selectedActivity, setSelectedActivity] = useState<
+    (ActivityFormSchemaType & { id: number }) | null
+  >(null)
 
-              return {
-                rows: [...acc.rows, row],
-                ownerBalance,
-                tenantBalance,
-              }
+  const [createActivityMutation, { isLoading: isLoadingCreateActivity }] =
+    useMutation(createActivity)
+
+  const [updateActivityMutation, { isLoading: isLoadingUpdateActivity }] =
+    useMutation(updateActivity)
+  const handleOpenEditActivity = (activity: ActivityWithDetails) => {
+    const { isDebit, type, customDetails, ...activityData } = activity
+
+    // todo: create a mapper fn to transform from form to backend and backend to form
+    setSelectedActivity({
+      ...activityData,
+      transactionType: isDebit ? ActivityTransactionType.DEBIT : ActivityTransactionType.CREDIT,
+      ...(type === ActivityType.CUSTOM
+        ? {
+            type: ActivityType.CUSTOM,
+            details: {
+              title: customDetails?.title ?? "",
             },
-            { rows: [], ownerBalance: 0, tenantBalance: 0 }
-          ).rows
-        }
-      </tbody>
-    </Table>
+          }
+        : {
+            type,
+          }),
+    })
+    open()
+  }
+
+  const [deleteActivityMutation] = useMutation(deleteActivity)
+  const handleDeleteActivity = async (activity: Activity) => {
+    await deleteActivityMutation({ id: activity.id })
+
+    void refetchActivities()
+
+    notifications.show({
+      title: "Actividad eliminada exitosamente",
+      message: "",
+      color: "green",
+      icon: <IconCheck />,
+    })
+  }
+
+  return (
+    <Paper shadow="xs" p="xl" mt="md">
+      <Flex justify="space-between" align="center" mb="md">
+        <Title order={2}>Balance</Title>
+        <Button onClick={open}>Crear nueva</Button>
+      </Flex>
+      <Modal
+        opened={opened}
+        onClose={close}
+        title={selectedActivity ? "Editar actividad" : "Crear actividad"}
+      >
+        <ActivityForm
+          submitText={selectedActivity ? "Guardar" : "Crear"}
+          initialValues={
+            selectedActivity ?? {
+              transactionType: ActivityTransactionType.DEBIT,
+              type: ActivityType.CUSTOM,
+              assignedTo: ActivityPersonType.TENANT,
+              details: {
+                title: "",
+              },
+            }
+          }
+          schema={CreateActivityFormSchema}
+          onSubmit={async (input) => {
+            const { transactionType, ...activityData } = input
+
+            const isDebit = transactionType === ActivityTransactionType.DEBIT
+
+            try {
+              const input = { ...activityData, isDebit, contractId }
+              if (selectedActivity) {
+                await updateActivityMutation({
+                  input: {
+                    ...input,
+                    id: selectedActivity.id,
+                  },
+                })
+
+                notifications.show({
+                  title: "Actividad modificada exitosamente",
+                  message: "Ya podes ver los cambios en el balance",
+                  color: "green",
+                  icon: <IconCheck />,
+                })
+              } else {
+                await createActivityMutation({
+                  input,
+                })
+
+                notifications.show({
+                  title: "Actividad creada exitosamente",
+                  message: "Ya podes ver la nueva actividad en el balance",
+                  color: "green",
+                  icon: <IconCheck />,
+                })
+              }
+
+              void refetchActivities()
+
+              close()
+            } catch (error: any) {
+              console.error(error)
+              // return {
+              //   [FORM_ERROR]: error.toString(),
+              // }
+            }
+          }}
+          isLoading={isLoadingCreateActivity || isLoadingUpdateActivity}
+        />
+      </Modal>
+      <DataTable
+        fetching={isLoadingActivities}
+        minHeight={200}
+        groups={[
+          {
+            id: "general",
+            title: "General",
+            columns: [
+              {
+                accessor: "createdAt",
+                title: "Fecha",
+                render: ({ createdAt }) => createdAt.toLocaleString(),
+              },
+              { accessor: "type", title: "Tipo", render: getActivityTitle },
+            ],
+          },
+          {
+            id: "tenant",
+            title: "Inquilino",
+            columns: [
+              {
+                accessor: `${ActivityPersonType.TENANT}.debit`,
+                title: "Debe",
+                render: (activity) =>
+                  renderBalanceMovementCell({
+                    activity,
+                    assignedTo: ActivityPersonType.TENANT,
+                    type: "debit",
+                  }),
+              },
+              {
+                accessor: `${ActivityPersonType.TENANT}.credit`,
+                title: "Haber",
+                render: (activity) =>
+                  renderBalanceMovementCell({
+                    activity,
+                    assignedTo: ActivityPersonType.TENANT,
+                    type: "credit",
+                  }),
+              },
+              {
+                accessor: `${ActivityPersonType.TENANT}.balance`,
+                title: "Saldo",
+                render: (activity) =>
+                  renderBalanceMovementCell({
+                    activity,
+                    assignedTo: ActivityPersonType.TENANT,
+                    type: "total",
+                  }),
+              },
+            ],
+          },
+          {
+            id: "owner",
+            title: "Propietario",
+            columns: [
+              {
+                accessor: `${ActivityPersonType.OWNER}.debit`,
+                title: "Debe",
+                render: (activity) =>
+                  renderBalanceMovementCell({
+                    activity,
+                    assignedTo: ActivityPersonType.OWNER,
+                    type: "debit",
+                  }),
+              },
+              {
+                accessor: `${ActivityPersonType.OWNER}.credit`,
+                title: "Haber",
+                render: (activity) =>
+                  renderBalanceMovementCell({
+                    activity,
+                    assignedTo: ActivityPersonType.OWNER,
+                    type: "credit",
+                  }),
+              },
+              {
+                accessor: `${ActivityPersonType.OWNER}.balance`,
+                title: "Saldo",
+                render: (activity) =>
+                  renderBalanceMovementCell({
+                    activity,
+                    assignedTo: ActivityPersonType.OWNER,
+                    type: "total",
+                  }),
+              },
+              {
+                accessor: "actions",
+                title: "Acciones",
+                render: (activity) => (
+                  <Group spacing={0} position="right" noWrap>
+                    <ActionIcon onClick={() => handleOpenEditActivity(activity)}>
+                      <IconEdit size="1rem" stroke={1.5} />
+                    </ActionIcon>
+                    <ActionIcon color="red" onClick={() => handleDeleteActivity(activity)}>
+                      <IconTrash size="1rem" stroke={1.5} />
+                    </ActionIcon>
+                  </Group>
+                ),
+              },
+            ],
+          },
+        ]}
+        records={activitiesWithMovements?.rows}
+      />
+    </Paper>
   )
 }

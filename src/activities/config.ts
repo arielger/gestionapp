@@ -10,3 +10,8 @@ export const activityPersonLabels: Record<ActivityPersonType, string> = {
   OWNER: "Propietario",
   TENANT: "Inquilino",
 }
+
+export enum ActivityTransactionType {
+  DEBIT = "DEBIT",
+  CREDIT = "CREDIT",
+}

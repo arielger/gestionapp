@@ -2,7 +2,7 @@ import { Suspense } from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { ActionIcon, Button, Flex, Group, Paper, Table, Title } from "@mantine/core"
+import { ActionIcon, Button, Group } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 import { useRouter } from "next/router"
 
@@ -12,16 +12,16 @@ import Layout from "src/core/layouts/Layout"
 import getContracts from "src/contracts/queries/getContracts"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 
+// TODO: Check if we should remove
 export const ContractsList = () => {
   const router = useRouter()
-  const { items, page, count, goToPage, recordsPerPage } = usePaginatedTable({
+  const { tableProps } = usePaginatedTable({
     query: getContracts,
   })
 
   return (
     <>
       <DataTable
-        records={items}
         columns={[
           {
             accessor: "id",
@@ -63,10 +63,7 @@ export const ContractsList = () => {
             ),
           },
         ]}
-        page={page + 1}
-        onPageChange={(newPage) => goToPage(newPage)}
-        totalRecords={count}
-        recordsPerPage={recordsPerPage}
+        {...tableProps}
       />
     </>
   )

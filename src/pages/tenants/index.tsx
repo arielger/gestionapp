@@ -2,7 +2,7 @@ import { Suspense } from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { ActionIcon, Button, Flex, Group, Paper, Table, Title } from "@mantine/core"
+import { ActionIcon, Button, Group } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 
 import { DataTable } from "src/core/components/DataTable"
@@ -10,25 +10,19 @@ import Layout from "src/core/layouts/Layout"
 import getTenants from "src/tenants/queries/getTenants"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 import { PageHeader } from "src/layout/components/PageHeader"
+import { personTableCommonColumns } from "src/real-state-owners/config"
 
 export const TenantsList = () => {
-  const { items, page, count, goToPage, recordsPerPage } = usePaginatedTable({
+  const { tableProps } = usePaginatedTable({
     query: getTenants,
   })
 
   return (
     <>
       <DataTable
-        records={items}
+        {...tableProps}
         columns={[
-          {
-            accessor: "id",
-            title: "#",
-            textAlignment: "right",
-            width: 60,
-          },
-          { accessor: "firstName", title: "Nombre" },
-          { accessor: "lastName", title: "Apellido" },
+          ...personTableCommonColumns,
           {
             accessor: "actions",
             title: "Acciones",
@@ -52,10 +46,6 @@ export const TenantsList = () => {
             ),
           },
         ]}
-        page={page + 1}
-        onPageChange={(newPage) => goToPage(newPage)}
-        totalRecords={count}
-        recordsPerPage={recordsPerPage}
       />
     </>
   )
