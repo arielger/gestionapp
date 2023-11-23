@@ -1,13 +1,27 @@
 import { z } from "zod"
 
-export const CreatePropertySchema = z.object({
+export const PropertyBaseSchema = z.object({
   address: z.string(),
+})
+
+export const CreatePropertyFormSchema = PropertyBaseSchema.extend({
+  owners: z.array(
+    z.string().refine(
+      (v) => {
+        let n = Number(v)
+        return !isNaN(n) && v?.length > 0
+      },
+      { message: "Ingrese un número valido" }
+    )
+  ),
+})
+
+export const CreatePropertyMutationSchema = PropertyBaseSchema.extend({
   owners: z.array(z.number()),
 })
-export const UpdatePropertySchema = z.object({
+
+export const UpdatePropertyMutationSchema = CreatePropertyMutationSchema.extend({
   id: z.number(),
-  address: z.string(),
-  owners: z.array(z.number()),
 })
 
 export const DeletePropertySchema = z.object({

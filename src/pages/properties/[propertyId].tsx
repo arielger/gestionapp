@@ -4,8 +4,10 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useQuery, useMutation } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
-import { Anchor, Button, Flex, Paper, Badge, Center, Loader } from "@mantine/core"
+import { Anchor, Button, Flex, Paper, Badge, Center, Loader, Modal } from "@mantine/core"
+import { useDisclosure } from "@mantine/hooks"
 import { IconCheck } from "@tabler/icons-react"
+import { notifications } from "@mantine/notifications"
 
 import Layout from "src/core/layouts/Layout"
 import getProperty from "src/properties/queries/getProperty"
@@ -14,12 +16,15 @@ import { PageHeader } from "src/layout/components/PageHeader"
 import { DetailsList } from "src/core/components/DetailsList"
 import { PersonList } from "src/real-state-owners/components/PersonList"
 import { ActivitiesBalance } from "src/activities/components/ActivitiesBalance"
+import { ContractForm } from "src/contracts/components/ContractForm"
+import createContract from "src/contracts/mutations/createContract"
+import { CreateContractSchema } from "src/contracts/schemas"
 
 export const Property = () => {
   const router = useRouter()
   const propertyId = useParam("propertyId", "number")!
 
-  const [property, { isLoading: isLoadingProperty }] = useQuery(
+  const [property, { isLoading: isLoadingProperty, refetch: refetchProperty }] = useQuery(
     getProperty,
     { id: propertyId },
     {
@@ -31,6 +36,10 @@ export const Property = () => {
   const currentContract = property?.Contract?.[0]
 
   const [deletePropertyMutation] = useMutation(deleteProperty)
+
+  const [createContractMutation, { isLoading }] = useMutation(createContract)
+  const [isCreateContractOpen, { open: openCreateContractModal, close: closeCreateContractModal }] =
+    useDisclosure(false)
 
   return (
     <>
@@ -73,9 +82,7 @@ export const Property = () => {
             </Button>
 
             {!property?.Contract?.length && (
-              <Link href={Routes.NewContractPage({ propertyId: propertyId })}>
-                <Button>Crear contrato</Button>
-              </Link>
+              <Button onClick={openCreateContractModal}>Crear contrato</Button>
             )}
           </Flex>
         </PageHeader>
@@ -107,23 +114,14 @@ export const Property = () => {
                       {
                         title: "Estado",
                         value: (
-                          <Anchor
-                            size="sm"
-                            component={Link}
-                            href={Routes.ShowContractPage({
-                              propertyId: property.id,
-                              contractId: currentContract.id,
-                            })}
+                          <Badge
+                            leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
+                            variant="light"
+                            color="green"
+                            radius="xs"
                           >
-                            <Badge
-                              leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
-                              variant="light"
-                              color="green"
-                              radius="xs"
-                            >
-                              Alquilada
-                            </Badge>
-                          </Anchor>
+                            Alquilada
+                          </Badge>
                         ),
                       },
                       {
@@ -167,6 +165,39 @@ export const Property = () => {
           )}
         </Paper>
         {currentContract && <ActivitiesBalance contractId={currentContract.id} />}
+        <Modal
+          opened={isCreateContractOpen}
+          onClose={closeCreateContractModal}
+          title="Crear contrato"
+        >
+          <ContractForm
+            isLoading={isLoading}
+            submitText="Crear"
+            schema={CreateContractSchema.omit({ propertyId: true })}
+            // initialValues={{}}
+            onSubmit={async (values) => {
+              try {
+                await createContractMutation({
+                  ...values,
+                  propertyId: propertyId,
+                })
+
+                closeCreateContractModal()
+
+                notifications.show({
+                  title: "Contrato creado exitosamente",
+                  message: "",
+                  color: "green",
+                  icon: <IconCheck />,
+                })
+
+                void refetchProperty()
+              } catch (error: any) {
+                console.error(error)
+              }
+            }}
+          />
+        </Modal>
       </div>
     </>
   )

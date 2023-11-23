@@ -1,9 +1,9 @@
 import { resolver } from "@blitzjs/rpc"
 import db from "db"
-import { CreatePropertySchema } from "../schemas"
+import { CreatePropertyMutationSchema } from "../schemas"
 
 export default resolver.pipe(
-  resolver.zod(CreatePropertySchema),
+  resolver.zod(CreatePropertyMutationSchema),
   resolver.authorize(),
   async (input, ctx) => {
     const property = await db.property.create({

@@ -3,7 +3,7 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useMutation } from "@blitzjs/rpc"
 import Layout from "src/core/layouts/Layout"
-import { CreatePropertySchema } from "src/properties/schemas"
+import { CreatePropertyFormSchema } from "src/properties/schemas"
 import createProperty from "src/properties/mutations/createProperty"
 import { PropertyForm } from "src/properties/components/PropertyForm"
 import { Suspense } from "react"
@@ -22,9 +22,7 @@ const NewPropertyPage = () => {
         <Paper shadow="xs" p="xl">
           <PropertyForm
             submitText="Crear"
-            schema={CreatePropertySchema.extend({
-              owners: z.array(z.string()),
-            })}
+            schema={CreatePropertyFormSchema}
             initialValues={{
               address: "",
               owners: [],

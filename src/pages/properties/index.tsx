@@ -90,23 +90,14 @@ export const PropertiesList = () => {
             title: "Estado",
             render: (property) =>
               property?.Contract?.length > 0 ? (
-                <Anchor
-                  size="sm"
-                  component={Link}
-                  href={Routes.ShowContractPage({
-                    propertyId: property.id,
-                    contractId: property.Contract[0]!.id,
-                  })}
+                <Badge
+                  leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
+                  variant="light"
+                  color="green"
+                  radius="xs"
                 >
-                  <Badge
-                    leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
-                    variant="light"
-                    color="green"
-                    radius="xs"
-                  >
-                    Alquilada
-                  </Badge>
-                </Anchor>
+                  Alquilada
+                </Badge>
               ) : (
                 <Badge opacity={0.5} variant="light" color="gray" radius="xs">
                   No alquilada
