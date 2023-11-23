@@ -1,9 +1,9 @@
 import { resolver } from "@blitzjs/rpc"
 import db from "db"
-import { UpdatePropertySchema } from "../schemas"
+import { UpdatePropertyMutationSchema } from "../schemas"
 
 export default resolver.pipe(
-  resolver.zod(UpdatePropertySchema),
+  resolver.zod(UpdatePropertyMutationSchema),
   resolver.authorize(),
   async ({ id, ...data }, ctx) => {
     const property = await db.property.update({

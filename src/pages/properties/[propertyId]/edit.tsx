@@ -6,7 +6,7 @@ import { useRouter } from "next/router"
 import { useQuery, useMutation } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
 
-import { UpdatePropertySchema } from "src/properties/schemas"
+import { CreatePropertyFormSchema } from "src/properties/schemas"
 import getProperty from "src/properties/queries/getProperty"
 import updateProperty from "src/properties/mutations/updateProperty"
 import { PropertyForm } from "src/properties/components/PropertyForm"
@@ -31,7 +31,7 @@ export const EditProperty = () => {
   const initialValues = {
     ...property,
     address: property?.address ?? "",
-    owners: property?.owners ? property.owners.map((owner) => owner.id) : [],
+    owners: property?.owners ? property.owners.map((owner) => String(owner.id)) : [],
   }
 
   // TODO: Fix property edit - form errors not working properly
@@ -51,7 +51,7 @@ export const EditProperty = () => {
           ) : (
             <PropertyForm
               submitText="Editar"
-              schema={UpdatePropertySchema.omit({ id: true })}
+              schema={CreatePropertyFormSchema}
               initialValues={initialValues}
               ownersInitialValues={property.owners.map(personToSelectItem)}
               isLoading={isLoadingUpdate}
@@ -60,6 +60,7 @@ export const EditProperty = () => {
                   const updated = await updatePropertyMutation({
                     id: property.id,
                     ...values,
+                    owners: values.owners?.map((o) => Number(o)),
                   })
                   await setQueryData(updated)
                   await router.push(Routes.ShowPropertyPage({ propertyId: updated.id }))
