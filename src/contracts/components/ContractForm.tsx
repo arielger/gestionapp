@@ -31,9 +31,15 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
               <DatePickerInput
                 sx={{ flex: 1 }}
                 label="Inicio"
+                popoverProps={{ withinPortal: true }}
                 {...form.getInputProps("startDate")}
               />
-              <DatePickerInput sx={{ flex: 1 }} label="Fin" {...form.getInputProps("endDate")} />
+              <DatePickerInput
+                sx={{ flex: 1 }}
+                label="Fin"
+                popoverProps={{ withinPortal: true }}
+                {...form.getInputProps("endDate")}
+              />
             </Flex>
             <NumberInput label="Periodos" {...form.getInputProps("periods")} />
             <NumberInput label="Monto" {...form.getInputProps("rentAmount")} />

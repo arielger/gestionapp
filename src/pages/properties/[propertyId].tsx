@@ -174,7 +174,9 @@ export const Property = () => {
             isLoading={isLoading}
             submitText="Crear"
             schema={CreateContractSchema.omit({ propertyId: true })}
-            // initialValues={{}}
+            initialValues={{
+              startDate: new Date(),
+            }}
             onSubmit={async (values) => {
               try {
                 await createContractMutation({
