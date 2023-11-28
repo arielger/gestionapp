@@ -5,18 +5,16 @@ TODO:
 - [OK] Add custom activity types
 - [OK] Delete activities
 - [OK] Update activities
-- [] Review contract pages -> should be handled via property pages
+- [OK] Review contract pages -> should be handled via property pages
+- [OK] Add payment entity
+- [ ] Payments
+
+  - [ ] You should only be able to pay a debt that is not already payed
+  - [ ] You should be able to register a payment related to a tenant or owner
+
 - [] i18n form validation to spanish
-- [] Improve balance view (property details)
-- [] Revisar todos los flujos
-
-  - List
-  - Detail
-  - Create new
-  - Edit
-  - Delete
-
 - [ ] Handle error when going to authenticated route
+- [ ] Handle form errors (not handled anywhere)
 
 TECH DEBT:
 

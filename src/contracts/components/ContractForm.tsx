@@ -19,13 +19,11 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
               // TODO: Add initial values for edit
               initialValues={[]}
               {...form.getInputProps("owners")}
-              onChange={(values) => form.getInputProps("owners").onChange(values)}
             />
             <TenantSelect
               // TODO: Add initial values for edit
               initialValues={[]}
               {...form.getInputProps("tenants")}
-              onChange={(values) => form.getInputProps("tenants").onChange(values)}
             />
             <Flex direction="row" gap="md">
               <DatePickerInput
@@ -41,7 +39,7 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
                 {...form.getInputProps("endDate")}
               />
             </Flex>
-            <NumberInput label="Periodos" {...form.getInputProps("periods")} />
+            <NumberInput label="Periodos (mensual)" {...form.getInputProps("periods")} />
             <NumberInput label="Monto" {...form.getInputProps("rentAmount")} />
           </Flex>
         )

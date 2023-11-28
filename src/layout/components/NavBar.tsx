@@ -11,11 +11,10 @@ import {
   Flex,
   Text,
 } from "@mantine/core"
-import { IconHome, IconLogout, IconUser } from "@tabler/icons-react"
+import { IconCreditCard, IconHome, IconLogout, IconUser } from "@tabler/icons-react"
 import { useMutation } from "@blitzjs/rpc"
 import Link from "next/link"
 import { Routes } from "@blitzjs/next"
-import { useQuery } from "@blitzjs/rpc"
 
 import logout from "src/auth/mutations/logout"
 import { useCurrentUser } from "src/users/hooks/useCurrentUser"
@@ -80,6 +79,7 @@ const data = [
   { link: Routes.PropertiesPage(), label: "Propiedades", icon: IconHome },
   { link: Routes.RealStateOwnersPage(), label: "Propietarios", icon: IconUser },
   { link: Routes.TenantsPage(), label: "Inquilinos", icon: IconUser },
+  { link: Routes.NewPaymentPage(), label: "Nuevo pago", icon: IconCreditCard },
 ]
 
 export function NavigationBar() {
