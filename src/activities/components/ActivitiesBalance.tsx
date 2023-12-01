@@ -58,7 +58,7 @@ const getActivityTitle = (activity: ActivityWithDetails): string | undefined => 
   if (activity.type === ActivityType.RENT) {
     return activityTypeTranslations.RENT.replace(
       "{month}",
-      activity.createdAt.toLocaleString("default", { month: "long" })
+      activity.date.toLocaleString("es-AR", { month: "long" })
     )
   }
 
@@ -66,9 +66,21 @@ const getActivityTitle = (activity: ActivityWithDetails): string | undefined => 
 }
 
 export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
+  // set date in state so it's not recalculated on every render
+  // preveng infinite loop in db query
+  const [currentDate] = useState(new Date())
+
   const [activitiesData, { isLoading: isLoadingActivities, refetch: refetchActivities }] = useQuery(
     getActivities,
-    { contractId },
+    {
+      where: {
+        contractId,
+        // activities from the past
+        date: {
+          lte: currentDate,
+        },
+      },
+    },
     {
       suspense: false,
       enabled: !!contractId,
@@ -229,9 +241,9 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
             title: "General",
             columns: [
               {
-                accessor: "createdAt",
+                accessor: "date",
                 title: "Fecha",
-                render: ({ createdAt }) => createdAt.toLocaleString(),
+                render: ({ date }) => date.toLocaleString(),
               },
               { accessor: "type", title: "Tipo", render: getActivityTitle },
             ],

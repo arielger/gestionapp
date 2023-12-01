@@ -1,5 +1,5 @@
 import { resolver } from "@blitzjs/rpc"
-import db, { ActivityPersonType, ActivityType, PaymentPayer } from "db"
+import db, { ActivityPersonType, ActivityType } from "db"
 import { CreatePaymentSchema } from "../schemas"
 
 export default resolver.pipe(
@@ -11,7 +11,6 @@ export default resolver.pipe(
         date: input.date,
         contractId: input.contractId,
         organizationId: ctx.session.orgId,
-        payer: PaymentPayer.TENANT,
         items: {
           createMany: {
             data: [

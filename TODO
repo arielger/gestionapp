@@ -22,4 +22,5 @@ TECH DEBT:
 - [OK] Create production database + migrations
   - database
 - [] Add dead code check before commiting
+- [] Integrate testing into pipelines (commit hook / ci-cd)
 - [] Add eslint for unused variables

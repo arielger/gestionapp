@@ -134,16 +134,8 @@ export const Property = () => {
                         ),
                       },
                       {
-                        title: "Inicio",
-                        value: currentContract.startDate.toLocaleString(),
-                      },
-                      {
-                        title: "Fin",
-                        value: currentContract.startDate.toLocaleString(),
-                      },
-                      {
-                        title: "Periodos",
-                        value: currentContract.periods,
+                        title: "Periodo",
+                        value: `${currentContract.startDate.toLocaleDateString()} - ${currentContract.endDate.toLocaleDateString()}`,
                       },
                       {
                         title: "Monto",
