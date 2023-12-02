@@ -114,6 +114,7 @@ export function ContractSearchForm({
                 </Button>
               </Flex>
               <DataTable
+                idAccessor={(row) => row.contract.id}
                 minHeight={!searchedContracts?.length ? 200 : undefined}
                 noRecordsText="No se encontraron contratos relacionados a la búsqueda"
                 fetching={isSearching}

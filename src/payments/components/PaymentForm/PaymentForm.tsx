@@ -1,21 +1,34 @@
 import React, { useState } from "react"
-import { z } from "zod"
-import { Button, Text, Flex, NumberInput } from "@mantine/core"
-import { DatePickerInput } from "@mantine/dates"
+import { Button, Text, Flex } from "@mantine/core"
+import { notifications } from "@mantine/notifications"
 
-import Form, { FormProps } from "src/core/components/Form"
 import { ContractSearchForm, ContractWithRelatedEntities } from "./ContractSearchForm"
 import { getPersonFullName } from "src/real-state-owners/utils"
+import { SelectActivitiesTable } from "./SelectActivitiesTable"
+import { Activity } from "@prisma/client"
+import { useMutation } from "@blitzjs/rpc"
+import createPayment from "src/payments/mutations/createPayment"
+import { IconCheck } from "@tabler/icons-react"
+import router from "next/router"
+import { Routes } from "@blitzjs/next"
 
-export function PaymentForm<S extends z.ZodType<any, any>>({
-  initialValues,
-  ...props
-}: FormProps<S>) {
+export function PaymentForm() {
   const [selectedContract, setSelectedContract] = useState<ContractWithRelatedEntities | null>(null)
+  const [selectedActivities, setSelectedActivities] = useState<Activity[]>([])
+
+  const [createPaymentMutation, { isLoading }] = useMutation(createPayment)
+
+  const noSelectedActivities = !selectedActivities.length
 
   return (
     <>
-      {selectedContract ? (
+      {!selectedContract ? (
+        <ContractSearchForm
+          onSelectContract={(contract) => {
+            setSelectedContract(contract)
+          }}
+        />
+      ) : (
         <>
           <Flex direction="column" mb="lg">
             <Text>Contrato: </Text>
@@ -30,35 +43,48 @@ export function PaymentForm<S extends z.ZodType<any, any>>({
             </Text>
             <Button onClick={() => setSelectedContract(null)}>Cambiar contrato</Button>
           </Flex>
-          <Form
-            initialValues={{
-              date: new Date(),
-              contractId: selectedContract.id,
-              rentAmount: selectedContract.rentAmount,
-            }}
-            {...props}
-          >
-            {(form) => {
-              return (
-                <>
-                  <Text>Monto total: {selectedContract.rentAmount}</Text>
-                  <NumberInput
-                    label="Monto a pagar"
-                    hideControls
-                    {...form.getInputProps("rentAmount")}
-                  />
-                  <DatePickerInput label="Fecha" {...form.getInputProps("date")} />
-                </>
-              )
-            }}
-          </Form>
+          <SelectActivitiesTable
+            contractId={selectedContract.id}
+            selectedActivities={selectedActivities}
+            setSelectedActivities={setSelectedActivities}
+          />
+          <Flex align="center" gap="sm">
+            <Button
+              loading={isLoading}
+              disabled={noSelectedActivities}
+              onClick={async () => {
+                try {
+                  await createPaymentMutation({
+                    contractId: selectedContract.id,
+                    items: selectedActivities.map((activity) => ({
+                      id: activity.id,
+                      amount: activity.amount,
+                      type: activity.type,
+                    })),
+                  })
+
+                  notifications.show({
+                    title: "Pago registrado exitosamente",
+                    message: "",
+                    color: "green",
+                    icon: <IconCheck />,
+                  })
+                  await router.push(
+                    Routes.ShowPropertyPage({ propertyId: selectedContract.propertyId })
+                  )
+                } catch (error: any) {
+                  console.error(error)
+                  // return {
+                  //   [FORM_ERROR]: error.toString(),
+                  // }
+                }
+              }}
+            >
+              Registrar pago
+            </Button>
+            {noSelectedActivities && <Text>Aún no seleccionaste ninguna deuda</Text>}
+          </Flex>
         </>
-      ) : (
-        <ContractSearchForm
-          onSelectContract={(contract) => {
-            setSelectedContract(contract)
-          }}
-        />
       )}
     </>
   )

@@ -191,7 +191,6 @@ model Payment {
   id             Int          @id @default(autoincrement())
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
-  date           DateTime
   items          Activity[]
   contract       Contract     @relation(fields: [contractId], references: [id])
   contractId     Int

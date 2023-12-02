@@ -3,18 +3,21 @@ import { Text, Modal, Button, Paper, Title, Flex, ActionIcon, Group } from "@man
 import { useDisclosure } from "@mantine/hooks"
 import { notifications } from "@mantine/notifications"
 import { DataTable } from "mantine-datatable"
-import { Activity, ActivityPersonType, ActivityType } from "@prisma/client"
+import { Activity, ActivityPersonType, ActivityType, Prisma } from "@prisma/client"
 import { IconCheck, IconEdit, IconTrash } from "@tabler/icons-react"
 
 import { ActivityTransactionType } from "../config"
 import createActivity from "../mutations/createActivity"
 import getActivities from "../queries/getActivities"
-import { ActivityWithDetails } from "../queries/types"
 import { CreateActivityFormSchema, ActivityFormSchemaType } from "../schemas"
 import { ActivityForm } from "./ActivityForm"
 import deleteActivity from "../mutations/deleteActivity"
 import updateActivity from "../mutations/updateActivity"
 import { useState } from "react"
+
+export type ActivityWithDetails = Prisma.ActivityGetPayload<{
+  include: { customDetails: true; activityToPay: true }
+}>
 
 const activityTypeTranslations = {
   RENT: "Alquiler {month}",
@@ -56,9 +59,11 @@ const getActivityTitle = (activity: ActivityWithDetails): string | undefined => 
   }
 
   if (activity.type === ActivityType.RENT) {
+    // if is cancelling the rent debt we need to get the data from the related activity to pay
+    const selectedActivity = activity.isDebit ? activity : activity.activityToPay!
     return activityTypeTranslations.RENT.replace(
       "{month}",
-      activity.date.toLocaleString("es-AR", { month: "long" })
+      selectedActivity.date.toLocaleString("es-AR", { month: "long" })
     )
   }
 
@@ -79,6 +84,10 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
         date: {
           lte: currentDate,
         },
+      },
+      include: {
+        customDetails: true,
+        activityToPay: true,
       },
     },
     {
@@ -323,7 +332,9 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
                 title: "Acciones",
                 render: (activity) => (
                   <Group spacing={0} position="right" noWrap>
-                    <ActionIcon onClick={() => handleOpenEditActivity(activity)}>
+                    <ActionIcon
+                      onClick={() => handleOpenEditActivity(activity as ActivityWithDetails)}
+                    >
                       <IconEdit size="1rem" stroke={1.5} />
                     </ActionIcon>
                     <ActionIcon color="red" onClick={() => handleDeleteActivity(activity)}>

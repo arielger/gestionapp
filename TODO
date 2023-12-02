@@ -9,9 +9,10 @@ TODO:
 - [OK] Add payment entity
 - [ ] Payments
 
-  - [ ] You should only be able to pay a debt that is not already payed
+  - [OK] You should only be able to pay a debt that is not already payed
   - [ ] You should be able to register a payment related to a tenant or owner
 
+- [] Check currentDate filter when fetching activities => should be dynamic - right now is not showing the newly created activities
 - [] i18n form validation to spanish
 - [ ] Handle error when going to authenticated route
 - [ ] Handle form errors (not handled anywhere)

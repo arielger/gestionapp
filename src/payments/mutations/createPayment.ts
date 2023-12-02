@@ -1,5 +1,5 @@
 import { resolver } from "@blitzjs/rpc"
-import db, { ActivityPersonType, ActivityType } from "db"
+import db, { ActivityPersonType } from "db"
 import { CreatePaymentSchema } from "../schemas"
 
 export default resolver.pipe(
@@ -8,21 +8,19 @@ export default resolver.pipe(
   async (input, ctx) => {
     const payment = await db.payment.create({
       data: {
-        date: input.date,
         contractId: input.contractId,
         organizationId: ctx.session.orgId,
         items: {
           createMany: {
-            data: [
-              {
-                organizationId: ctx.session.orgId,
-                amount: input.rentAmount,
-                isDebit: false,
-                type: ActivityType.RENT,
-                contractId: input.contractId,
-                assignedTo: ActivityPersonType.TENANT,
-              },
-            ],
+            data: input.items.map((activity) => ({
+              organizationId: ctx.session.orgId,
+              amount: activity.amount,
+              isDebit: false,
+              type: activity.type,
+              contractId: input.contractId,
+              assignedTo: ActivityPersonType.TENANT,
+              activityToPayId: activity.id,
+            })),
           },
         },
       },
