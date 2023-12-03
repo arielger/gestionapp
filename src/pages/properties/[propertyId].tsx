@@ -134,16 +134,8 @@ export const Property = () => {
                         ),
                       },
                       {
-                        title: "Inicio",
-                        value: currentContract.startDate.toLocaleString(),
-                      },
-                      {
-                        title: "Fin",
-                        value: currentContract.startDate.toLocaleString(),
-                      },
-                      {
-                        title: "Periodos",
-                        value: currentContract.periods,
+                        title: "Periodo",
+                        value: `${currentContract.startDate.toLocaleDateString()} - ${currentContract.endDate.toLocaleDateString()}`,
                       },
                       {
                         title: "Monto",
@@ -174,9 +166,6 @@ export const Property = () => {
             isLoading={isLoading}
             submitText="Crear"
             schema={CreateContractSchema.omit({ propertyId: true })}
-            initialValues={{
-              startDate: new Date(),
-            }}
             onSubmit={async (values) => {
               try {
                 await createContractMutation({

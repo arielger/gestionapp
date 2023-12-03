@@ -39,7 +39,7 @@ export const RealStateOwner = () => {
         <PageHeader
           title={realStateOwner ? getPersonFullName(realStateOwner) : "..."}
           breadcrumbs={[
-            <Anchor component={Link} href={Routes.PropertiesPage()} key="properties">
+            <Anchor component={Link} href={Routes.RealStateOwnersPage()} key="properties">
               Propietarios
             </Anchor>,
             <Anchor

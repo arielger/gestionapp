@@ -23,6 +23,7 @@ model Organization {
   Tenant         Tenant[]
   Contract       Contract[]
   Activity       Activity[]
+  Payment        Payment[]
 }
 
 model Membership {
@@ -101,6 +102,7 @@ model Property {
   organizationId Int
 }
 
+// TODO: Check if it makes sense to merge Tenant and RealStateOwner
 model RealStateOwner {
   id             Int          @id @default(autoincrement())
   createdAt      DateTime     @default(now())
@@ -138,9 +140,9 @@ model Contract {
   organizationId Int
   startDate      DateTime
   endDate        DateTime
-  periods        Int
   rentAmount     Float
   activities     Activity[]
+  Payment        Payment[]
 }
 
 enum ActivityType {
@@ -158,6 +160,7 @@ model Activity {
   id              Int                    @id @default(autoincrement())
   createdAt       DateTime               @default(now())
   updatedAt       DateTime               @updatedAt
+  date            DateTime               @default(now())
   organization    Organization           @relation(fields: [organizationId], references: [id])
   organizationId  Int
   amount          Float
@@ -168,6 +171,13 @@ model Activity {
   assignedTo      ActivityPersonType
   customDetailsId Int?                   @unique
   customDetails   ActivityCustomDetails?
+  payment         Payment?               @relation(fields: [paymentId], references: [id])
+  paymentId       Int?
+
+  // Define if credit activity is paying a debit activity
+  activityToPay   Activity?  @relation("ActivityToPay", fields: [activityToPayId], references: [id])
+  activityToPayId Int?
+  paidBy          Activity[] @relation("ActivityToPay")
 }
 
 model ActivityCustomDetails {
@@ -175,4 +185,15 @@ model ActivityCustomDetails {
   activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
   activityId Int      @unique
   title      String
+}
+
+model Payment {
+  id             Int          @id @default(autoincrement())
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  items          Activity[]
+  contract       Contract     @relation(fields: [contractId], references: [id])
+  contractId     Int
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId Int
 }
