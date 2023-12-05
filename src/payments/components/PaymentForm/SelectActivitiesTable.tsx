@@ -28,7 +28,7 @@ export function SelectActivitiesTable({
         },
         // Filter activities that aren't paid
         // TODO: Handle partial payment
-        paidBy: {
+        relatedActivities: {
           none: {},
         },
       },

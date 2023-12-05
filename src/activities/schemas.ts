@@ -2,6 +2,9 @@ import { ActivityPersonType, ActivityType } from "@prisma/client"
 import { z } from "zod"
 import { ActivityTransactionType } from "./config"
 
+// TODO: review these types, there is a lot of repetition here
+// and a lot of hacks to make zod work
+
 const CreateActivityBaseSchema = z.object({
   // template: __fieldName__: z.__zodType__(),
   amount: z.number(),
@@ -10,6 +13,11 @@ const CreateActivityBaseSchema = z.object({
 
 const CreateActivityRentSchema = {
   type: z.literal(ActivityType.RENT),
+  details: z.undefined(),
+}
+
+const CreateActivityRentFeeSchema = {
+  type: z.literal(ActivityType.RENT_FEE),
   details: z.undefined(),
 }
 
@@ -28,6 +36,7 @@ const CreateActivityBaseFormSchema = CreateActivityBaseSchema.extend({
 
 export const CreateActivityFormSchema = z.discriminatedUnion("type", [
   CreateActivityBaseFormSchema.extend(CreateActivityRentSchema),
+  CreateActivityBaseFormSchema.extend(CreateActivityRentFeeSchema),
   CreateActivityBaseFormSchema.extend(CreateActivityCustomSchema),
 ])
 
@@ -40,26 +49,24 @@ const CreateActivityBaseMutationSchema = CreateActivityBaseSchema.extend({
   isDebit: z.boolean(),
 })
 
+const mutationSchemas = z.discriminatedUnion("type", [
+  CreateActivityBaseMutationSchema.extend(CreateActivityRentSchema),
+  CreateActivityBaseMutationSchema.extend(CreateActivityRentFeeSchema),
+  CreateActivityBaseMutationSchema.extend(CreateActivityCustomSchema),
+])
+
 // need to add input wrapper to fix types
 // related bug: https://github.com/blitz-js/blitz/issues/3988#issuecomment-1326566877
 export const CreateActivityMutationSchema = z.object({
-  input: z.discriminatedUnion("type", [
-    CreateActivityBaseMutationSchema.extend(CreateActivityRentSchema),
-    CreateActivityBaseMutationSchema.extend(CreateActivityCustomSchema),
-  ]),
+  input: mutationSchemas,
 })
 
 export const UpdateActivityMutationSchema = z.object({
-  input: z
-    .discriminatedUnion("type", [
-      CreateActivityBaseMutationSchema.extend(CreateActivityRentSchema),
-      CreateActivityBaseMutationSchema.extend(CreateActivityCustomSchema),
-    ])
-    .and(
-      z.object({
-        id: z.number(),
-      })
-    ),
+  input: mutationSchemas.and(
+    z.object({
+      id: z.number(),
+    })
+  ),
 })
 
 export const DeleteActivitySchema = z.object({

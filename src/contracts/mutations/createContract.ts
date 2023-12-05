@@ -1,10 +1,10 @@
 import { resolver } from "@blitzjs/rpc"
 import db, { ActivityPersonType, ActivityType } from "db"
-import { CreateContractSchema } from "../schemas"
+import { CreateContractMutationSchema } from "../schemas"
 import { getContractRentPaymentDates } from "../utils/utils"
 
 export default resolver.pipe(
-  resolver.zod(CreateContractSchema),
+  resolver.zod(CreateContractMutationSchema),
   resolver.authorize(),
   async (input, ctx) => {
     const rentDates = getContractRentPaymentDates(input.startDate, input.endDate)

@@ -16,6 +16,7 @@ import { Form, FormProps } from "src/core/components/Form"
 import { z } from "zod"
 import { activityPersonLabels, ActivityTransactionType, activityTypesLabels } from "../config"
 
+// TODO: review if we should be able to edit activities
 export function ActivityForm<S extends z.ZodType<any, any>>(props: FormProps<S>) {
   return (
     <Form<S> {...props}>
