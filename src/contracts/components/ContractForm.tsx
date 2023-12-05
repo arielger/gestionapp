@@ -1,5 +1,5 @@
 import React from "react"
-import { Accordion, Flex, NumberInput, Table } from "@mantine/core"
+import { Accordion, Flex, NumberInput, Select, Table, Text } from "@mantine/core"
 import { DateInput } from "@mantine/dates"
 import { z } from "zod"
 
@@ -7,10 +7,17 @@ import { Form, FormProps } from "src/core/components/Form"
 import { RealStateOwnerSelect } from "src/real-state-owners/components/RealStateOwnerSelect"
 import { TenantSelect } from "src/tenants/components/TenantSelect"
 import { getContractRentPaymentDates } from "../utils/utils"
+import { ContractFeeType } from "@prisma/client"
 
 export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>) {
   return (
-    <Form<S> {...props}>
+    <Form<S>
+      initialValues={{
+        feeType: ContractFeeType.PERCENTAGE,
+        fee: 0.1,
+      }}
+      {...props}
+    >
       {(form) => {
         return (
           <Flex direction="column" gap="sm">
@@ -42,6 +49,31 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
               />
             </Flex>
             <NumberInput label="Monto" hideControls {...form.getInputProps("rentAmount")} />
+
+            <Text>Comisión</Text>
+            <Flex direction="row" gap="md">
+              <Select
+                label="Tipo"
+                data={[
+                  { value: ContractFeeType.PERCENTAGE, label: "Porcentaje" },
+                  { value: ContractFeeType.FIXED, label: "Fijo" },
+                ]}
+                {...form.getInputProps("feeType")}
+              />
+              <NumberInput
+                label="Valor"
+                min={0}
+                hideControls
+                precision={2}
+                // TODO: Format as percentage
+                {...form.getInputProps("fee")}
+                {...(form.values.feeType === ContractFeeType.PERCENTAGE
+                  ? {
+                      max: 1,
+                    }
+                  : {})}
+              />
+            </Flex>
 
             {!!form.values.startDate && !!form.values.startDate && !!form.values.rentAmount && (
               <Accordion defaultValue="rent" variant="contained">

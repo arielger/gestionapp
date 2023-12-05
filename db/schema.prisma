@@ -128,6 +128,11 @@ model Tenant {
   email          String?
 }
 
+enum ContractFeeType {
+  PERCENTAGE
+  FIXED
+}
+
 model Contract {
   id             Int              @id @default(autoincrement())
   createdAt      DateTime         @default(now())
@@ -143,10 +148,13 @@ model Contract {
   rentAmount     Float
   activities     Activity[]
   Payment        Payment[]
+  fee            Float
+  feeType        ContractFeeType
 }
 
 enum ActivityType {
   RENT
+  RENT_FEE
   // used for activities with custom title / information
   CUSTOM
 }
@@ -174,10 +182,12 @@ model Activity {
   payment         Payment?               @relation(fields: [paymentId], references: [id])
   paymentId       Int?
 
-  // Define if credit activity is paying a debit activity
-  activityToPay   Activity?  @relation("ActivityToPay", fields: [activityToPayId], references: [id])
-  activityToPayId Int?
-  paidBy          Activity[] @relation("ActivityToPay")
+  // Used to link to original activity
+  // For payments it will link to the paid activity
+  // For fees it will link to the activity that generated the fee
+  originActivity    Activity?  @relation("RelatedActivity", fields: [originActivityId], references: [id])
+  originActivityId  Int?
+  relatedActivities Activity[] @relation("RelatedActivity")
 }
 
 model ActivityCustomDetails {

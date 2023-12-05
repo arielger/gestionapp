@@ -18,7 +18,8 @@ import { PersonList } from "src/real-state-owners/components/PersonList"
 import { ActivitiesBalance } from "src/activities/components/ActivitiesBalance"
 import { ContractForm } from "src/contracts/components/ContractForm"
 import createContract from "src/contracts/mutations/createContract"
-import { CreateContractSchema } from "src/contracts/schemas"
+import { CreateContractFormSchema } from "src/contracts/schemas"
+import { ContractDetails } from "src/contracts/components/ContractDetails"
 
 export const Property = () => {
   const router = useRouter()
@@ -86,76 +87,64 @@ export const Property = () => {
             )}
           </Flex>
         </PageHeader>
-        <Paper shadow="xs" p="xl">
-          {/* TODO: Prevent repeating elements with properties table - move to general file */}
-          {isLoadingProperty || !property ? (
-            <Center>
-              <Loader />
-            </Center>
-          ) : (
-            <DetailsList
-              details={[
-                { title: "Dirección", value: property.address },
-                {
-                  title: "Fecha de creación",
-                  value: property.createdAt.toLocaleDateString(),
-                },
-                {
-                  title: "Propietario/s",
-                  value: (
-                    <PersonList
-                      list={property.owners ?? []}
-                      handlePress={(id) => Routes.ShowRealStateOwnerPage({ realStateOwnerId: id })}
-                    />
-                  ),
-                },
-                ...(currentContract
-                  ? [
-                      {
-                        title: "Estado",
-                        value: (
-                          <Badge
-                            leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
-                            variant="light"
-                            color="green"
-                            radius="xs"
-                          >
-                            Alquilada
-                          </Badge>
-                        ),
-                      },
-                      {
-                        title: "Inquilino/s",
-                        value: (
-                          <PersonList
-                            list={currentContract.tenants ?? []}
-                            handlePress={(id) => Routes.ShowTenantPage({ tenantId: id })}
-                          />
-                        ),
-                      },
-                      {
-                        title: "Periodo",
-                        value: `${currentContract.startDate.toLocaleDateString()} - ${currentContract.endDate.toLocaleDateString()}`,
-                      },
-                      {
-                        title: "Monto",
-                        value: new Intl.NumberFormat().format(currentContract.rentAmount),
-                      },
-                    ]
-                  : [
-                      {
-                        title: "Estado",
-                        value: (
-                          <Badge opacity={0.5} variant="light" color="gray" radius="xs">
-                            No alquilada
-                          </Badge>
-                        ),
-                      },
-                    ]),
-              ]}
-            />
-          )}
-        </Paper>
+        <Flex gap="md">
+          <Paper shadow="xs" p="xl" sx={{ flex: 1 }}>
+            {/* TODO: Prevent repeating elements with properties table - move to general file */}
+            {isLoadingProperty || !property ? (
+              <Center>
+                <Loader />
+              </Center>
+            ) : (
+              <DetailsList
+                details={[
+                  { title: "Dirección", value: property.address },
+                  {
+                    title: "Fecha de creación",
+                    value: property.createdAt.toLocaleDateString(),
+                  },
+                  {
+                    title: "Propietario/s",
+                    value: (
+                      <PersonList
+                        list={property.owners ?? []}
+                        handlePress={(id) =>
+                          Routes.ShowRealStateOwnerPage({ realStateOwnerId: id })
+                        }
+                      />
+                    ),
+                  },
+                  ...(currentContract
+                    ? [
+                        {
+                          title: "Estado",
+                          value: (
+                            <Badge
+                              leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
+                              variant="light"
+                              color="green"
+                              radius="xs"
+                            >
+                              Alquilada
+                            </Badge>
+                          ),
+                        },
+                      ]
+                    : [
+                        {
+                          title: "Estado",
+                          value: (
+                            <Badge opacity={0.5} variant="light" color="gray" radius="xs">
+                              No alquilada
+                            </Badge>
+                          ),
+                        },
+                      ]),
+                ]}
+              />
+            )}
+          </Paper>
+          {currentContract && <ContractDetails contract={currentContract} />}
+        </Flex>
         {currentContract && <ActivitiesBalance contractId={currentContract.id} />}
         <Modal
           opened={isCreateContractOpen}
@@ -165,7 +154,7 @@ export const Property = () => {
           <ContractForm
             isLoading={isLoading}
             submitText="Crear"
-            schema={CreateContractSchema.omit({ propertyId: true })}
+            schema={CreateContractFormSchema}
             onSubmit={async (values) => {
               try {
                 await createContractMutation({
