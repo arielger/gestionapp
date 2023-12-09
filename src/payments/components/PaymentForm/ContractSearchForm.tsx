@@ -1,13 +1,13 @@
 import React, { useState } from "react"
 import { Flex, Select, Button, TextInput } from "@mantine/core"
 import { Prisma } from "@prisma/client"
-import { DataTable } from "mantine-datatable"
 import { useQuery } from "@blitzjs/rpc"
 import uniqBy from "lodash/uniqBy"
 
 import Form from "src/core/components/Form"
 import getRealStateOwners from "src/real-state-owners/queries/getRealStateOwners"
 import { getPersonFullName } from "src/real-state-owners/utils"
+import { DataTable } from "src/core/components/DataTable"
 
 type RealStateOwnerWithRelatedEntities = Prisma.RealStateOwnerGetPayload<{
   include: {
@@ -109,16 +109,14 @@ export function ContractSearchForm({
                     setSearchText(e.currentTarget.value)
                   }}
                 />
-                <Button sx={{ alignSelf: "end" }} type="submit" loading={isSearching}>
+                <Button style={{ alignSelf: "end" }} type="submit" loading={isSearching}>
                   Buscar
                 </Button>
               </Flex>
               <DataTable
                 idAccessor={(row) => row.contract.id}
-                minHeight={!searchedContracts?.length ? 200 : undefined}
                 noRecordsText="No se encontraron contratos relacionados a la búsqueda"
                 fetching={isSearching}
-                withBorder
                 withColumnBorders
                 records={searchedContracts}
                 columns={[

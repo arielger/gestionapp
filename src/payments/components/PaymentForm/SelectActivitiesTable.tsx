@@ -1,10 +1,10 @@
 import React, { useState } from "react"
-import { DataTable } from "mantine-datatable"
 import { Flex, Text } from "@mantine/core"
 import { useQuery } from "@blitzjs/rpc"
 
 import getActivities from "src/activities/queries/getActivities"
 import { Activity } from "@prisma/client"
+import { DataTable } from "src/core/components/DataTable"
 
 export function SelectActivitiesTable({
   contractId,
@@ -50,10 +50,7 @@ export function SelectActivitiesTable({
     <>
       <Text mb="sm">Seleccioná las deudas a pagar</Text>
       <DataTable
-        // minHeight={!searchedContracts?.length ? 200 : undefined}
-        // noRecordsText="No se encontraron contratos relacionados a la búsqueda"
         fetching={isLoadingActivities}
-        withBorder
         withColumnBorders
         records={activitiesData?.items ?? []}
         selectedRecords={selectedActivities}

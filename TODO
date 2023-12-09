@@ -1,29 +1,23 @@
 TODO:
 
-- [OK] Improve tenant details and edit view
-- [OK] Fix typescript errors
-- [OK] Add custom activity types
-- [OK] Delete activities
-- [OK] Update activities
-- [OK] Review contract pages -> should be handled via property pages
-- [OK] Add payment entity
 - [ ] Payments
 
-  - [OK] You should only be able to pay a debt that is not already payed
   - [ ] You should be able to register a payment related to a tenant or owner
 
+- [] When logging out in /properties it wont take you to the login page
+- [] Calculate initial and end month payments values
 - [] When creating contract you don't need to set owner (get from property data)
 - [] Change date format to dd-mm-yyyy (move to general variable)
 - [] Check currentDate filter when fetching activities => should be dynamic - right now is not showing the newly created activities
 - [] i18n form validation to spanish
 - [ ] Handle error when going to authenticated route
 - [ ] Handle form errors (not handled anywhere)
+- [ ] i18n for routes
+- [ ] Review responsive styles (Layout)
 
 TECH DEBT:
 
-- [OK] Check eslint errors in hook (prevent pushing code with eslint errors)
-- [OK] Create production database + migrations
-  - database
+- [OK] Migrate mantine to v7
 - [] Add dead code check before commiting
 - [] Integrate testing into pipelines (commit hook / ci-cd)
 - [] Add eslint for unused variables

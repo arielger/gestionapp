@@ -5,7 +5,7 @@ import Link from "next/link"
 import { ActionIcon, Button, Flex, Group, Paper, Table, Title } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 
-import { DataTable } from "src/core/components/DataTable"
+import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
 import { PageHeader } from "src/layout/components/PageHeader"
 import Layout from "src/core/layouts/Layout"
 import get__ModelNames__ from "src/__modelNames__/queries/get__ModelNames__"
@@ -24,14 +24,12 @@ export const __ModelNames__List = () => {
           {
             accessor: "id",
             title: "#",
-            textAlignment: "right",
+            textAlign: "right",
             width: 60,
           },
           // TEMPLATE: COMPLETE TABLE
           {
-            accessor: "actions",
-            title: "Acciones",
-            textAlignment: "right",
+            ...actionsColumnConfig,
             render: (__modelName__) => (
               <Group spacing={0} position="right" noWrap>
                 <Link href={Routes.Show__ModelName__Page({ __modelName__Id: __modelName__.id })}>

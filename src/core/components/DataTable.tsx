@@ -1,8 +1,9 @@
+import React from "react"
 import { DataTable as MantineDataTable, DataTableProps } from "mantine-datatable"
 
 export const DataTable = <T,>(props: DataTableProps<T>) => (
   <MantineDataTable
-    withBorder
+    withTableBorder
     borderRadius="sm"
     highlightOnHover
     minHeight={!props.records?.length ? 240 : undefined}
@@ -10,3 +11,9 @@ export const DataTable = <T,>(props: DataTableProps<T>) => (
     {...props}
   />
 )
+
+export const actionsColumnConfig = {
+  accessor: "actions",
+  title: "Acciones",
+  textAlign: "right" as const,
+}

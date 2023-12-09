@@ -4,10 +4,10 @@ import Head from "next/head"
 import Link from "next/link"
 import { useMutation } from "@blitzjs/rpc"
 import { useRouter } from "next/router"
-import { ActionIcon, Anchor, Group, Button, Badge, TextInput } from "@mantine/core"
+import { ActionIcon, Button, Badge, TextInput, Group } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye, IconCheck, IconSearch } from "@tabler/icons-react"
 
-import { DataTable } from "src/core/components/DataTable"
+import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
 import getProperties from "src/properties/queries/getProperties"
 import deleteProperty from "src/properties/mutations/deleteProperty"
@@ -52,7 +52,7 @@ export const PropertiesList = () => {
           {
             accessor: "id",
             title: "#",
-            textAlignment: "right",
+            textAlign: "right",
             width: 60,
           },
           {
@@ -63,7 +63,7 @@ export const PropertiesList = () => {
                 label="Dirección"
                 description="Mostrar propiedades cuya dirección incluya el siguiente texto:"
                 placeholder="Buscar propiedades..."
-                icon={<IconSearch size={16} />}
+                leftSection={<IconSearch size={16} />}
                 value={filters.address}
                 onChange={(e) =>
                   setFilters((filters) => ({
@@ -105,22 +105,25 @@ export const PropertiesList = () => {
               ),
           },
           {
-            accessor: "actions",
-            title: "Acciones",
-            textAlignment: "right",
+            ...actionsColumnConfig,
             render: (property) => (
-              <Group spacing={0} position="right" noWrap>
+              <Group gap={4} justify="right" wrap="nowrap">
                 <Link href={Routes.ShowPropertyPage({ propertyId: property.id })}>
-                  <ActionIcon>
+                  <ActionIcon size="sm" variant="subtle">
                     <IconEye size="1rem" stroke={1.5} />
                   </ActionIcon>
                 </Link>
                 <Link href={Routes.EditPropertyPage({ propertyId: property.id })}>
-                  <ActionIcon>
+                  <ActionIcon size="sm" variant="subtle">
                     <IconEdit size="1rem" stroke={1.5} />
                   </ActionIcon>
                 </Link>
-                <ActionIcon color="red" onClick={() => handleDelete(property)}>
+                <ActionIcon
+                  size="sm"
+                  variant="subtle"
+                  color="red"
+                  onClick={() => handleDelete(property)}
+                >
                   <IconTrash size="1rem" stroke={1.5} />
                 </ActionIcon>
               </Group>

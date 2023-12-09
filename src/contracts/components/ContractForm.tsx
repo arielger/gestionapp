@@ -31,7 +31,7 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
             <TenantSelect initialValues={[]} {...form.getInputProps("tenants")} />
             <Flex direction="row" gap="md">
               <DateInput
-                sx={{ flex: 1 }}
+                style={{ flex: 1 }}
                 label="Inicio"
                 popoverProps={{ withinPortal: true }}
                 placeholder="YYYY-MM-DD"
@@ -39,7 +39,7 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
                 {...form.getInputProps("startDate")}
               />
               <DateInput
-                sx={{ flex: 1 }}
+                style={{ flex: 1 }}
                 label="Fin"
                 popoverProps={{ withinPortal: true }}
                 minDate={form.values.startDate}
@@ -64,14 +64,16 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
                 label="Valor"
                 min={0}
                 hideControls
-                precision={2}
                 // TODO: Format as percentage
                 {...form.getInputProps("fee")}
                 {...(form.values.feeType === ContractFeeType.PERCENTAGE
                   ? {
+                      suffix: "%",
                       max: 1,
                     }
-                  : {})}
+                  : {
+                      prefix: "$",
+                    })}
               />
             </Flex>
 
@@ -81,23 +83,23 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
                   <Accordion.Control>Detalles cobro mensual</Accordion.Control>
                   <Accordion.Panel>
                     <Table>
-                      <thead>
-                        <tr>
-                          <th>Fecha</th>
-                          <th>Monto</th>
-                        </tr>
-                      </thead>
-                      <tbody>
+                      <Table.Thead>
+                        <Table.Tr>
+                          <Table.Th>Fecha</Table.Th>
+                          <Table.Th>Monto</Table.Th>
+                        </Table.Tr>
+                      </Table.Thead>
+                      <Table.Tbody>
                         {getContractRentPaymentDates(
                           form.values.startDate,
                           form.values.endDate
                         ).map((date) => (
-                          <tr key={date.toLocaleDateString()}>
-                            <td>{date.toLocaleDateString()}</td>
-                            <td>{form.values.rentAmount}</td>
-                          </tr>
+                          <Table.Tr key={date.toLocaleDateString()}>
+                            <Table.Td>{date.toLocaleDateString()}</Table.Td>
+                            <Table.Td>{form.values.rentAmount}</Table.Td>
+                          </Table.Tr>
                         ))}
-                      </tbody>
+                      </Table.Tbody>
                     </Table>
                   </Accordion.Panel>
                 </Accordion.Item>

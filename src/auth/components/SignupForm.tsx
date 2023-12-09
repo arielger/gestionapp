@@ -50,10 +50,10 @@ export const SignupForm = (props: SignupFormProps) => {
 
   return (
     <Container size={420} my={40}>
-      <Title align="center" sx={() => ({ fontWeight: 900 })}>
+      <Title style={{ textAlign: "center" }} fw="bold">
         Crear cuenta
       </Title>
-      <Text color="dimmed" size="sm" align="center" mt={5}>
+      <Text c="dimmed" size="sm" style={{ textAlign: "center" }} mt={5}>
         Ya tienes una cuenta?{" "}
         <Anchor size="sm" component={Link} href={Routes.LoginPage()}>
           Ingresar

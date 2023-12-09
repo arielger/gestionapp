@@ -88,7 +88,7 @@ export const Property = () => {
           </Flex>
         </PageHeader>
         <Flex gap="md">
-          <Paper shadow="xs" p="xl" sx={{ flex: 1 }}>
+          <Paper shadow="xs" p="xl" style={{ flex: 1 }}>
             {/* TODO: Prevent repeating elements with properties table - move to general file */}
             {isLoadingProperty || !property ? (
               <Center>

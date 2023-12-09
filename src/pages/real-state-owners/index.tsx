@@ -1,7 +1,7 @@
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { ActionIcon, Button, Flex, Group, Title } from "@mantine/core"
+import { ActionIcon, Button, Group } from "@mantine/core"
 import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react"
 
 import { DataTable } from "src/core/components/DataTable"
@@ -23,20 +23,20 @@ export const RealStateOwnersList = () => {
           ...personTableCommonColumns,
           {
             accessor: "actions",
-            textAlignment: "right",
+            textAlign: "right",
             render: (owner) => (
-              <Group spacing={0} position="right" noWrap>
+              <Group gap={4} justify="right" wrap="nowrap">
                 <Link href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: owner.id })}>
-                  <ActionIcon>
+                  <ActionIcon size="sm" variant="subtle">
                     <IconEye size="1rem" stroke={1.5} />
                   </ActionIcon>
                 </Link>
                 <Link href={Routes.EditRealStateOwnerPage({ realStateOwnerId: owner.id })}>
-                  <ActionIcon>
+                  <ActionIcon size="sm" variant="subtle">
                     <IconEdit size="1rem" stroke={1.5} />
                   </ActionIcon>
                 </Link>
-                <ActionIcon color="red">
+                <ActionIcon size="sm" variant="subtle" color="red">
                   <IconTrash size="1rem" stroke={1.5} />
                 </ActionIcon>
               </Group>

@@ -1,14 +1,11 @@
 import Layout from "src/core/layouts/Layout"
 import { BlitzPage, Routes } from "@blitzjs/next"
-import { Loader, Center } from "@mantine/core"
-import { useRedirectAuthenticated, useSession } from "@blitzjs/auth"
 
-import { Hero } from "src/landing/components/Hero"
-import { Suspense } from "react"
+import { Hero } from "src/landing/components/Hero/Hero"
 
 const Home: BlitzPage = () => {
   return (
-    <Layout title="Gestionprop">
+    <Layout title="gestion.app">
       <Hero />
     </Layout>
   )

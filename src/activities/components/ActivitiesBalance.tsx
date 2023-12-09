@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useMutation, useQuery } from "@blitzjs/rpc"
 import { Text, Modal, Button, Paper, Title, Flex, ActionIcon, Group } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
@@ -13,7 +14,7 @@ import { CreateActivityFormSchema, ActivityFormSchemaType } from "../schemas"
 import { ActivityForm } from "./ActivityForm"
 import deleteActivity from "../mutations/deleteActivity"
 import updateActivity from "../mutations/updateActivity"
-import { useState } from "react"
+import { actionsColumnConfig } from "src/core/components/DataTable"
 
 export type ActivityWithDetails = Prisma.ActivityGetPayload<{
   include: {
@@ -60,7 +61,7 @@ const renderBalanceMovementCell = ({
   }
 
   return (
-    <Text c={activity.isDebit ? "red" : "teal"}>
+    <Text size="sm" c={activity.isDebit ? "red" : "teal"}>
       {activity.isDebit ? "-" : "+"}
       {new Intl.NumberFormat().format(activity.amount)}
     </Text>
@@ -376,17 +377,23 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
                   }),
               },
               {
-                accessor: "actions",
-                title: "Acciones",
+                ...actionsColumnConfig,
                 render: (activity) => (
-                  <Group spacing={0} position="right" noWrap>
+                  <Group gap={4} justify="right" wrap="nowrap">
                     <ActionIcon
+                      size="sm"
+                      variant="subtle"
                       onClick={() => handleOpenEditActivity(activity as ActivityWithDetails)}
                     >
-                      <IconEdit size="1rem" stroke={1.5} />
+                      <IconEdit size="1rem" />
                     </ActionIcon>
-                    <ActionIcon color="red" onClick={() => handleDeleteActivity(activity)}>
-                      <IconTrash size="1rem" stroke={1.5} />
+                    <ActionIcon
+                      size="sm"
+                      variant="subtle"
+                      color="red"
+                      onClick={() => handleDeleteActivity(activity)}
+                    >
+                      <IconTrash size="1rem" />
                     </ActionIcon>
                   </Group>
                 ),
