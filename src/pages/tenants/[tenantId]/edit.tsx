@@ -43,19 +43,12 @@ export const EditTenant = () => {
               schema={UpdateTenantSchema.omit({ id: true })}
               initialValues={tenant}
               onSubmit={async (values) => {
-                try {
-                  const updated = await updateTenantMutation({
-                    id: tenant.id,
-                    ...values,
-                  })
-                  await setQueryData(updated)
-                  await router.push(Routes.ShowTenantPage({ tenantId: updated.id }))
-                } catch (error: any) {
-                  console.error(error)
-                  // return {
-                  //   [FORM_ERROR]: error.toString(),
-                  // }
-                }
+                const updated = await updateTenantMutation({
+                  id: tenant.id,
+                  ...values,
+                })
+                await setQueryData(updated)
+                await router.push(Routes.ShowTenantPage({ tenantId: updated.id }))
               }}
             />
           </Paper>

@@ -161,29 +161,24 @@ export const Property = () => {
             onSubmit={async (values) => {
               if (!property) return
 
-              try {
-                await createContractMutation({
-                  ...values,
-                  propertyId: propertyId,
-                  owners: property.owners.map((owner) => owner.id),
-                  // transform percentage from presentation (0 to 100) to db representation (0 to 1)
-                  fee:
-                    values.feeType === ContractFeeType.PERCENTAGE ? values.fee * 0.01 : values.fee,
-                })
+              await createContractMutation({
+                ...values,
+                propertyId: propertyId,
+                owners: property.owners.map((owner) => owner.id),
+                // transform percentage from presentation (0 to 100) to db representation (0 to 1)
+                fee: values.feeType === ContractFeeType.PERCENTAGE ? values.fee * 0.01 : values.fee,
+              })
 
-                closeCreateContractModal()
+              closeCreateContractModal()
 
-                notifications.show({
-                  title: "Contrato creado exitosamente",
-                  message: "",
-                  color: "green",
-                  icon: <IconCheck />,
-                })
+              notifications.show({
+                title: "Contrato creado exitosamente",
+                message: "",
+                color: "green",
+                icon: <IconCheck />,
+              })
 
-                void refetchProperty()
-              } catch (error: any) {
-                console.error(error)
-              }
+              void refetchProperty()
             }}
           />
         </Modal>

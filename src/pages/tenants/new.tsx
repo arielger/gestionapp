@@ -24,15 +24,8 @@ const NewTenantPage = () => {
             schema={CreateTenantSchema}
             isLoading={isLoading}
             onSubmit={async (values) => {
-              try {
-                const tenant = await createTenantMutation(values)
-                await router.push(Routes.ShowTenantPage({ tenantId: tenant.id }))
-              } catch (error: any) {
-                console.error(error)
-                // return {
-                //   [FORM_ERROR]: error.toString(),
-                // }
-              }
+              const tenant = await createTenantMutation(values)
+              await router.push(Routes.ShowTenantPage({ tenantId: tenant.id }))
             }}
           />
         </Paper>

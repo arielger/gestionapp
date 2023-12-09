@@ -53,31 +53,24 @@ export function PaymentForm() {
               loading={isLoading}
               disabled={noSelectedActivities}
               onClick={async () => {
-                try {
-                  await createPaymentMutation({
-                    contractId: selectedContract.id,
-                    items: selectedActivities.map((activity) => ({
-                      id: activity.id,
-                      amount: activity.amount,
-                      type: activity.type,
-                    })),
-                  })
+                await createPaymentMutation({
+                  contractId: selectedContract.id,
+                  items: selectedActivities.map((activity) => ({
+                    id: activity.id,
+                    amount: activity.amount,
+                    type: activity.type,
+                  })),
+                })
 
-                  notifications.show({
-                    title: "Pago registrado exitosamente",
-                    message: "",
-                    color: "green",
-                    icon: <IconCheck />,
-                  })
-                  await router.push(
-                    Routes.ShowPropertyPage({ propertyId: selectedContract.propertyId })
-                  )
-                } catch (error: any) {
-                  console.error(error)
-                  // return {
-                  //   [FORM_ERROR]: error.toString(),
-                  // }
-                }
+                notifications.show({
+                  title: "Pago registrado exitosamente",
+                  message: "",
+                  color: "green",
+                  icon: <IconCheck />,
+                })
+                await router.push(
+                  Routes.ShowPropertyPage({ propertyId: selectedContract.propertyId })
+                )
               }}
             >
               Registrar pago

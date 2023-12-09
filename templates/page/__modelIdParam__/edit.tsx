@@ -10,7 +10,7 @@ import Layout from "src/core/layouts/Layout"
 import { Update__ModelName__Schema } from "src/__modelNamesPath__/schemas"
 import get__ModelName__ from "src/__modelNamesPath__/queries/get__ModelName__"
 import update__ModelName__ from "src/__modelNamesPath__/mutations/update__ModelName__"
-import { __ModelName__Form, FORM_ERROR } from "src/__modelNamesPath__/components/__ModelName__Form"
+import { __ModelName__Form } from "src/__modelNamesPath__/components/__ModelName__Form"
 import { PageHeader } from "src/layout/components/PageHeader"
 
 export const Edit__ModelName__ = () => {
@@ -44,26 +44,19 @@ export const Edit__ModelName__ = () => {
             schema={Update__ModelName__Schema.omit({ id: true })}
             initialValues={__modelName__}
             onSubmit={async (values) => {
-              try {
-                const updated = await update__ModelName__Mutation({
-                  id: __modelName__.id,
-                  ...values,
-                })
-                await setQueryData(updated)
-                await router.push(
-                  process.env.parentModel
-                    ? Routes.Show__ModelName__Page({
-                        __parentModelId__: __parentModelId__!,
-                        __modelId__: updated.id,
-                      })
-                    : Routes.Show__ModelName__Page({ __modelId__: updated.id })
-                )
-              } catch (error: any) {
-                console.error(error)
-                return {
-                  [FORM_ERROR]: error.toString(),
-                }
-              }
+              const updated = await update__ModelName__Mutation({
+                id: __modelName__.id,
+                ...values,
+              })
+              await setQueryData(updated)
+              await router.push(
+                process.env.parentModel
+                  ? Routes.Show__ModelName__Page({
+                      __parentModelId__: __parentModelId__!,
+                      __modelId__: updated.id,
+                    })
+                  : Routes.Show__ModelName__Page({ __modelId__: updated.id })
+              )
             }}
           />
         </Suspense>

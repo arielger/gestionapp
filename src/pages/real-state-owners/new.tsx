@@ -25,19 +25,12 @@ const NewRealStateOwnerPage = () => {
             // initialValues={{}}
             isLoading={isLoading}
             onSubmit={async (values) => {
-              try {
-                const realStateOwner = await createRealStateOwnerMutation(values)
-                await router.push(
-                  Routes.ShowRealStateOwnerPage({
-                    realStateOwnerId: realStateOwner.id,
-                  })
-                )
-              } catch (error: any) {
-                console.error(error)
-                // return {
-                //   [FORM_ERROR]: error.toString(),
-                // }
-              }
+              const realStateOwner = await createRealStateOwnerMutation(values)
+              await router.push(
+                Routes.ShowRealStateOwnerPage({
+                  realStateOwnerId: realStateOwner.id,
+                })
+              )
             }}
           />
         </Paper>

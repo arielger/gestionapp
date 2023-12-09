@@ -243,49 +243,42 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
             }
           }
           schema={CreateActivityFormSchema}
-          onSubmit={async (input) => {
-            const { transactionType, ...activityData } = input
+          onSubmit={async (values) => {
+            const { transactionType, ...activityData } = values
 
             const isDebit = transactionType === ActivityTransactionType.DEBIT
 
-            try {
-              const input = { ...activityData, isDebit, contractId }
-              if (selectedActivity) {
-                await updateActivityMutation({
-                  input: {
-                    ...input,
-                    id: selectedActivity.id,
-                  },
-                })
+            const input = { ...activityData, isDebit, contractId }
+            if (selectedActivity) {
+              await updateActivityMutation({
+                input: {
+                  ...input,
+                  id: selectedActivity.id,
+                },
+              })
 
-                notifications.show({
-                  title: "Actividad modificada exitosamente",
-                  message: "Ya podes ver los cambios en el balance",
-                  color: "green",
-                  icon: <IconCheck />,
-                })
-              } else {
-                await createActivityMutation({
-                  input,
-                })
+              notifications.show({
+                title: "Actividad modificada exitosamente",
+                message: "Ya podes ver los cambios en el balance",
+                color: "green",
+                icon: <IconCheck />,
+              })
+            } else {
+              await createActivityMutation({
+                input,
+              })
 
-                notifications.show({
-                  title: "Actividad creada exitosamente",
-                  message: "Ya podes ver la nueva actividad en el balance",
-                  color: "green",
-                  icon: <IconCheck />,
-                })
-              }
-
-              void refetchActivities()
-
-              close()
-            } catch (error: any) {
-              console.error(error)
-              // return {
-              //   [FORM_ERROR]: error.toString(),
-              // }
+              notifications.show({
+                title: "Actividad creada exitosamente",
+                message: "Ya podes ver la nueva actividad en el balance",
+                color: "green",
+                icon: <IconCheck />,
+              })
             }
+
+            void refetchActivities()
+
+            close()
           }}
           isLoading={isLoadingCreateActivity || isLoadingUpdateActivity}
         />
