@@ -1,14 +1,15 @@
 TODO:
 
 - [OK] When creating contract you don't need to set owner (get from property data)
-- [ ] Handle form errors (not handled anywhere)
+- [OK] Handle form errors (not handled anywhere)
+- [OK] Check currentDate filter when fetching activities => should be dynamic - right now is not showing the newly created activities
 - [ ] Add monitoring
-- [] Check currentDate filter when fetching activities => should be dynamic - right now is not showing the newly created activities
 - [] When logging out in /properties it wont take you to the login page
 - [ ] Payments
 
   - [ ] You should be able to register a payment related to a tenant or owner
 
+- [] Review select activities table texts
 - [] Calculate initial and end month payments values
 - [] Change date format to dd-mm-yyyy (move to general variable)
 - [] i18n form validation to spanish

@@ -112,19 +112,11 @@ const getActivityTitle = (activity: ActivityWithDetails): string | undefined => 
 }
 
 export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
-  // set date in state so it's not recalculated on every render
-  // preveng infinite loop in db query
-  const [currentDate] = useState(new Date())
-
   const [activitiesData, { isLoading: isLoadingActivities, refetch: refetchActivities }] = useQuery(
     getActivities,
     {
       where: {
         contractId,
-        // activities from the past
-        date: {
-          lte: currentDate,
-        },
       },
       include: {
         customDetails: true,

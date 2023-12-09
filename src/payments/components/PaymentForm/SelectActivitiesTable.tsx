@@ -3,7 +3,7 @@ import { Flex, Text } from "@mantine/core"
 import { useQuery } from "@blitzjs/rpc"
 
 import getActivities from "src/activities/queries/getActivities"
-import { Activity } from "@prisma/client"
+import { Activity, ActivityPersonType } from "@prisma/client"
 import { DataTable } from "src/core/components/DataTable"
 
 export function SelectActivitiesTable({
@@ -15,17 +15,13 @@ export function SelectActivitiesTable({
   selectedActivities: Activity[]
   setSelectedActivities: (activities: Activity[]) => void
 }) {
-  const [currentDate] = useState(new Date())
-
   const [activitiesData, { isLoading: isLoadingActivities }] = useQuery(
     getActivities,
     {
       where: {
         contractId,
         isDebit: true,
-        date: {
-          lte: currentDate,
-        },
+        assignedTo: ActivityPersonType.TENANT,
         // Filter activities that aren't paid
         // TODO: Handle partial payment
         relatedActivities: {
