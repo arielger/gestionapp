@@ -8,6 +8,7 @@ import { Routes } from "@blitzjs/next"
 import logout from "src/auth/mutations/logout"
 import { useCurrentUser } from "src/users/hooks/useCurrentUser"
 import classes from "./Navbar.module.css"
+import { getInitials } from "src/core/strings/utils"
 
 const data = [
   { link: Routes.PropertiesPage(), label: "Propiedades", icon: IconHome },
@@ -41,16 +42,18 @@ export const NavBar = () => {
     )
   })
 
+  const orgName = currentUser?.memberships?.[0]?.organization.name
+
   return (
     <nav className={classes.navbar}>
       <div className={classes.navbarMain}>
         <Flex align="center" mb="lg">
           <Avatar src={"./logo.jpeg"} color="cyan" radius="sm" mr={"sm"}>
-            GG
+            {getInitials(orgName ?? "", true)}
           </Avatar>
           <Flex direction="column" miw={0}>
             <Text size="h5" c="gray.8" lineClamp={1} fw={700}>
-              {currentUser?.memberships?.[0]?.organization.name}
+              {orgName}
             </Text>
             <Text c="dimmed" truncate="end">
               {currentUser?.email}
