@@ -7,7 +7,7 @@ import { Routes } from "@blitzjs/next"
 
 import logout from "src/auth/mutations/logout"
 import { useCurrentUser } from "src/users/hooks/useCurrentUser"
-import classes from "./Navbar.module.css"
+import classes from "./NavBar.module.css"
 import { getInitials } from "src/core/strings/utils"
 
 const data = [
