@@ -20,6 +20,8 @@ import { ContractForm } from "src/contracts/components/ContractForm"
 import createContract from "src/contracts/mutations/createContract"
 import { CreateContractFormSchema } from "src/contracts/schemas"
 import { ContractDetails } from "src/contracts/components/ContractDetails"
+import { personToSelectItem } from "src/real-state-owners/utils"
+import { ContractFeeType } from "@prisma/client"
 
 export const Property = () => {
   const router = useRouter()
@@ -155,11 +157,18 @@ export const Property = () => {
             isLoading={isLoading}
             submitText="Crear"
             schema={CreateContractFormSchema}
+            ownersInitialValue={property?.owners.map(personToSelectItem)}
             onSubmit={async (values) => {
+              if (!property) return
+
               try {
                 await createContractMutation({
                   ...values,
                   propertyId: propertyId,
+                  owners: property.owners.map((owner) => owner.id),
+                  // transform percentage from presentation (0 to 100) to db representation (0 to 1)
+                  fee:
+                    values.feeType === ContractFeeType.PERCENTAGE ? values.fee * 0.01 : values.fee,
                 })
 
                 closeCreateContractModal()

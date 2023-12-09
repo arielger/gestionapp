@@ -1,5 +1,14 @@
 import React from "react"
-import { Accordion, Flex, NumberInput, Select, Table, Text } from "@mantine/core"
+import {
+  Accordion,
+  ComboboxItem,
+  Flex,
+  MultiSelect,
+  NumberInput,
+  Select,
+  Table,
+  Text,
+} from "@mantine/core"
 import { DateInput } from "@mantine/dates"
 import { z } from "zod"
 
@@ -9,24 +18,26 @@ import { TenantSelect } from "src/tenants/components/TenantSelect"
 import { getContractRentPaymentDates } from "../utils/utils"
 import { ContractFeeType } from "@prisma/client"
 
-export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>) {
+export function ContractForm<S extends z.ZodType<any, any>>({
+  ownersInitialValue = [],
+  ...props
+}: FormProps<S> & { ownersInitialValue?: ComboboxItem[] }) {
   return (
     <Form<S>
       initialValues={{
         feeType: ContractFeeType.PERCENTAGE,
-        fee: 0.1,
+        fee: 10,
       }}
       {...props}
     >
       {(form) => {
         return (
           <Flex direction="column" gap="sm">
-            {/* TODO: review -> values not initializing properly */}
-            {/* template: <__component__ name="__fieldName__" label="__Field_Name__" placeholder="__Field_Name__"  type="__inputType__" /> */}
-            <RealStateOwnerSelect
-              // TODO: Add initial values for create (based on property data)
-              initialValues={[]}
-              {...form.getInputProps("owners")}
+            <MultiSelect
+              label="Propietario/s"
+              data={ownersInitialValue}
+              disabled
+              value={ownersInitialValue.map((o) => o.value)}
             />
             <TenantSelect initialValues={[]} {...form.getInputProps("tenants")} />
             <Flex direction="row" gap="md">
@@ -64,12 +75,12 @@ export function ContractForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
                 label="Valor"
                 min={0}
                 hideControls
-                // TODO: Format as percentage
+                allowNegative={false}
                 {...form.getInputProps("fee")}
                 {...(form.values.feeType === ContractFeeType.PERCENTAGE
                   ? {
                       suffix: "%",
-                      max: 1,
+                      max: 100,
                     }
                   : {
                       prefix: "$",

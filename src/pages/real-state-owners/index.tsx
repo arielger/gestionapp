@@ -4,7 +4,7 @@ import Link from "next/link"
 import { ActionIcon, Button, Group } from "@mantine/core"
 import { IconEdit, IconEye, IconTrash } from "@tabler/icons-react"
 
-import { DataTable } from "src/core/components/DataTable"
+import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
 import getRealStateOwners from "src/real-state-owners/queries/getRealStateOwners"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
@@ -22,8 +22,7 @@ export const RealStateOwnersList = () => {
         columns={[
           ...personTableCommonColumns,
           {
-            accessor: "actions",
-            textAlign: "right",
+            ...actionsColumnConfig,
             render: (owner) => (
               <Group gap={4} justify="right" wrap="nowrap">
                 <Link href={Routes.ShowRealStateOwnerPage({ realStateOwnerId: owner.id })}>

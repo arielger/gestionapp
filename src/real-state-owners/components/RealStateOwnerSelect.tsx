@@ -1,5 +1,5 @@
 import { useQuery } from "@blitzjs/rpc"
-import { Loader, MultiSelect, ComboboxItem } from "@mantine/core"
+import { Loader, MultiSelect, ComboboxItem, MultiSelectProps } from "@mantine/core"
 import getRealStateOwners from "../queries/getRealStateOwners"
 import { useThrottle } from "@react-hook/throttle"
 import { useState } from "react"
@@ -7,12 +7,10 @@ import { personToSelectItem } from "../utils"
 
 export const RealStateOwnerSelect = ({
   initialValues,
-  onChange,
   ...props
 }: {
   initialValues: ComboboxItem[]
-  onChange: (values: string[]) => void
-}) => {
+} & MultiSelectProps) => {
   const [selectedOwners, setSelectedOwners] = useState<ComboboxItem[]>([])
   const [ownersSearchTextDebounced, setOwnersSearchTextDebounced] = useThrottle("", 0.5)
 
@@ -61,7 +59,7 @@ export const RealStateOwnerSelect = ({
             label: ownersList.find((owner) => owner.value === value)!.label,
           }))
         )
-        onChange(values)
+        props?.onChange?.(values)
       }}
     />
   )
