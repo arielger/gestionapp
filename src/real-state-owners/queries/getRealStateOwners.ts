@@ -28,6 +28,8 @@ export default resolver.pipe(
       // TODO: review how to handle count
       count: () => db.realStateOwner.count(),
       query: (paginateArgs) => {
+        // TODO: if we are only using this for contract search
+        // we could move this logic to the getContracts query
         let query = kyselyDb
           .selectFrom("RealStateOwner")
           .selectAll("RealStateOwner")

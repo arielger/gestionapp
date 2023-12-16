@@ -1,6 +1,4 @@
-import { useMutation } from "@blitzjs/rpc"
 import { Suspense } from "react"
-import { Paper } from "@mantine/core"
 
 import Layout from "src/core/layouts/Layout"
 import { PageHeader } from "src/layout/components/PageHeader"
@@ -11,9 +9,7 @@ const NewPaymentPage = () => {
     <Layout title={"Nuevo pago"}>
       <PageHeader title="Crear nuevo pago" />
       <Suspense fallback={<div>Loading...</div>}>
-        <Paper shadow="xs" p="xl">
-          <PaymentForm />
-        </Paper>
+        <PaymentForm />
       </Suspense>
     </Layout>
   )
