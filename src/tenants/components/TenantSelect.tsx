@@ -1,5 +1,5 @@
 import { useQuery } from "@blitzjs/rpc"
-import { Loader, MultiSelect, SelectItem } from "@mantine/core"
+import { Loader, MultiSelect, ComboboxItem } from "@mantine/core"
 import getTenants from "../queries/getTenants"
 import { useThrottle } from "@react-hook/throttle"
 import { useState } from "react"
@@ -10,10 +10,10 @@ export const TenantSelect = ({
   onChange,
   ...props
 }: {
-  initialValues: SelectItem[]
+  initialValues: ComboboxItem[]
   onChange: (values: string[]) => void
 }) => {
-  const [selectedTenants, setSelectedTenants] = useState<SelectItem[]>([])
+  const [selectedTenants, setSelectedTenants] = useState<ComboboxItem[]>([])
   const [searchTextDebounced, setSearchTextDebounced] = useThrottle("", 0.5)
 
   // TODO: Improve search to search for first and last name at the same time
@@ -47,13 +47,12 @@ export const TenantSelect = ({
     <MultiSelect
       label="Inquilino/s"
       data={filteredtenantsList}
-      maxSelectedValues={5}
       searchable
       rightSection={isFetching ? <Loader size={14} /> : undefined}
       onSearchChange={(searchText) => {
         setSearchTextDebounced(searchText)
       }}
-      nothingFound="No se encontraron resultados"
+      nothingFoundMessage="No se encontraron resultados"
       {...props}
       onChange={(values) => {
         setSelectedTenants(

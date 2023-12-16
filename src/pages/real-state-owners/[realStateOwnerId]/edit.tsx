@@ -44,23 +44,16 @@ export const EditRealStateOwner = () => {
               schema={UpdateRealStateOwnerSchema.omit({ id: true })}
               initialValues={realStateOwner}
               onSubmit={async (values) => {
-                try {
-                  const updated = await updateRealStateOwnerMutation({
-                    id: realStateOwner.id,
-                    ...values,
+                const updated = await updateRealStateOwnerMutation({
+                  id: realStateOwner.id,
+                  ...values,
+                })
+                await setQueryData(updated)
+                await router.push(
+                  Routes.ShowRealStateOwnerPage({
+                    realStateOwnerId: updated.id,
                   })
-                  await setQueryData(updated)
-                  await router.push(
-                    Routes.ShowRealStateOwnerPage({
-                      realStateOwnerId: updated.id,
-                    })
-                  )
-                } catch (error: any) {
-                  console.error(error)
-                  // return {
-                  //   [FORM_ERROR]: error.toString(),
-                  // }
-                }
+                )
               }}
             />
           </Paper>

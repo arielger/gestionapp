@@ -1,5 +1,5 @@
 import React from "react"
-import { Flex, SelectItem, TextInput } from "@mantine/core"
+import { Flex, ComboboxItem, TextInput } from "@mantine/core"
 import { z } from "zod"
 
 import Form, { FormProps } from "src/core/components/Form"
@@ -11,7 +11,7 @@ export function PropertyForm<S extends z.ZodType<any, any>>({
   ownersInitialValues = [],
   ...props
 }: FormProps<S> & {
-  ownersInitialValues?: SelectItem[]
+  ownersInitialValues?: ComboboxItem[]
 }) {
   const mappedInitialValues = {
     ...initialValues,
@@ -28,7 +28,6 @@ export function PropertyForm<S extends z.ZodType<any, any>>({
               <RealStateOwnerSelect
                 initialValues={ownersInitialValues}
                 {...form.getInputProps("owners")}
-                onChange={(values) => form.getInputProps("owners").onChange(values)}
               />
             </Flex>
           )

@@ -50,7 +50,7 @@ export const LoginForm = (props: LoginFormProps) => {
 
   return (
     <Container size={420} my={40}>
-      <Title align="center" sx={() => ({ fontWeight: 900 })}>
+      <Title style={{ textAlign: "center" }} fw="bold">
         Ingresar
       </Title>
       {/* <Text color="dimmed" size="sm" align="center" mt={5}>

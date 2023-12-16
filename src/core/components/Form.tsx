@@ -2,6 +2,8 @@ import { ReactNode, PropsWithoutRef } from "react"
 import { z } from "zod"
 import { useForm, zodResolver, UseFormReturnType } from "@mantine/form"
 import { Button } from "@mantine/core"
+import { notifications } from "@mantine/notifications"
+import { IconX } from "@tabler/icons-react"
 
 export interface FormProps<Schema extends z.ZodType<any, any>>
   extends Omit<PropsWithoutRef<JSX.IntrinsicElements["form"]>, "onSubmit" | "children"> {
@@ -27,12 +29,25 @@ export function Form<S extends z.ZodType<any, any>>({
   ...props
 }: FormProps<S>) {
   const form = useForm({
-    initialValues,
+    initialValues: { ...initialValues, formError: "" },
     validate: schema ? zodResolver(schema) : undefined,
   })
 
+  const _onSubmit = async (values: z.TypeOf<S>) => {
+    try {
+      await onSubmit(values)
+    } catch (error) {
+      notifications.show({
+        title: "Hubo un error al realizar la acción",
+        message: "",
+        color: "red",
+        icon: <IconX />,
+      })
+    }
+  }
+
   return (
-    <form onSubmit={form.onSubmit(onSubmit)} className="form" {...props}>
+    <form onSubmit={form.onSubmit(_onSubmit)} className="form" {...props}>
       {/* Form fields supplied as children are rendered here */}
       {children?.(form)}
 

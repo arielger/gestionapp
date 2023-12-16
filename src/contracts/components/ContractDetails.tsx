@@ -13,7 +13,7 @@ type ContractWithRelatedEntities = Prisma.ContractGetPayload<{
 
 export const ContractDetails = ({ contract }: { contract: ContractWithRelatedEntities }) => {
   return (
-    <Paper shadow="xs" p="xl" sx={{ flex: 1 }}>
+    <Paper shadow="xs" p="xl" style={{ flex: 1 }}>
       <Text>Detalles del contrato</Text>
       <DetailsList
         details={[

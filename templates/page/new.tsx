@@ -14,7 +14,7 @@ import { PageHeader } from "src/layout/components/PageHeader"
 import Layout from "src/core/layouts/Layout"
 import { Create__ModelName__Schema } from "src/__modelNamesPath__/schemas"
 import create__ModelName__ from "src/__modelNamesPath__/mutations/create__ModelName__"
-import { __ModelName__Form, FORM_ERROR } from "src/__modelNamesPath__/components/__ModelName__Form"
+import { __ModelName__Form } from "src/__modelNamesPath__/components/__ModelName__Form"
 
 const New__ModelName__Page = () => {
   const router = useRouter()
@@ -32,26 +32,19 @@ const New__ModelName__Page = () => {
           schema={Create__ModelName__Schema}
           // initialValues={{}}
           onSubmit={async (values) => {
-            try {
-              const __modelName__ = await create__ModelName__Mutation(
-                process.env.parentModel
-                  ? { ...values, __parentModelId__: __parentModelId__! }
-                  : values
-              )
-              await router.push(
-                process.env.parentModel
-                  ? Routes.Show__ModelName__Page({
-                      __parentModelId__: __parentModelId__!,
-                      __modelId__: __modelName__.id,
-                    })
-                  : Routes.Show__ModelName__Page({ __modelId__: __modelName__.id })
-              )
-            } catch (error: any) {
-              console.error(error)
-              return {
-                [FORM_ERROR]: error.toString(),
-              }
-            }
+            const __modelName__ = await create__ModelName__Mutation(
+              process.env.parentModel
+                ? { ...values, __parentModelId__: __parentModelId__! }
+                : values
+            )
+            await router.push(
+              process.env.parentModel
+                ? Routes.Show__ModelName__Page({
+                    __parentModelId__: __parentModelId__!,
+                    __modelId__: __modelName__.id,
+                  })
+                : Routes.Show__ModelName__Page({ __modelId__: __modelName__.id })
+            )
           }}
         />
       </Suspense>

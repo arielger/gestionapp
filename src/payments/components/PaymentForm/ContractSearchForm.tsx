@@ -1,13 +1,13 @@
 import React, { useState } from "react"
 import { Flex, Select, Button, TextInput } from "@mantine/core"
 import { Prisma } from "@prisma/client"
-import { DataTable } from "mantine-datatable"
 import { useQuery } from "@blitzjs/rpc"
 import uniqBy from "lodash/uniqBy"
 
 import Form from "src/core/components/Form"
 import getRealStateOwners from "src/real-state-owners/queries/getRealStateOwners"
 import { getPersonFullName } from "src/real-state-owners/utils"
+import { DataTable } from "src/core/components/DataTable"
 
 type RealStateOwnerWithRelatedEntities = Prisma.RealStateOwnerGetPayload<{
   include: {
@@ -34,27 +34,13 @@ export function ContractSearchForm({
 }: {
   onSelectContract: (contract: ContractWithRelatedEntities) => void
 }) {
-  // TODO: Improve search to search for first and last name at the same time
   const [searchText, setSearchText] = useState("")
 
   const [ownersData, { isFetching: isFetchingOwners, refetch: refetchOwners }] = useQuery(
     getRealStateOwners,
     {
-      where: {
-        OR: [
-          { firstName: { contains: searchText, mode: "insensitive" } },
-          { lastName: { contains: searchText, mode: "insensitive" } },
-        ],
-      },
-      include: {
-        contracts: {
-          include: {
-            owners: true,
-            property: true,
-            tenants: true,
-          },
-        },
-      },
+      fullNameSearch: searchText,
+      includeRelatedEntities: true,
     },
     {
       enabled: false,
@@ -68,7 +54,7 @@ export function ContractSearchForm({
     ? uniqBy(
         ownersData.items
           ?.map((owner) =>
-            (owner as RealStateOwnerWithRelatedEntities).contracts.map((contract) => ({
+            (owner as RealStateOwnerWithRelatedEntities)?.contracts.map((contract) => ({
               contract,
               address: contract.property.address,
               owners: contract.owners.map((owner) => getPersonFullName(owner)).join(", "),
@@ -109,16 +95,14 @@ export function ContractSearchForm({
                     setSearchText(e.currentTarget.value)
                   }}
                 />
-                <Button sx={{ alignSelf: "end" }} type="submit" loading={isSearching}>
+                <Button style={{ alignSelf: "end" }} type="submit" loading={isSearching}>
                   Buscar
                 </Button>
               </Flex>
               <DataTable
                 idAccessor={(row) => row.contract.id}
-                minHeight={!searchedContracts?.length ? 200 : undefined}
                 noRecordsText="No se encontraron contratos relacionados a la búsqueda"
                 fetching={isSearching}
-                withBorder
                 withColumnBorders
                 records={searchedContracts}
                 columns={[

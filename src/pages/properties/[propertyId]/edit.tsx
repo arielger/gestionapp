@@ -52,24 +52,20 @@ export const EditProperty = () => {
             <PropertyForm
               submitText="Editar"
               schema={CreatePropertyFormSchema}
-              initialValues={initialValues}
+              initialValues={{
+                address: initialValues.address,
+                owners: initialValues.owners,
+              }}
               ownersInitialValues={property.owners.map(personToSelectItem)}
               isLoading={isLoadingUpdate}
               onSubmit={async (values) => {
-                try {
-                  const updated = await updatePropertyMutation({
-                    id: property.id,
-                    ...values,
-                    owners: values.owners?.map((o) => Number(o)),
-                  })
-                  await setQueryData(updated)
-                  await router.push(Routes.ShowPropertyPage({ propertyId: updated.id }))
-                } catch (error: any) {
-                  console.error(error)
-                  // return {
-                  //   [FORM_ERROR]: error.toString(),
-                  // }
-                }
+                const updated = await updatePropertyMutation({
+                  id: property.id,
+                  ...values,
+                  owners: values.owners?.map((o) => Number(o)),
+                })
+                await setQueryData(updated)
+                await router.push(Routes.ShowPropertyPage({ propertyId: updated.id }))
               }}
             />
           )}
@@ -84,9 +80,7 @@ const EditPropertyPage = () => {
     <div>
       <EditProperty />
 
-      <p>
-        <Link href={Routes.PropertiesPage()}>Volver</Link>
-      </p>
+      <Link href={Routes.PropertiesPage()}>Volver</Link>
     </div>
   )
 }

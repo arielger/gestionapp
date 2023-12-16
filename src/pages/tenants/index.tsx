@@ -5,7 +5,7 @@ import Link from "next/link"
 import { ActionIcon, Button, Group } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 
-import { DataTable } from "src/core/components/DataTable"
+import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
 import getTenants from "src/tenants/queries/getTenants"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
@@ -24,22 +24,20 @@ export const TenantsList = () => {
         columns={[
           ...personTableCommonColumns,
           {
-            accessor: "actions",
-            title: "Acciones",
-            textAlignment: "right",
+            ...actionsColumnConfig,
             render: (tenant) => (
-              <Group spacing={0} position="right" noWrap>
+              <Group gap={4} justify="right" wrap="nowrap">
                 <Link href={Routes.ShowTenantPage({ tenantId: tenant.id })}>
-                  <ActionIcon>
+                  <ActionIcon size="sm" variant="subtle">
                     <IconEye size="1rem" stroke={1.5} />
                   </ActionIcon>
                 </Link>
                 <Link href={Routes.EditTenantPage({ tenantId: tenant.id })}>
-                  <ActionIcon>
+                  <ActionIcon size="sm" variant="subtle">
                     <IconEdit size="1rem" stroke={1.5} />
                   </ActionIcon>
                 </Link>
-                <ActionIcon color="red">
+                <ActionIcon size="sm" variant="subtle" color="red">
                   <IconTrash size="1rem" stroke={1.5} />
                 </ActionIcon>
               </Group>

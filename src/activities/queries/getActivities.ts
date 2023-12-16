@@ -3,11 +3,23 @@ import { resolver } from "@blitzjs/rpc"
 import db, { Prisma } from "db"
 
 interface GetActivitiesInput
-  extends Pick<Prisma.ActivityFindManyArgs, "where" | "orderBy" | "skip" | "take" | "include"> {}
+  extends Pick<Prisma.ActivityFindManyArgs, "where" | "orderBy" | "skip" | "take" | "include"> {
+  includeFutureActivities: boolean
+}
 
 export default resolver.pipe(
   resolver.authorize(),
-  async ({ where, orderBy, skip = 0, take = 100, include }: GetActivitiesInput, ctx) => {
+  async (
+    {
+      where,
+      orderBy,
+      skip = 0,
+      take = 100,
+      include,
+      includeFutureActivities = false,
+    }: GetActivitiesInput,
+    ctx
+  ) => {
     const { items, hasMore, nextPage, count } = await paginate({
       skip,
       take,
@@ -18,6 +30,14 @@ export default resolver.pipe(
           where: {
             ...where,
             organizationId: ctx.session.orgId,
+            // by default remove future activities from search
+            ...(includeFutureActivities
+              ? {}
+              : {
+                  date: {
+                    lte: new Date(),
+                  },
+                }),
           },
           include,
           orderBy,

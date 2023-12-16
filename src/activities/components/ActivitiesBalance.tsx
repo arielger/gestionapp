@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useMutation, useQuery } from "@blitzjs/rpc"
 import { Text, Modal, Button, Paper, Title, Flex, ActionIcon, Group } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
@@ -13,7 +14,7 @@ import { CreateActivityFormSchema, ActivityFormSchemaType } from "../schemas"
 import { ActivityForm } from "./ActivityForm"
 import deleteActivity from "../mutations/deleteActivity"
 import updateActivity from "../mutations/updateActivity"
-import { useState } from "react"
+import { actionsColumnConfig } from "src/core/components/DataTable"
 
 export type ActivityWithDetails = Prisma.ActivityGetPayload<{
   include: {
@@ -60,7 +61,7 @@ const renderBalanceMovementCell = ({
   }
 
   return (
-    <Text c={activity.isDebit ? "red" : "teal"}>
+    <Text size="sm" c={activity.isDebit ? "red" : "teal"}>
       {activity.isDebit ? "-" : "+"}
       {new Intl.NumberFormat().format(activity.amount)}
     </Text>
@@ -111,19 +112,11 @@ const getActivityTitle = (activity: ActivityWithDetails): string | undefined => 
 }
 
 export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
-  // set date in state so it's not recalculated on every render
-  // preveng infinite loop in db query
-  const [currentDate] = useState(new Date())
-
   const [activitiesData, { isLoading: isLoadingActivities, refetch: refetchActivities }] = useQuery(
     getActivities,
     {
       where: {
         contractId,
-        // activities from the past
-        date: {
-          lte: currentDate,
-        },
       },
       include: {
         customDetails: true,
@@ -242,49 +235,42 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
             }
           }
           schema={CreateActivityFormSchema}
-          onSubmit={async (input) => {
-            const { transactionType, ...activityData } = input
+          onSubmit={async (values) => {
+            const { transactionType, ...activityData } = values
 
             const isDebit = transactionType === ActivityTransactionType.DEBIT
 
-            try {
-              const input = { ...activityData, isDebit, contractId }
-              if (selectedActivity) {
-                await updateActivityMutation({
-                  input: {
-                    ...input,
-                    id: selectedActivity.id,
-                  },
-                })
+            const input = { ...activityData, isDebit, contractId }
+            if (selectedActivity) {
+              await updateActivityMutation({
+                input: {
+                  ...input,
+                  id: selectedActivity.id,
+                },
+              })
 
-                notifications.show({
-                  title: "Actividad modificada exitosamente",
-                  message: "Ya podes ver los cambios en el balance",
-                  color: "green",
-                  icon: <IconCheck />,
-                })
-              } else {
-                await createActivityMutation({
-                  input,
-                })
+              notifications.show({
+                title: "Actividad modificada exitosamente",
+                message: "Ya podes ver los cambios en el balance",
+                color: "green",
+                icon: <IconCheck />,
+              })
+            } else {
+              await createActivityMutation({
+                input,
+              })
 
-                notifications.show({
-                  title: "Actividad creada exitosamente",
-                  message: "Ya podes ver la nueva actividad en el balance",
-                  color: "green",
-                  icon: <IconCheck />,
-                })
-              }
-
-              void refetchActivities()
-
-              close()
-            } catch (error: any) {
-              console.error(error)
-              // return {
-              //   [FORM_ERROR]: error.toString(),
-              // }
+              notifications.show({
+                title: "Actividad creada exitosamente",
+                message: "Ya podes ver la nueva actividad en el balance",
+                color: "green",
+                icon: <IconCheck />,
+              })
             }
+
+            void refetchActivities()
+
+            close()
           }}
           isLoading={isLoadingCreateActivity || isLoadingUpdateActivity}
         />
@@ -376,17 +362,23 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
                   }),
               },
               {
-                accessor: "actions",
-                title: "Acciones",
+                ...actionsColumnConfig,
                 render: (activity) => (
-                  <Group spacing={0} position="right" noWrap>
+                  <Group gap={4} justify="right" wrap="nowrap">
                     <ActionIcon
+                      size="sm"
+                      variant="subtle"
                       onClick={() => handleOpenEditActivity(activity as ActivityWithDetails)}
                     >
-                      <IconEdit size="1rem" stroke={1.5} />
+                      <IconEdit size="1rem" />
                     </ActionIcon>
-                    <ActionIcon color="red" onClick={() => handleDeleteActivity(activity)}>
-                      <IconTrash size="1rem" stroke={1.5} />
+                    <ActionIcon
+                      size="sm"
+                      variant="subtle"
+                      color="red"
+                      onClick={() => handleDeleteActivity(activity)}
+                    >
+                      <IconTrash size="1rem" />
                     </ActionIcon>
                   </Group>
                 ),

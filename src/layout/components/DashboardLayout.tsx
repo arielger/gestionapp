@@ -1,19 +1,19 @@
 import { AppShell } from "@mantine/core"
-import { NavigationBar } from "./NavBar"
+import { NavBar } from "./NavBar/NavBar"
 
 export const DashboardLayout = ({ children }: { children: React.ReactElement }) => {
   return (
     <AppShell
       padding="lg"
-      navbar={<NavigationBar />}
+      navbar={{ width: 300, breakpoint: "sm" }}
       styles={(theme) => ({
-        main: {
-          backgroundColor:
-            theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
-        },
+        main: { backgroundColor: theme.colors.gray[0] },
       })}
     >
-      {children}
+      <AppShell.Navbar>
+        <NavBar />
+      </AppShell.Navbar>
+      <AppShell.Main>{children}</AppShell.Main>
     </AppShell>
   )
 }

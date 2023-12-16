@@ -10,7 +10,7 @@ export const PageHeader = ({
     <Flex justify="space-between" align="center" mb={16}>
       <Flex direction="column" gap="xs">
         {breadcrumbs && <Breadcrumbs separator="/">{breadcrumbs}</Breadcrumbs>}
-        <Title order={3} weight={"normal"}>
+        <Title order={3} fw={"normal"}>
           {title}
         </Title>
       </Flex>
