@@ -1,4 +1,3 @@
-import { Routes } from "@blitzjs/next"
 import { Anchor, Flex, Text } from "@mantine/core"
 import { RealStateOwner, Tenant } from "@prisma/client"
 import { IconExternalLink } from "@tabler/icons-react"
@@ -18,16 +17,15 @@ export const PersonList = ({
       {list?.length > 0
         ? list.map((person) => (
             <Anchor
-              color="black"
+              c="black"
               key={person.id}
               size="sm"
               component={Link}
               href={handlePress(person.id)}
+              style={{ display: "inline-flex", alignItems: "center" }}
             >
-              <Flex align="center" gap={4}>
-                <Text>{`${person.firstName} ${person.lastName}`}</Text>
-                <IconExternalLink color="gray" size={16} />
-              </Flex>
+              <Text mr={4} span>{`${person.firstName} ${person.lastName}`}</Text>
+              <IconExternalLink color="gray" size={16} />
             </Anchor>
           ))
         : "-"}

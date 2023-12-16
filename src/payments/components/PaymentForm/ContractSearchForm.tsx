@@ -34,27 +34,13 @@ export function ContractSearchForm({
 }: {
   onSelectContract: (contract: ContractWithRelatedEntities) => void
 }) {
-  // TODO: Improve search to search for first and last name at the same time
   const [searchText, setSearchText] = useState("")
 
   const [ownersData, { isFetching: isFetchingOwners, refetch: refetchOwners }] = useQuery(
     getRealStateOwners,
     {
-      where: {
-        OR: [
-          { firstName: { contains: searchText, mode: "insensitive" } },
-          { lastName: { contains: searchText, mode: "insensitive" } },
-        ],
-      },
-      include: {
-        contracts: {
-          include: {
-            owners: true,
-            property: true,
-            tenants: true,
-          },
-        },
-      },
+      fullNameSearch: searchText,
+      includeRelatedEntities: true,
     },
     {
       enabled: false,
@@ -68,7 +54,7 @@ export function ContractSearchForm({
     ? uniqBy(
         ownersData.items
           ?.map((owner) =>
-            (owner as RealStateOwnerWithRelatedEntities).contracts.map((contract) => ({
+            (owner as RealStateOwnerWithRelatedEntities)?.contracts.map((contract) => ({
               contract,
               address: contract.property.address,
               owners: contract.owners.map((owner) => getPersonFullName(owner)).join(", "),

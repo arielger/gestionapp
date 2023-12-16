@@ -2,12 +2,23 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "postgres"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
+}
+
+generator kysely {
+  provider = "prisma-kysely"
+
+  // Optionally provide a destination directory for the generated file
+  // and a filename of your choice
+  output       = "./types"
+  fileName     = "index.ts"
+  // Optionally generate runtime enums to a separate file
+  enumFileName = "enums.ts"
 }
 
 // --------------------------------------

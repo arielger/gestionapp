@@ -52,7 +52,10 @@ export const EditProperty = () => {
             <PropertyForm
               submitText="Editar"
               schema={CreatePropertyFormSchema}
-              initialValues={initialValues}
+              initialValues={{
+                address: initialValues.address,
+                owners: initialValues.owners,
+              }}
               ownersInitialValues={property.owners.map(personToSelectItem)}
               isLoading={isLoadingUpdate}
               onSubmit={async (values) => {
@@ -77,9 +80,7 @@ const EditPropertyPage = () => {
     <div>
       <EditProperty />
 
-      <p>
-        <Link href={Routes.PropertiesPage()}>Volver</Link>
-      </p>
+      <Link href={Routes.PropertiesPage()}>Volver</Link>
     </div>
   )
 }

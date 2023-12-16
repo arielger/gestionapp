@@ -5,19 +5,21 @@ export const PropertyBaseSchema = z.object({
 })
 
 export const CreatePropertyFormSchema = PropertyBaseSchema.extend({
-  owners: z.array(
-    z.string().refine(
-      (v) => {
-        let n = Number(v)
-        return !isNaN(n) && v?.length > 0
-      },
-      { message: "Ingrese un número valido" }
+  owners: z
+    .array(
+      z.string().refine(
+        (v) => {
+          let n = Number(v)
+          return !isNaN(n) && v?.length > 0
+        },
+        { message: "Ingrese un número valido" }
+      )
     )
-  ),
+    .min(1),
 })
 
 export const CreatePropertyMutationSchema = PropertyBaseSchema.extend({
-  owners: z.array(z.number()),
+  owners: z.array(z.number()).min(1),
 })
 
 export const UpdatePropertyMutationSchema = CreatePropertyMutationSchema.extend({

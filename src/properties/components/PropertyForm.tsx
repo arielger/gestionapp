@@ -28,7 +28,6 @@ export function PropertyForm<S extends z.ZodType<any, any>>({
               <RealStateOwnerSelect
                 initialValues={ownersInitialValues}
                 {...form.getInputProps("owners")}
-                onChange={(values) => form.getInputProps("owners").onChange(values)}
               />
             </Flex>
           )

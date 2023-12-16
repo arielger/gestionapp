@@ -1,29 +1,45 @@
 import { useQuery } from "@blitzjs/rpc"
-import { Loader, MultiSelect, ComboboxItem, MultiSelectProps } from "@mantine/core"
+import {
+  Loader,
+  Combobox,
+  ComboboxItem,
+  useCombobox,
+  Group,
+  Pill,
+  CheckIcon,
+  PillsInput,
+  Input,
+} from "@mantine/core"
 import getRealStateOwners from "../queries/getRealStateOwners"
 import { useThrottle } from "@react-hook/throttle"
-import { useState } from "react"
 import { personToSelectItem } from "../utils"
+import { useState } from "react"
 
 export const RealStateOwnerSelect = ({
+  // Value used to initialize the labels for owners (when editing)
   initialValues,
-  ...props
+  value,
+  onChange,
+  error,
 }: {
   initialValues: ComboboxItem[]
-} & MultiSelectProps) => {
-  const [selectedOwners, setSelectedOwners] = useState<ComboboxItem[]>([])
-  const [ownersSearchTextDebounced, setOwnersSearchTextDebounced] = useThrottle("", 0.5)
+  value: string[]
+  onChange: (ids: string[]) => void
+  error?: any
+  // onFocus?: any
+  // onBlur?: any
+}) => {
+  const [searchText, setSearchText] = useState("")
+  const [searchTextDebounced, setSearchTextDebounced] = useThrottle("", 1)
+  const updateSearchText = (value: string) => {
+    setSearchText(value)
+    setSearchTextDebounced(value)
+  }
 
-  // TODO: Improve search to search for first and last name at the same time
   const [owners, { isFetching }] = useQuery(
     getRealStateOwners,
     {
-      where: {
-        OR: [
-          { firstName: { contains: ownersSearchTextDebounced, mode: "insensitive" } },
-          { lastName: { contains: ownersSearchTextDebounced, mode: "insensitive" } },
-        ],
-      },
+      fullNameSearch: searchTextDebounced,
     },
     {
       suspense: false,
@@ -31,36 +47,109 @@ export const RealStateOwnerSelect = ({
     }
   )
 
-  const ownersList = [
-    ...initialValues,
-    ...selectedOwners,
-    ...(owners?.items.map(personToSelectItem) ?? []),
-  ]
-  // remove duplicated items
-  const filteredOwnersList = ownersList.filter(
-    (owner, index) => ownersList.findIndex((o) => o.value === owner.value) === index
+  /** Keep track of selected owners data (to add labels to the value prop) */
+  const [ownersData, setOwnersData] = useState<ComboboxItem[]>(initialValues)
+  const selectedOwnersComboBoxItems = value.map(
+    (ownerId) => ownersData.find((owner) => owner.value === ownerId)!
   )
 
+  const searchOwnersComboBoxItems = owners?.items?.map(personToSelectItem) || []
+
+  const comboBoxOptions = [...selectedOwnersComboBoxItems, ...searchOwnersComboBoxItems]
+    // remove duplicates
+    .filter((owner, index, arr) => arr.findIndex((o) => o.value === owner.value) === index)
+    ?.map((item) => {
+      const isActive = value.some((ownerId) => ownerId === item.value)
+      return (
+        <Combobox.Option value={item.value} key={item.value} active={isActive}>
+          <Group gap="sm">
+            {isActive ? <CheckIcon size={12} /> : null}
+            <span>{item.label}</span>
+          </Group>
+        </Combobox.Option>
+      )
+    })
+
+  const handleValueRemove = (ownerIdToRemove: string) =>
+    onChange(value.filter((id) => id !== ownerIdToRemove))
+
+  const combobox = useCombobox({
+    onDropdownClose: () => combobox.resetSelectedOption(),
+    onDropdownOpen: () => combobox.updateSelectedOptionIndex("active"),
+  })
+
+  const handleOptionSubmit = (selectedOwnerId: string) => {
+    // toggle owner item selection
+    const isAlreadySelected = value.some((ownerId) => selectedOwnerId === ownerId)
+
+    if (!isAlreadySelected) {
+      updateSearchText("")
+    }
+
+    const newValue = isAlreadySelected
+      ? value.filter((ownerId) => ownerId !== selectedOwnerId)
+      : [...value, selectedOwnerId]
+    onChange(newValue)
+
+    setOwnersData((owners) => {
+      const comboBoxItem = searchOwnersComboBoxItems.find(
+        (owner) => owner.value === selectedOwnerId
+      )!
+      return [...owners, comboBoxItem]
+    })
+  }
+
   return (
-    <MultiSelect
-      label="Propietario/s"
-      data={filteredOwnersList}
-      searchable
-      rightSection={isFetching ? <Loader size={14} /> : undefined}
-      onSearchChange={(searchText) => {
-        setOwnersSearchTextDebounced(searchText)
-      }}
-      nothingFoundMessage="No se encontraron resultados"
-      {...props}
-      onChange={(values) => {
-        setSelectedOwners(
-          values.map((value) => ({
-            value,
-            label: ownersList.find((owner) => owner.value === value)!.label,
-          }))
-        )
-        props?.onChange?.(values)
-      }}
-    />
+    <Input.Wrapper label="Propietario/s" error={error}>
+      <Combobox store={combobox} onOptionSubmit={handleOptionSubmit}>
+        <Combobox.DropdownTarget>
+          <PillsInput
+            onClick={() => combobox.openDropdown()}
+            rightSection={
+              isFetching || (searchText !== searchTextDebounced && <Loader size={18} />)
+            }
+          >
+            <Pill.Group>
+              {selectedOwnersComboBoxItems.map((owner) => (
+                <Pill
+                  key={owner.value}
+                  withRemoveButton
+                  onRemove={() => handleValueRemove(owner.value)}
+                >
+                  {owner.label}
+                </Pill>
+              ))}
+
+              <Combobox.EventsTarget>
+                <PillsInput.Field
+                  onFocus={() => combobox.openDropdown()}
+                  onBlur={() => combobox.closeDropdown()}
+                  value={searchText}
+                  onChange={(event) => {
+                    combobox.updateSelectedOptionIndex()
+                    updateSearchText(event.currentTarget.value)
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Backspace" && searchText.length === 0) {
+                      event.preventDefault()
+                      value.length && handleValueRemove(value[value.length - 1]!)
+                    }
+                  }}
+                />
+              </Combobox.EventsTarget>
+            </Pill.Group>
+          </PillsInput>
+        </Combobox.DropdownTarget>
+
+        <Combobox.Dropdown>
+          <Combobox.Options>
+            {comboBoxOptions}
+            {owners?.items && owners?.items.length === 0 && (
+              <Combobox.Empty>No se encontraron resultados</Combobox.Empty>
+            )}
+          </Combobox.Options>
+        </Combobox.Dropdown>
+      </Combobox>
+    </Input.Wrapper>
   )
 }
