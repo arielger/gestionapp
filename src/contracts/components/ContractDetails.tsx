@@ -3,11 +3,15 @@ import { Paper, Text } from "@mantine/core"
 import { ContractFeeType, Prisma } from "@prisma/client"
 
 import { DetailsList } from "src/core/components/DetailsList"
-import { PersonList } from "src/real-state-owners/components/PersonList"
+import { PersonList } from "src/clients/components/PersonList"
 
 type ContractWithRelatedEntities = Prisma.ContractGetPayload<{
   include: {
-    tenants: true
+    tenants: {
+      include: {
+        client: true
+      }
+    }
   }
 }>
 
@@ -19,12 +23,7 @@ export const ContractDetails = ({ contract }: { contract: ContractWithRelatedEnt
         details={[
           {
             title: "Inquilino/s",
-            value: (
-              <PersonList
-                list={contract.tenants ?? []}
-                handlePress={(id) => Routes.ShowTenantPage({ tenantId: id })}
-              />
-            ),
+            value: <PersonList list={contract.tenants.map((tenant) => tenant.client) ?? []} />,
           },
           {
             title: "Periodo",

@@ -10,22 +10,24 @@ import {
   PillsInput,
   Input,
 } from "@mantine/core"
-import getRealStateOwners from "../queries/getRealStateOwners"
+import getClients from "../queries/getClients"
 import { useThrottle } from "@react-hook/throttle"
 import { personToSelectItem } from "../utils"
 import { useState } from "react"
 
-export const RealStateOwnerSelect = ({
-  // Value used to initialize the labels for owners (when editing)
+export const ClientsSelect = ({
+  // Values used to initialize the labels (value prop only includes ids)
   initialValues,
-  value,
+  value = [],
   onChange,
   error,
+  label,
 }: {
   initialValues: ComboboxItem[]
-  value: string[]
+  value?: string[]
   onChange: (ids: string[]) => void
   error?: any
+  label: string
   // onFocus?: any
   // onBlur?: any
 }) => {
@@ -36,8 +38,8 @@ export const RealStateOwnerSelect = ({
     setSearchTextDebounced(value)
   }
 
-  const [owners, { isFetching }] = useQuery(
-    getRealStateOwners,
+  const [clients, { isFetching }] = useQuery(
+    getClients,
     {
       fullNameSearch: searchTextDebounced,
     },
@@ -47,19 +49,19 @@ export const RealStateOwnerSelect = ({
     }
   )
 
-  /** Keep track of selected owners data (to add labels to the value prop) */
-  const [ownersData, setOwnersData] = useState<ComboboxItem[]>(initialValues)
-  const selectedOwnersComboBoxItems = value.map(
-    (ownerId) => ownersData.find((owner) => owner.value === ownerId)!
+  /** Keep track of selected clients data (to add labels to the value prop) */
+  const [clientsData, setClientsData] = useState<ComboboxItem[]>(initialValues)
+  const selectedClientsComboBoxItems = value.map(
+    (clientId) => clientsData.find((client) => client.value === clientId)!
   )
 
-  const searchOwnersComboBoxItems = owners?.items?.map(personToSelectItem) || []
+  const searchClientsComboBoxItems = clients?.items?.map(personToSelectItem) || []
 
-  const comboBoxOptions = [...selectedOwnersComboBoxItems, ...searchOwnersComboBoxItems]
+  const comboBoxOptions = [...selectedClientsComboBoxItems, ...searchClientsComboBoxItems]
     // remove duplicates
-    .filter((owner, index, arr) => arr.findIndex((o) => o.value === owner.value) === index)
+    .filter((client, index, arr) => arr.findIndex((o) => o.value === client.value) === index)
     ?.map((item) => {
-      const isActive = value.some((ownerId) => ownerId === item.value)
+      const isActive = value.some((clientId) => clientId === item.value)
       return (
         <Combobox.Option value={item.value} key={item.value} active={isActive}>
           <Group gap="sm">
@@ -70,37 +72,37 @@ export const RealStateOwnerSelect = ({
       )
     })
 
-  const handleValueRemove = (ownerIdToRemove: string) =>
-    onChange(value.filter((id) => id !== ownerIdToRemove))
+  const handleValueRemove = (idToRemove: string) =>
+    onChange(value.filter((id) => id !== idToRemove))
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
     onDropdownOpen: () => combobox.updateSelectedOptionIndex("active"),
   })
 
-  const handleOptionSubmit = (selectedOwnerId: string) => {
-    // toggle owner item selection
-    const isAlreadySelected = value.some((ownerId) => selectedOwnerId === ownerId)
+  const handleOptionSubmit = (selectedClientId: string) => {
+    // toggle item selection
+    const isAlreadySelected = value.some((clientId) => selectedClientId === clientId)
 
     if (!isAlreadySelected) {
       updateSearchText("")
     }
 
     const newValue = isAlreadySelected
-      ? value.filter((ownerId) => ownerId !== selectedOwnerId)
-      : [...value, selectedOwnerId]
+      ? value.filter((clientId) => clientId !== selectedClientId)
+      : [...value, selectedClientId]
     onChange(newValue)
 
-    setOwnersData((owners) => {
-      const comboBoxItem = searchOwnersComboBoxItems.find(
-        (owner) => owner.value === selectedOwnerId
+    setClientsData((clients) => {
+      const comboBoxItem = searchClientsComboBoxItems.find(
+        (client) => client.value === selectedClientId
       )!
-      return [...owners, comboBoxItem]
+      return [...clients, comboBoxItem]
     })
   }
 
   return (
-    <Input.Wrapper label="Propietario/s" error={error}>
+    <Input.Wrapper label={label} error={error}>
       <Combobox store={combobox} onOptionSubmit={handleOptionSubmit}>
         <Combobox.DropdownTarget>
           <PillsInput
@@ -110,13 +112,13 @@ export const RealStateOwnerSelect = ({
             }
           >
             <Pill.Group>
-              {selectedOwnersComboBoxItems.map((owner) => (
+              {selectedClientsComboBoxItems.map((client) => (
                 <Pill
-                  key={owner.value}
+                  key={client.value}
                   withRemoveButton
-                  onRemove={() => handleValueRemove(owner.value)}
+                  onRemove={() => handleValueRemove(client.value)}
                 >
-                  {owner.label}
+                  {client.label}
                 </Pill>
               ))}
 
@@ -144,7 +146,7 @@ export const RealStateOwnerSelect = ({
         <Combobox.Dropdown>
           <Combobox.Options>
             {comboBoxOptions}
-            {owners?.items && owners?.items.length === 0 && (
+            {clients?.items && clients?.items.length === 0 && (
               <Combobox.Empty>No se encontraron resultados</Combobox.Empty>
             )}
           </Combobox.Options>

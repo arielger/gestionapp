@@ -13,7 +13,7 @@ import getProperties from "src/properties/queries/getProperties"
 import deleteProperty from "src/properties/mutations/deleteProperty"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 import { PageHeader } from "src/layout/components/PageHeader"
-import { PersonList } from "src/real-state-owners/components/PersonList"
+import { PersonList } from "src/clients/components/PersonList"
 
 export const PropertiesList = () => {
   const router = useRouter()
@@ -79,17 +79,15 @@ export const PropertiesList = () => {
             accessor: "owners",
             title: "Propietario/s",
             render: (property) => (
-              <PersonList
-                list={property?.owners ?? []}
-                handlePress={(id) => Routes.ShowRealStateOwnerPage({ realStateOwnerId: id })}
-              />
+              <PersonList list={property?.owners.map((owner) => owner.client) ?? []} />
             ),
           },
           {
             accessor: "contract",
             title: "Estado",
             render: (property) =>
-              property?.Contract?.length > 0 ? (
+              // TODO: review that contract is current
+              property?.contracts?.length > 0 ? (
                 <Badge
                   leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
                   variant="light"

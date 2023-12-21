@@ -13,8 +13,18 @@ export default resolver.pipe(
       data: {
         ...input,
         organizationId: ctx.session.orgId,
-        owners: { connect: input.owners?.map((owner) => ({ id: owner })) },
-        tenants: { connect: input.tenants?.map((tenant) => ({ id: tenant })) },
+        owners: {
+          create: input.owners?.map((owner) => ({
+            organizationId: ctx.session.orgId,
+            clientId: owner,
+          })),
+        },
+        tenants: {
+          create: input.tenants?.map((owner) => ({
+            organizationId: ctx.session.orgId,
+            clientId: owner,
+          })),
+        },
         activities: {
           createMany: {
             data: rentDates.map((rentDate) => ({

@@ -2,15 +2,17 @@ import React, { useState } from "react"
 import { Button, Text, Flex, Paper, Tooltip } from "@mantine/core"
 import { notifications } from "@mantine/notifications"
 
-import { ContractSearchForm, ContractWithRelatedEntities } from "./ContractSearchForm"
-import { getPersonFullName } from "src/real-state-owners/utils"
+import { ContractSearchForm } from "./ContractSearchForm"
+import { getPersonFullName } from "src/clients/utils"
 import { SelectActivitiesTable } from "./SelectActivitiesTable"
+import { ContractWithRelatedEntities } from "src/contracts/queries/getContracts"
 import { Activity } from "@prisma/client"
 import { useMutation } from "@blitzjs/rpc"
 import createPayment from "src/payments/mutations/createPayment"
 import { IconCheck } from "@tabler/icons-react"
 import router from "next/router"
 import { Routes } from "@blitzjs/next"
+import { PersonList } from "src/clients/components/PersonList"
 
 export function PaymentForm() {
   const [selectedContract, setSelectedContract] = useState<ContractWithRelatedEntities | null>(null)
@@ -45,11 +47,11 @@ export function PaymentForm() {
           <Text>Dirección: {selectedContract.property.address}</Text>
           <Text>
             Propietario/s:{" "}
-            {selectedContract.owners.map((owner) => getPersonFullName(owner)).join(", ")}
+            <PersonList list={selectedContract.owners.map((owner) => owner.client)} />
           </Text>
           <Text>
             Inquilino/s:{" "}
-            {selectedContract.tenants.map((tenant) => getPersonFullName(tenant)).join(", ")}
+            <PersonList list={selectedContract.tenants.map((tenant) => tenant.client)} />
           </Text>
         </Flex>
       </Paper>

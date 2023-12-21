@@ -11,6 +11,7 @@ TODO:
 
   - [ ] You should be able to register a payment related to a tenant or owner
 
+- [] add 404 page for property not found
 - [] Merge owners and tenants
 - [] Calculate initial and end month payments values
 - [] Change date format to dd-mm-yyyy (move to general variable)

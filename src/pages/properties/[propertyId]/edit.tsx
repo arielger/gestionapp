@@ -1,4 +1,3 @@
-import { Suspense } from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
@@ -12,7 +11,7 @@ import updateProperty from "src/properties/mutations/updateProperty"
 import { PropertyForm } from "src/properties/components/PropertyForm"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { Center, Loader, Paper } from "@mantine/core"
-import { personToSelectItem } from "src/real-state-owners/utils"
+import { personToSelectItem } from "src/clients/utils"
 
 export const EditProperty = () => {
   const router = useRouter()
@@ -28,10 +27,12 @@ export const EditProperty = () => {
   )
   const [updatePropertyMutation, { isLoading: isLoadingUpdate }] = useMutation(updateProperty)
 
+  const propertyOwnersClients = property?.owners.map((owner) => owner.client) ?? []
+
   const initialValues = {
     ...property,
     address: property?.address ?? "",
-    owners: property?.owners ? property.owners.map((owner) => String(owner.id)) : [],
+    owners: propertyOwnersClients?.map((client) => String(client.id)),
   }
 
   // TODO: Fix property edit - form errors not working properly
@@ -56,7 +57,7 @@ export const EditProperty = () => {
                 address: initialValues.address,
                 owners: initialValues.owners,
               }}
-              ownersInitialValues={property.owners.map(personToSelectItem)}
+              ownersInitialValues={propertyOwnersClients.map(personToSelectItem)}
               isLoading={isLoadingUpdate}
               onSubmit={async (values) => {
                 const updated = await updatePropertyMutation({

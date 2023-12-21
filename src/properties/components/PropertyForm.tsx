@@ -3,7 +3,7 @@ import { Flex, ComboboxItem, TextInput } from "@mantine/core"
 import { z } from "zod"
 
 import Form, { FormProps } from "src/core/components/Form"
-import { RealStateOwnerSelect } from "src/real-state-owners/components/RealStateOwnerSelect"
+import { ClientsSelect } from "src/clients/components/ClientsSelect"
 
 export function PropertyForm<S extends z.ZodType<any, any>>({
   initialValues,
@@ -25,7 +25,8 @@ export function PropertyForm<S extends z.ZodType<any, any>>({
           return (
             <Flex direction="column" gap="sm">
               <TextInput label="Dirección" {...form.getInputProps("address")} required />
-              <RealStateOwnerSelect
+              <ClientsSelect
+                label="Propietario/s"
                 initialValues={ownersInitialValues}
                 {...form.getInputProps("owners")}
               />

@@ -10,7 +10,12 @@ export default resolver.pipe(
       data: {
         ...input,
         organizationId: ctx.session.orgId,
-        owners: { connect: input.owners?.map((owner) => ({ id: owner })) },
+        owners: {
+          create: input.owners?.map((owner) => ({
+            organizationId: ctx.session.orgId,
+            clientId: owner,
+          })),
+        },
       },
     })
 

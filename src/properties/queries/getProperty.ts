@@ -8,20 +8,30 @@ const GetProperty = z.object({
   id: z.number().optional().refine(Boolean, "Required"),
 })
 
+export const getPropertyInclude = {
+  owners: {
+    include: {
+      client: true,
+    },
+  },
+  contracts: {
+    include: {
+      tenants: {
+        include: {
+          client: true,
+        },
+      },
+    },
+  },
+}
+
 export default resolver.pipe(
   resolver.zod(GetProperty),
   resolver.authorize(),
   async ({ id }, ctx) => {
     const property = await db.property.findFirst({
       where: { id, organizationId: ctx.session.orgId },
-      include: {
-        owners: true,
-        Contract: {
-          include: {
-            tenants: true,
-          },
-        },
-      },
+      include: getPropertyInclude,
     })
 
     if (!property) throw new NotFoundError()

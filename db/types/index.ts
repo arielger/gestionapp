@@ -26,25 +26,26 @@ export type ActivityCustomDetails = {
   activityId: number
   title: string
 }
-export type Contract = {
-  id: Generated<number>
+export type Client = {
+  organizationId: number
   createdAt: Generated<Timestamp>
   updatedAt: Timestamp
-  propertyId: number
+  id: Generated<number>
+  firstName: string
+  lastName: string
+  email: string | null
+}
+export type Contract = {
   organizationId: number
+  createdAt: Generated<Timestamp>
+  updatedAt: Timestamp
+  id: Generated<number>
+  propertyId: number
   startDate: Timestamp
   endDate: Timestamp
   rentAmount: number
   fee: number
   feeType: ContractFeeType
-}
-export type ContractToRealStateOwner = {
-  A: number
-  B: number
-}
-export type ContractToTenant = {
-  A: number
-  B: number
 }
 export type Membership = {
   id: Generated<number>
@@ -65,24 +66,25 @@ export type Payment = {
   organizationId: number
 }
 export type Property = {
+  organizationId: number
+  createdAt: Generated<Timestamp>
+  updatedAt: Timestamp
   id: Generated<number>
   address: string
+}
+export type PropertyOwnerOnContract = {
+  organizationId: number
   createdAt: Generated<Timestamp>
   updatedAt: Timestamp
+  clientId: number
+  contractId: number
+}
+export type PropertyOwnerOnProperty = {
   organizationId: number
-}
-export type PropertyToRealStateOwner = {
-  A: number
-  B: number
-}
-export type RealStateOwner = {
-  id: Generated<number>
   createdAt: Generated<Timestamp>
   updatedAt: Timestamp
-  firstName: string
-  lastName: string
-  organizationId: number
-  email: string | null
+  clientId: number
+  propertyId: number
 }
 export type Session = {
   id: Generated<number>
@@ -96,14 +98,12 @@ export type Session = {
   privateData: string | null
   userId: number | null
 }
-export type Tenant = {
-  id: Generated<number>
+export type TenantOnContract = {
+  organizationId: number
   createdAt: Generated<Timestamp>
   updatedAt: Timestamp
-  firstName: string
-  lastName: string
-  organizationId: number
-  email: string | null
+  clientId: number
+  contractId: number
 }
 export type Token = {
   id: Generated<number>
@@ -125,19 +125,18 @@ export type User = {
   role: Generated<string>
 }
 export type DB = {
-  _ContractToRealStateOwner: ContractToRealStateOwner
-  _ContractToTenant: ContractToTenant
-  _PropertyToRealStateOwner: PropertyToRealStateOwner
   Activity: Activity
   ActivityCustomDetails: ActivityCustomDetails
+  Client: Client
   Contract: Contract
   Membership: Membership
   Organization: Organization
   Payment: Payment
   Property: Property
-  RealStateOwner: RealStateOwner
+  PropertyOwnerOnContract: PropertyOwnerOnContract
+  PropertyOwnerOnProperty: PropertyOwnerOnProperty
   Session: Session
-  Tenant: Tenant
+  TenantOnContract: TenantOnContract
   Token: Token
   User: User
 }

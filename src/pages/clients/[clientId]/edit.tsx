@@ -7,48 +7,50 @@ import { useQuery, useMutation } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
 
 import Layout from "src/core/layouts/Layout"
-import { UpdateTenantSchema } from "src/tenants/schemas"
-import getTenant from "src/tenants/queries/getTenant"
-import updateTenant from "src/tenants/mutations/updateTenant"
-import { TenantForm } from "src/tenants/components/TenantForm"
+import { UpdateClientSchema } from "src/clients/schemas"
+import getClient from "src/clients/queries/getClient"
+import updateClient from "src/clients/mutations/updateClient"
+import { ClientForm } from "src/clients/components/ClientForm"
 import { Paper } from "@mantine/core"
 import { PageHeader } from "src/layout/components/PageHeader"
 
-export const EditTenant = () => {
+// TODO: move to edit modal
+
+export const EditClient = () => {
   const router = useRouter()
-  const tenantId = useParam("tenantId", "number")
-  const [tenant, { setQueryData }] = useQuery(
-    getTenant,
-    { id: tenantId },
+  const clientId = useParam("clientId", "number")
+  const [client, { setQueryData }] = useQuery(
+    getClient,
+    { id: clientId },
     {
       // This ensures the query never refreshes and overwrites the form data while the user is editing.
       staleTime: Infinity,
     }
   )
-  const [updateTenantMutation, { isLoading }] = useMutation(updateTenant)
+  const [updateClientMutation, { isLoading }] = useMutation(updateClient)
 
   return (
     <>
       <Head>
-        <title>Editar inquilino #{tenant.id}</title>
+        <title>Editar cliente #{client.id}</title>
       </Head>
 
       <div>
-        <PageHeader title={`Editar inquilino #${tenant.id}`} />
+        <PageHeader title={`Editar cliente #${client.id}`} />
         <Suspense fallback={<div>Loading...</div>}>
           <Paper shadow="xs" p="xl">
-            <TenantForm
+            <ClientForm
               isLoading={isLoading}
               submitText="Editar"
-              schema={UpdateTenantSchema.omit({ id: true })}
-              initialValues={tenant}
+              schema={UpdateClientSchema.omit({ id: true })}
+              initialValues={client}
               onSubmit={async (values) => {
-                const updated = await updateTenantMutation({
-                  id: tenant.id,
+                const updated = await updateClientMutation({
+                  id: client.id,
                   ...values,
                 })
                 await setQueryData(updated)
-                await router.push(Routes.ShowTenantPage({ tenantId: updated.id }))
+                await router.push(Routes.ShowClientPage({ clientId: updated.id }))
               }}
             />
           </Paper>
@@ -58,21 +60,21 @@ export const EditTenant = () => {
   )
 }
 
-const EditTenantPage = () => {
+const EditClientPage = () => {
   return (
     <div>
       <Suspense fallback={<div>Loading...</div>}>
-        <EditTenant />
+        <EditClient />
       </Suspense>
 
       <p>
-        <Link href={Routes.TenantsPage()}>Volver</Link>
+        <Link href={Routes.ClientsPage()}>Volver</Link>
       </p>
     </div>
   )
 }
 
-EditTenantPage.authenticate = true
-EditTenantPage.getLayout = (page) => <Layout>{page}</Layout>
+EditClientPage.authenticate = true
+EditClientPage.getLayout = (page) => <Layout>{page}</Layout>
 
-export default EditTenantPage
+export default EditClientPage

@@ -16,3 +16,5 @@ export enum ActivityTransactionType {
   DEBIT = "DEBIT",
   CREDIT = "CREDIT",
 }
+
+export const activitiesWithCreationEnabled = [ActivityType.CUSTOM]

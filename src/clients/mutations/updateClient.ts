@@ -1,16 +1,16 @@
 import { resolver } from "@blitzjs/rpc"
 import db from "db"
-import { UpdateRealStateOwnerSchema } from "../schemas"
+import { UpdateClientSchema } from "../schemas"
 
 export default resolver.pipe(
-  resolver.zod(UpdateRealStateOwnerSchema),
+  resolver.zod(UpdateClientSchema),
   resolver.authorize(),
   async ({ id, ...data }, ctx) => {
-    const realStateOwner = await db.realStateOwner.update({
+    const client = await db.client.update({
       where: { id, organizationId: ctx.session.orgId },
       data,
     })
 
-    return realStateOwner
+    return client
   }
 )
