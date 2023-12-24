@@ -15,6 +15,7 @@ const data = [
   { link: Routes.PropertiesPage(), label: "Propiedades", icon: IconHome },
   { link: Routes.ClientsPage({ type: "owners" }), label: "Propietarios", icon: IconUser },
   { link: Routes.ClientsPage({ type: "tenants" }), label: "Inquilinos", icon: IconUser },
+  { link: Routes.PaymentsPage(), label: "Pagos", icon: IconCreditCard },
   { link: Routes.NewPaymentPage(), label: "Nuevo pago", icon: IconCreditCard },
 ] as const
 
