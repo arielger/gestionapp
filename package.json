@@ -53,6 +53,7 @@
     "next": "^13.5.6",
     "next-query-params": "5.0.0",
     "pdfkit": "0.14.0",
+    "pdfkit-table": "0.1.99",
     "pg": "8.11.3",
     "prisma": "5",
     "prisma-kysely": "1.7.1",

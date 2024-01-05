@@ -8,9 +8,9 @@ const activityTypeTranslations = {
   CUSTOM: "Manual",
 }
 
-export const getActivityTitle = (activity: ActivityWithDetails): string | undefined => {
+export const getActivityTitle = (activity: ActivityWithDetails): string => {
   if (activity.type === ActivityType.CUSTOM) {
-    return activity?.customDetails?.title
+    return activity?.customDetails?.title ?? "-"
   }
 
   if (activity.type === ActivityType.RENT) {
