@@ -3,17 +3,19 @@ import { DataTableProps } from "mantine-datatable"
 import { useRouter } from "next/router"
 import { IconSquareX } from "@tabler/icons-react"
 
-export const usePaginatedTable = <T,>({
+type QueryType<T> = (...args) => Promise<{
+  items: T[]
+  count: number
+}>
+
+export const usePaginatedTable = <T extends {}>({
   query,
   recordsPerPage = 50,
   queryParams = {},
 }: {
-  query: (...args: any) => Promise<{
-    items: T[]
-    count: number
-  }>
+  query: QueryType<T>
+  queryParams?: Parameters<QueryType<T>>[0]
   recordsPerPage?: number
-  queryParams?: Record<string, any> // todo: remove any
 }) => {
   const router = useRouter()
   const page = Number(router.query.page) || 0

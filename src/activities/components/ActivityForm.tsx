@@ -14,7 +14,7 @@ import React from "react"
 import { Form, FormProps } from "src/core/components/Form"
 
 import { z } from "zod"
-import { activityPersonLabels, ActivityTransactionType, activityTypesLabels } from "../config"
+import { activityPersonLabels, ActivityTransactionType } from "../config"
 
 // TODO: review if we should be able to edit activities
 export function ActivityForm<S extends z.ZodType<any, any>>(props: FormProps<S>) {
@@ -62,14 +62,15 @@ export function ActivityForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
                 {...form.getInputProps("assignedTo")}
               />
             </Input.Wrapper>
-            <NativeSelect
+            {/* TODO: review - now we are only enabling to create custom activities */}
+            {/* <NativeSelect
               label="Tipo"
-              data={Object.values(ActivityType).map((activityType) => ({
+              data={activitiesWithCreationEnabled.map((activityType) => ({
                 value: activityType,
                 label: activityTypesLabels[activityType],
               }))}
               {...form.getInputProps("type")}
-            />
+            /> */}
             {form.values.type === ActivityType.CUSTOM && (
               <>
                 <TextInput label="Titulo" {...form.getInputProps("details.title")} />

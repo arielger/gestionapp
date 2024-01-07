@@ -15,29 +15,8 @@ import { ActivityForm } from "./ActivityForm"
 import deleteActivity from "../mutations/deleteActivity"
 import updateActivity from "../mutations/updateActivity"
 import { actionsColumnConfig } from "src/core/components/DataTable"
-
-export type ActivityWithDetails = Prisma.ActivityGetPayload<{
-  include: {
-    customDetails: true
-    // todo: review this nesting - code smell
-    originActivity: {
-      include: {
-        originActivity: {
-          include: {
-            originActivity: true
-          }
-        }
-      }
-    }
-  }
-}>
-
-const activityTypeTranslations = {
-  RENT: "Alquiler {month}",
-  RENT_PAYMENT: "Pago alquiler {month}",
-  RENT_FEE: "Comisión pago alquiler {month}",
-  CUSTOM: "Manual",
-}
+import { getActivityTitle } from "../utils"
+import { ActivityWithDetails } from "../types"
 
 const renderBalanceMovementCell = ({
   activity,
@@ -66,49 +45,6 @@ const renderBalanceMovementCell = ({
       {new Intl.NumberFormat().format(activity.amount)}
     </Text>
   )
-}
-
-const getActivityTitle = (activity: ActivityWithDetails): string | undefined => {
-  if (activity.type === ActivityType.CUSTOM) {
-    return activity?.customDetails?.title
-  }
-
-  if (activity.type === ActivityType.RENT) {
-    // initial tenant debit/debt activity
-    if (activity.assignedTo === ActivityPersonType.TENANT && activity.isDebit) {
-      return activityTypeTranslations.RENT.replace(
-        "{month}",
-        activity.date.toLocaleString("es-AR", { month: "long" })
-      )
-    }
-
-    // if tenant is cancelling the rent debt we need to get the data from the related activity to pay
-    if (activity.assignedTo === ActivityPersonType.TENANT && !activity.isDebit) {
-      return activityTypeTranslations.RENT_PAYMENT.replace(
-        "{month}",
-        activity.originActivity!.date.toLocaleString("es-AR", { month: "long" })
-      )
-    }
-
-    // owner credit
-    if (activity.assignedTo === ActivityPersonType.OWNER && !activity.isDebit) {
-      return activityTypeTranslations.RENT_PAYMENT.replace(
-        "{month}",
-        activity.originActivity!.originActivity!.date.toLocaleString("es-AR", { month: "long" })
-      )
-    }
-  }
-
-  if (activity.type === ActivityType.RENT_FEE) {
-    return activityTypeTranslations.RENT_FEE.replace(
-      "{month}",
-      activity.originActivity!.originActivity!.originActivity!.date.toLocaleString("es-AR", {
-        month: "long",
-      })
-    )
-  }
-
-  return "-"
 }
 
 export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
@@ -286,7 +222,7 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
               {
                 accessor: "date",
                 title: "Fecha",
-                render: ({ date }) => date.toLocaleString(),
+                render: ({ date }) => date.toLocaleDateString(),
               },
               { accessor: "type", title: "Tipo", render: getActivityTitle },
             ],

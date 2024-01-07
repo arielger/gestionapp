@@ -13,10 +13,9 @@ import { DateInput } from "@mantine/dates"
 import { z } from "zod"
 
 import { Form, FormProps } from "src/core/components/Form"
-import { RealStateOwnerSelect } from "src/real-state-owners/components/RealStateOwnerSelect"
-import { TenantSelect } from "src/tenants/components/TenantSelect"
 import { getContractRentPaymentDates } from "../utils/utils"
 import { ContractFeeType } from "@prisma/client"
+import { ClientsSelect } from "src/clients/components/ClientsSelect"
 
 export function ContractForm<S extends z.ZodType<any, any>>({
   ownersInitialValue = [],
@@ -39,7 +38,12 @@ export function ContractForm<S extends z.ZodType<any, any>>({
               disabled
               value={ownersInitialValue.map((o) => o.value)}
             />
-            <TenantSelect initialValues={[]} {...form.getInputProps("tenants")} />
+            {/* TODO: prevent adding owners as tenants */}
+            <ClientsSelect
+              label="Inquilino/s"
+              initialValues={[]}
+              {...form.getInputProps("tenants")}
+            />
             <Flex direction="row" gap="md">
               <DateInput
                 style={{ flex: 1 }}

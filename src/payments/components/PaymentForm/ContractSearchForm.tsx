@@ -1,46 +1,34 @@
 import React, { useState } from "react"
 import { Flex, Select, Button, TextInput } from "@mantine/core"
-import { Prisma } from "@prisma/client"
 import { useQuery } from "@blitzjs/rpc"
-import uniqBy from "lodash/uniqBy"
 
 import Form from "src/core/components/Form"
-import getRealStateOwners from "src/real-state-owners/queries/getRealStateOwners"
-import { getPersonFullName } from "src/real-state-owners/utils"
 import { DataTable } from "src/core/components/DataTable"
+import getContracts, { ContractWithRelatedEntities } from "src/contracts/queries/getContracts"
+import { PersonList } from "src/clients/components/PersonList"
 
-type RealStateOwnerWithRelatedEntities = Prisma.RealStateOwnerGetPayload<{
-  include: {
-    contracts: {
-      include: {
-        owners: true
-        property: true
-        tenants: true
-      }
-    }
-  }
-}>
-
-export type ContractWithRelatedEntities = Prisma.ContractGetPayload<{
-  include: {
-    owners: true
-    property: true
-    tenants: true
-  }
-}>
+const selectSearchTypeValues = [
+  { value: "owners", label: "Propietario" },
+  { value: "tenants", label: "Inquilino" },
+  { value: "address", label: "Dirección" },
+]
 
 export function ContractSearchForm({
   onSelectContract,
 }: {
   onSelectContract: (contract: ContractWithRelatedEntities) => void
 }) {
-  const [searchText, setSearchText] = useState("")
+  const [formValues, setFormValues] = useState<{
+    searchBy: (typeof selectSearchTypeValues)[number]["value"]
+    searchText: string
+  }>()
 
-  const [ownersData, { isFetching: isFetchingOwners, refetch: refetchOwners }] = useQuery(
-    getRealStateOwners,
+  const [contractsData, { isFetching: isFetchingContracts, refetch: refetchContracts }] = useQuery(
+    getContracts,
     {
-      fullNameSearch: searchText,
-      includeRelatedEntities: true,
+      // TODO: add full name search
+      searchText: formValues?.searchText,
+      searchBy: formValues?.searchBy,
     },
     {
       enabled: false,
@@ -49,76 +37,70 @@ export function ContractSearchForm({
     }
   )
 
-  const isSearching = isFetchingOwners
-  const searchedContracts = ownersData?.items
-    ? uniqBy(
-        ownersData.items
-          ?.map((owner) =>
-            (owner as RealStateOwnerWithRelatedEntities)?.contracts.map((contract) => ({
-              contract,
-              address: contract.property.address,
-              owners: contract.owners.map((owner) => getPersonFullName(owner)).join(", "),
-              tenants: contract.tenants.map((owner) => getPersonFullName(owner)).join(", "),
-            }))
-          )
-          .flat(),
-        "contract.id"
-      )
-    : undefined
+  const isSearching = isFetchingContracts
 
   return (
     <>
       <Form
         initialValues={{
-          searchBy: "Propietario",
+          searchBy: "owners",
+          searchText: "",
         }}
-        onSubmit={() => refetchOwners({})}
+        onSubmit={() => refetchContracts({})}
+        formHookProps={{
+          onValuesChange: (values) => {
+            setFormValues(values)
+          },
+        }}
       >
         {(form) => {
           return (
             <Flex direction="column" gap="sm">
               <Flex direction="row" gap="md">
                 <Select
+                  allowDeselect={false}
                   label="Buscar contrato por"
-                  data={[
-                    { value: "Propietario", label: "Propietario" },
-                    { value: "Inquilino", label: "Inquilino", disabled: true },
-                    { value: "Dirección", label: "Dirección", disabled: true },
-                  ]}
+                  data={selectSearchTypeValues}
                   {...form.getInputProps("searchBy")}
                 />
                 <TextInput
-                  label={`${form.values.searchBy} a buscar`}
+                  label={`${
+                    selectSearchTypeValues.find(
+                      (searchType) => searchType.value === form.values.searchBy
+                    )?.label
+                  } a buscar`}
                   {...form.getInputProps("searchText")}
-                  onChange={(e) => {
-                    form.getInputProps("searchText").onChange(e.currentTarget.value)
-                    setSearchText(e.currentTarget.value)
-                  }}
                 />
                 <Button style={{ alignSelf: "end" }} type="submit" loading={isSearching}>
                   Buscar
                 </Button>
               </Flex>
               <DataTable
-                idAccessor={(row) => row.contract.id}
+                idAccessor={(row) => row.id}
                 noRecordsText="No se encontraron contratos relacionados a la búsqueda"
                 fetching={isSearching}
                 withColumnBorders
-                records={searchedContracts}
+                records={contractsData?.items}
                 columns={[
-                  { accessor: "contract.id", title: "ID contrato" },
-                  { accessor: "address", title: "Dirección" },
-                  { accessor: "owners", title: "Propietario/s" },
-                  { accessor: "tenants", title: "Inquilino/s" },
+                  { accessor: "id", title: "ID contrato" },
+                  { accessor: "property.address", title: "Dirección" },
+                  {
+                    accessor: "owners",
+                    title: "Propietario/s",
+                    render: (row) => <PersonList list={row.owners.map((owner) => owner.client)} />,
+                  },
+                  {
+                    accessor: "tenants",
+                    title: "Inquilino/s",
+                    render: (row) => (
+                      <PersonList list={row.tenants.map((tenant) => tenant.client)} />
+                    ),
+                  },
                   {
                     accessor: "actions",
                     title: "",
                     render: (row) => (
-                      <Button
-                        size="xs"
-                        variant="light"
-                        onClick={() => onSelectContract(row.contract)}
-                      >
+                      <Button size="xs" variant="light" onClick={() => onSelectContract(row)}>
                         Seleccionar
                       </Button>
                     ),

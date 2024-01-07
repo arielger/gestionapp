@@ -5,6 +5,8 @@ import { MantineProvider, createTheme } from "@mantine/core"
 import { DatesProvider } from "@mantine/dates"
 import { Notifications } from "@mantine/notifications"
 import { withBlitz } from "src/blitz-client"
+import NextAdapterPages from "next-query-params/pages"
+import { QueryParamProvider } from "use-query-params"
 import { Inter } from "next/font/google"
 
 import { Layout } from "src/layout/components/Layout"
@@ -54,16 +56,18 @@ function MyApp({ Component, pageProps }: AppProps) {
   })
 
   return (
-    <MantineProvider theme={theme}>
-      <DatesProvider settings={{ locale: "es", firstDayOfWeek: 1 }}>
-        <Notifications autoClose={5000} />
-        <ErrorBoundary FallbackComponent={RootErrorFallback} onReset={reset}>
-          <Suspense fallback="Loading...">
-            <Layout>{getLayout(<Component {...pageProps} />)}</Layout>
-          </Suspense>
-        </ErrorBoundary>
-      </DatesProvider>
-    </MantineProvider>
+    <QueryParamProvider adapter={NextAdapterPages}>
+      <MantineProvider theme={theme}>
+        <DatesProvider settings={{ locale: "es", firstDayOfWeek: 1 }}>
+          <Notifications autoClose={5000} />
+          <ErrorBoundary FallbackComponent={RootErrorFallback} onReset={reset}>
+            <Suspense fallback="Loading...">
+              <Layout>{getLayout(<Component {...pageProps} />)}</Layout>
+            </Suspense>
+          </ErrorBoundary>
+        </DatesProvider>
+      </MantineProvider>
+    </QueryParamProvider>
   )
 }
 

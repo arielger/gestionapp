@@ -1,6 +1,7 @@
 import { resolver } from "@blitzjs/rpc"
 import db from "db"
 import { UpdatePropertyMutationSchema } from "../schemas"
+import { getPropertyInclude } from "../queries/getProperty"
 
 export default resolver.pipe(
   resolver.zod(UpdatePropertyMutationSchema),
@@ -8,16 +9,24 @@ export default resolver.pipe(
   async ({ id, ...data }, ctx) => {
     const property = await db.property.update({
       where: { id, organizationId: ctx.session.orgId },
-      data: { ...data, owners: { set: data.owners?.map((owner) => ({ id: owner })) } },
-      include: {
-        owners: true,
-        Contract: {
-          include: {
-            tenants: true,
-            activities: true,
+      data: {
+        ...data,
+        owners: {
+          upsert: data.owners.map((ownerId) => ({
+            where: { clientId_propertyId: { clientId: ownerId, propertyId: id } },
+            update: {},
+            create: {
+              clientId: ownerId,
+              organizationId: ctx.session.orgId,
+            },
+          })),
+          deleteMany: {
+            propertyId: id,
+            clientId: { notIn: data.owners },
           },
         },
       },
+      include: getPropertyInclude,
     })
 
     return property

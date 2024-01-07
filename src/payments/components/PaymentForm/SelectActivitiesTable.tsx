@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Flex, Text } from "@mantine/core"
 import { useQuery } from "@blitzjs/rpc"
 
@@ -31,9 +31,15 @@ export function SelectActivitiesTable({
     },
     {
       suspense: false,
-      keepPreviousData: true,
+      staleTime: Infinity, // prevent refetching
     }
   )
+
+  useEffect(() => {
+    if (activitiesData?.items) {
+      setSelectedActivities(activitiesData.items)
+    }
+  }, [activitiesData?.items, setSelectedActivities])
 
   const totalDebt = activitiesData?.items.reduce((acc, activity) => acc + activity.amount, 0) ?? 0
   const selectedActivitiesAmount = selectedActivities.reduce(

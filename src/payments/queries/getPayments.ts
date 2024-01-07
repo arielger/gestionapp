@@ -3,11 +3,11 @@ import { resolver } from "@blitzjs/rpc"
 import db, { Prisma } from "db"
 
 interface GetPaymentsInput
-  extends Pick<Prisma.PaymentFindManyArgs, "where" | "orderBy" | "skip" | "take"> {}
+  extends Pick<Prisma.PaymentFindManyArgs, "where" | "orderBy" | "skip" | "take" | "include"> {}
 
 export default resolver.pipe(
-  resolver.authorize(),
-  async ({ where, orderBy, skip = 0, take = 100 }: GetPaymentsInput, ctx) => {
+  resolver.authorize<GetPaymentsInput>(),
+  async ({ where, orderBy, include, skip = 0, take = 100 }: GetPaymentsInput, ctx) => {
     const { items, hasMore, nextPage, count } = await paginate({
       skip,
       take,
@@ -20,6 +20,7 @@ export default resolver.pipe(
             organizationId: ctx.session.orgId,
           },
           orderBy,
+          include,
         }),
     })
 

@@ -21,8 +21,12 @@ export default resolver.pipe(
           },
           orderBy,
           include: {
-            owners: true,
-            Contract: true,
+            owners: {
+              include: {
+                client: true,
+              },
+            },
+            contracts: true,
           },
         }),
     })

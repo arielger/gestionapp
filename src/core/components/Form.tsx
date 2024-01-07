@@ -1,6 +1,6 @@
 import { ReactNode, PropsWithoutRef } from "react"
 import { z } from "zod"
-import { useForm, zodResolver, UseFormReturnType } from "@mantine/form"
+import { useForm, zodResolver, UseFormReturnType, UseFormInput } from "@mantine/form"
 import { Button } from "@mantine/core"
 import { notifications } from "@mantine/notifications"
 import { IconX } from "@tabler/icons-react"
@@ -17,6 +17,7 @@ export interface FormProps<Schema extends z.ZodType<any, any>>
   onSubmit: (values: z.infer<Schema>) => void
   initialValues?: Partial<z.infer<Schema>>
   isLoading?: boolean
+  formHookProps?: UseFormInput<z.TypeOf<Schema>>
 }
 
 export function Form<S extends z.ZodType<any, any>>({
@@ -26,11 +27,13 @@ export function Form<S extends z.ZodType<any, any>>({
   initialValues,
   onSubmit,
   isLoading = false,
+  formHookProps = {},
   ...props
 }: FormProps<S>) {
   const form = useForm({
     initialValues: { ...initialValues, formError: "" },
     validate: schema ? zodResolver(schema) : undefined,
+    ...formHookProps,
   })
 
   const _onSubmit = async (values: z.TypeOf<S>) => {

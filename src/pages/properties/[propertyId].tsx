@@ -14,13 +14,13 @@ import getProperty from "src/properties/queries/getProperty"
 import deleteProperty from "src/properties/mutations/deleteProperty"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { DetailsList } from "src/core/components/DetailsList"
-import { PersonList } from "src/real-state-owners/components/PersonList"
+import { PersonList } from "src/clients/components/PersonList"
 import { ActivitiesBalance } from "src/activities/components/ActivitiesBalance"
 import { ContractForm } from "src/contracts/components/ContractForm"
 import createContract from "src/contracts/mutations/createContract"
 import { CreateContractFormSchema } from "src/contracts/schemas"
 import { ContractDetails } from "src/contracts/components/ContractDetails"
-import { personToSelectItem } from "src/real-state-owners/utils"
+import { personToSelectItem } from "src/clients/utils"
 import { ContractFeeType } from "@prisma/client"
 
 export const Property = () => {
@@ -36,13 +36,15 @@ export const Property = () => {
   )
 
   // TODO: should check date to know if it's rented
-  const currentContract = property?.Contract?.[0]
+  const currentContract = property?.contracts?.[0]
 
   const [deletePropertyMutation] = useMutation(deleteProperty)
 
   const [createContractMutation, { isLoading }] = useMutation(createContract)
   const [isCreateContractOpen, { open: openCreateContractModal, close: closeCreateContractModal }] =
     useDisclosure(false)
+
+  const propertyOwnersClients = property?.owners.map((owner) => owner.client) ?? []
 
   return (
     <>
@@ -71,6 +73,7 @@ export const Property = () => {
               <Button>Editar</Button>
             </Link>
 
+            {/* TODO: review - not working */}
             <Button
               color="red"
               type="button"
@@ -84,7 +87,7 @@ export const Property = () => {
               Eliminar
             </Button>
 
-            {!property?.Contract?.length && (
+            {!property?.contracts?.length && (
               <Button onClick={openCreateContractModal}>Crear contrato</Button>
             )}
           </Flex>
@@ -106,14 +109,7 @@ export const Property = () => {
                   },
                   {
                     title: "Propietario/s",
-                    value: (
-                      <PersonList
-                        list={property.owners ?? []}
-                        handlePress={(id) =>
-                          Routes.ShowRealStateOwnerPage({ realStateOwnerId: id })
-                        }
-                      />
-                    ),
+                    value: <PersonList list={propertyOwnersClients ?? []} />,
                   },
                   ...(currentContract
                     ? [
@@ -157,14 +153,14 @@ export const Property = () => {
             isLoading={isLoading}
             submitText="Crear"
             schema={CreateContractFormSchema}
-            ownersInitialValue={property?.owners.map(personToSelectItem)}
+            ownersInitialValue={propertyOwnersClients.map((client) => personToSelectItem(client))}
             onSubmit={async (values) => {
               if (!property) return
 
               await createContractMutation({
                 ...values,
                 propertyId: propertyId,
-                owners: property.owners.map((owner) => owner.id),
+                owners: propertyOwnersClients.map((client) => client.id),
                 // transform percentage from presentation (0 to 100) to db representation (0 to 1)
                 fee: values.feeType === ContractFeeType.PERCENTAGE ? values.fee * 0.01 : values.fee,
               })

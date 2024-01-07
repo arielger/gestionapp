@@ -14,7 +14,18 @@ export default resolver.pipe(
   async ({ id }, ctx) => {
     const contract = await db.contract.findFirst({
       where: { id, organizationId: ctx.session.orgId },
-      include: { owners: true, tenants: true },
+      include: {
+        owners: {
+          include: {
+            client: true,
+          },
+        },
+        tenants: {
+          include: {
+            client: true,
+          },
+        },
+      },
     })
 
     if (!contract) throw new NotFoundError()
