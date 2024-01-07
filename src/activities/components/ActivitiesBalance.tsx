@@ -222,7 +222,7 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
               {
                 accessor: "date",
                 title: "Fecha",
-                render: ({ date }) => date.toLocaleString(),
+                render: ({ date }) => date.toLocaleDateString(),
               },
               { accessor: "type", title: "Tipo", render: getActivityTitle },
             ],

@@ -4,9 +4,13 @@ import { getActivityTitle } from "src/activities/utils"
 import { api } from "src/blitz-server"
 import { getPersonFullName } from "src/clients/utils"
 import createPdfDocument from "pdfkit-table"
+import { Resend } from "resend"
 
 import getPayment from "src/payments/queries/getPayment"
 import { getPaymentAmount } from "src/payments/utils"
+import { PaymentReceiptEmail } from "src/payments/emails/PaymentReceiptEmail"
+
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 export default api(async (req: NextApiRequest, res: NextApiResponse, ctx: Ctx) => {
   ctx.session.$authorize()
@@ -72,6 +76,13 @@ export default api(async (req: NextApiRequest, res: NextApiResponse, ctx: Ctx) =
   doc.text(`Total: ${getPaymentAmount(payment)}`)
 
   doc.end()
+
+  const { data, error } = await resend.emails.send({
+    from: "Grupo Gestionar <grupogestionar@resend.dev>",
+    to: ["arielgers@gmail.com"],
+    subject: "Recibo de pago #1",
+    react: PaymentReceiptEmail({ id: "1" }),
+  })
 
   res.setHeader("Content-Type", "application/pdf")
   res.send(doc)
