@@ -188,6 +188,5 @@ const ShowPropertyPage = () => {
 }
 
 ShowPropertyPage.authenticate = true
-ShowPropertyPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default ShowPropertyPage

@@ -190,4 +190,6 @@ const ClientsPage = () => {
   )
 }
 
+ClientsPage.authenticate = true
+
 export default ClientsPage

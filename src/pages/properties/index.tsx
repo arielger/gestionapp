@@ -153,4 +153,6 @@ const PropertiesPage = () => {
   )
 }
 
+PropertiesPage.authenticate = true
+
 export default PropertiesPage

@@ -5,7 +5,6 @@ import { useRouter } from "next/router"
 import { useQuery, useMutation } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
 
-import Layout from "src/core/layouts/Layout"
 import getClient from "src/clients/queries/getClient"
 import deleteClient from "src/clients/mutations/deleteClient"
 import { PageHeader } from "src/layout/components/PageHeader"
@@ -97,6 +96,5 @@ const ShowClientPage = () => {
 }
 
 ShowClientPage.authenticate = true
-ShowClientPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default ShowClientPage

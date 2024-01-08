@@ -75,6 +75,5 @@ const EditClientPage = () => {
 }
 
 EditClientPage.authenticate = true
-EditClientPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default EditClientPage
