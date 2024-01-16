@@ -166,7 +166,12 @@ export const Client = () => {
           Propiedades relacionadas
         </Title>
         <DataTable
-          records={client.properties ?? []}
+          records={client.properties.map((clientProperty) => ({
+            ...clientProperty,
+            role: "OWNER",
+          }))}
+          // TODO: add related tenants
+          // TODO: Move logic to properties module
           columns={[
             {
               accessor: "property.id",
@@ -206,6 +211,15 @@ export const Client = () => {
                     No alquilada
                   </Badge>
                 ),
+            },
+            {
+              accessor: "role",
+              title: "Rol",
+              render: (clientProperty) => (
+                <Badge variant="light" color="blue" radius="xs">
+                  {clientProperty.role === "OWNER" ? "Propietario" : "Inquilino"}
+                </Badge>
+              ),
             },
             {
               ...actionsColumnConfig,
