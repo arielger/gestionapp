@@ -8,15 +8,43 @@ import { useParam } from "@blitzjs/next"
 import getClient from "src/clients/queries/getClient"
 import deleteClient from "src/clients/mutations/deleteClient"
 import { PageHeader } from "src/layout/components/PageHeader"
-import { Anchor, Badge, Button, Center, Flex, Loader, Paper } from "@mantine/core"
+import {
+  ActionIcon,
+  Anchor,
+  Badge,
+  Button,
+  Center,
+  Flex,
+  Group,
+  Loader,
+  Paper,
+  Title,
+} from "@mantine/core"
 import { DetailsList } from "src/core/components/DetailsList"
 import { getPersonFullName } from "src/clients/utils"
 import { NotFoundError } from "blitz"
 import { NotFound } from "src/core/components/NotFound"
 import { Prisma } from "db"
+import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
+import { PersonList } from "src/clients/components/PersonList"
+import { IconCheck, IconEdit, IconEye } from "@tabler/icons-react"
 
 const clientWithPropertiesInclude = {
-  properties: true,
+  // get properties with their owners + client data
+  properties: {
+    include: {
+      property: {
+        include: {
+          owners: {
+            include: {
+              client: true,
+            },
+          },
+          contracts: true,
+        },
+      },
+    },
+  },
   tenantRentContracts: true,
 }
 
@@ -119,7 +147,7 @@ export const Client = () => {
             </Button>
           </Flex>
         </PageHeader>
-        <Paper shadow="xs" p="lg">
+        <Paper shadow="xs" p="lg" mb="lg">
           <DetailsList
             details={[
               {
@@ -133,6 +161,71 @@ export const Client = () => {
             ]}
           />
         </Paper>
+
+        <Title order={5} fw={"normal"} mb="sm">
+          Propiedades relacionadas
+        </Title>
+        <DataTable
+          records={client.properties ?? []}
+          columns={[
+            {
+              accessor: "property.id",
+              title: "#",
+              textAlign: "right",
+              width: 60,
+            },
+            {
+              accessor: "property.address",
+              title: "Dirección",
+            },
+            {
+              accessor: "owners",
+              title: "Propietario/s",
+              render: (clientProperty) => (
+                <PersonList
+                  list={clientProperty.property.owners.map((owner) => owner.client) ?? []}
+                />
+              ),
+            },
+            {
+              accessor: "contract",
+              title: "Estado",
+              render: (clientProperty) =>
+                // TODO: review that contract is current
+                clientProperty.property?.contracts?.length > 0 ? (
+                  <Badge
+                    leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
+                    variant="light"
+                    color="green"
+                    radius="xs"
+                  >
+                    Alquilada
+                  </Badge>
+                ) : (
+                  <Badge opacity={0.5} variant="light" color="gray" radius="xs">
+                    No alquilada
+                  </Badge>
+                ),
+            },
+            {
+              ...actionsColumnConfig,
+              render: (clientProperty) => (
+                <Group gap={4} justify="right" wrap="nowrap">
+                  <Link href={Routes.ShowPropertyPage({ propertyId: clientProperty.property.id })}>
+                    <ActionIcon size="sm" variant="subtle">
+                      <IconEye size="1rem" stroke={1.5} />
+                    </ActionIcon>
+                  </Link>
+                  <Link href={Routes.EditPropertyPage({ propertyId: clientProperty.property.id })}>
+                    <ActionIcon size="sm" variant="subtle">
+                      <IconEdit size="1rem" stroke={1.5} />
+                    </ActionIcon>
+                  </Link>
+                </Group>
+              ),
+            },
+          ]}
+        />
       </div>
     </>
   )

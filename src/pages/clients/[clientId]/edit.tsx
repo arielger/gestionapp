@@ -56,6 +56,10 @@ export const EditClient = () => {
           </Paper>
         </Suspense>
       </div>
+
+      <p>
+        <Link href={Routes.ShowClientPage({ clientId: String(clientId) })}>Volver</Link>
+      </p>
     </>
   )
 }
@@ -66,10 +70,6 @@ const EditClientPage = () => {
       <Suspense fallback={<div>Loading...</div>}>
         <EditClient />
       </Suspense>
-
-      <p>
-        <Link href={Routes.ClientsPage()}>Volver</Link>
-      </p>
     </div>
   )
 }
