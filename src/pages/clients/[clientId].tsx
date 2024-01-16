@@ -29,23 +29,35 @@ import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
 import { PersonList } from "src/clients/components/PersonList"
 import { IconCheck, IconEdit, IconEye } from "@tabler/icons-react"
 
+const propertyInclude = {
+  owners: {
+    include: {
+      client: true,
+    },
+  },
+  contracts: true,
+}
+
 const clientWithPropertiesInclude = {
   // get properties with their owners + client data
   properties: {
     include: {
       property: {
+        include: propertyInclude,
+      },
+    },
+  },
+  tenantRentContracts: {
+    include: {
+      contract: {
         include: {
-          owners: {
-            include: {
-              client: true,
-            },
+          property: {
+            include: propertyInclude,
           },
-          contracts: true,
         },
       },
     },
   },
-  tenantRentContracts: true,
 }
 
 type ClientWithProperties = Prisma.ClientGetPayload<{
@@ -97,6 +109,17 @@ export const Client = () => {
   const fullName = getPersonFullName(client)
   const isOwner = client.properties?.length > 0
   const isTenant = client.tenantRentContracts?.length > 0
+
+  const relatedProperties = [
+    ...(client.properties ?? []).map((clientProperty) => ({
+      ...clientProperty.property,
+      role: "OWNER",
+    })),
+    ...client.tenantRentContracts.map((tenantRentContract) => ({
+      ...tenantRentContract.contract.property,
+      role: "TENANT",
+    })),
+  ]
 
   return (
     <>
@@ -166,38 +189,33 @@ export const Client = () => {
           Propiedades relacionadas
         </Title>
         <DataTable
-          records={client.properties.map((clientProperty) => ({
-            ...clientProperty,
-            role: "OWNER",
-          }))}
+          records={relatedProperties}
           // TODO: add related tenants
           // TODO: Move logic to properties module
           columns={[
             {
-              accessor: "property.id",
+              accessor: "id",
               title: "#",
               textAlign: "right",
               width: 60,
             },
             {
-              accessor: "property.address",
+              accessor: "address",
               title: "Dirección",
             },
             {
               accessor: "owners",
               title: "Propietario/s",
-              render: (clientProperty) => (
-                <PersonList
-                  list={clientProperty.property.owners.map((owner) => owner.client) ?? []}
-                />
+              render: (property) => (
+                <PersonList list={property.owners.map((owner) => owner.client) ?? []} />
               ),
             },
             {
               accessor: "contract",
               title: "Estado",
-              render: (clientProperty) =>
+              render: (property) =>
                 // TODO: review that contract is current
-                clientProperty.property?.contracts?.length > 0 ? (
+                property.contracts?.length > 0 ? (
                   <Badge
                     leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
                     variant="light"
@@ -223,14 +241,14 @@ export const Client = () => {
             },
             {
               ...actionsColumnConfig,
-              render: (clientProperty) => (
+              render: (property) => (
                 <Group gap={4} justify="right" wrap="nowrap">
-                  <Link href={Routes.ShowPropertyPage({ propertyId: clientProperty.property.id })}>
+                  <Link href={Routes.ShowPropertyPage({ propertyId: property.id })}>
                     <ActionIcon size="sm" variant="subtle">
                       <IconEye size="1rem" stroke={1.5} />
                     </ActionIcon>
                   </Link>
-                  <Link href={Routes.EditPropertyPage({ propertyId: clientProperty.property.id })}>
+                  <Link href={Routes.EditPropertyPage({ propertyId: property.id })}>
                     <ActionIcon size="sm" variant="subtle">
                       <IconEdit size="1rem" stroke={1.5} />
                     </ActionIcon>
