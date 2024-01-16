@@ -8,21 +8,35 @@ import { useParam } from "@blitzjs/next"
 import getClient from "src/clients/queries/getClient"
 import deleteClient from "src/clients/mutations/deleteClient"
 import { PageHeader } from "src/layout/components/PageHeader"
-import { Anchor, Button, Center, Flex, Loader, Paper } from "@mantine/core"
+import { Anchor, Badge, Button, Center, Flex, Loader, Paper } from "@mantine/core"
 import { DetailsList } from "src/core/components/DetailsList"
 import { getPersonFullName } from "src/clients/utils"
 import { NotFoundError } from "blitz"
 import { NotFound } from "src/core/components/NotFound"
+import { Prisma } from "db"
+
+const clientWithPropertiesInclude = {
+  properties: true,
+  tenantRentContracts: true,
+}
+
+type ClientWithProperties = Prisma.ClientGetPayload<{
+  include: typeof clientWithPropertiesInclude
+}>
 
 export const Client = () => {
   const router = useRouter()
   const clientId = useParam("clientId", "number")
 
   const [deleteClientMutation] = useMutation(deleteClient)
-  const [client, { isLoading: isLoadingClient, error }] = useQuery(
+  const [client, { isLoading: isLoadingClient, error }] = useQuery<
+    typeof getClient,
+    ClientWithProperties
+  >(
     getClient,
     {
       id: clientId,
+      include: clientWithPropertiesInclude,
     },
     {
       suspense: false,
@@ -31,8 +45,6 @@ export const Client = () => {
   )
 
   const notFound = (error as NotFoundError)?.name === NotFoundError.name
-
-  // TODO: add type of client (owner / tenant)
 
   if (notFound) {
     return (
@@ -55,6 +67,8 @@ export const Client = () => {
   }
 
   const fullName = getPersonFullName(client)
+  const isOwner = client.properties?.length > 0
+  const isTenant = client.tenantRentContracts?.length > 0
 
   return (
     <>
@@ -67,6 +81,12 @@ export const Client = () => {
       <div>
         <PageHeader
           title={client ? fullName : "..."}
+          afterTitle={
+            <Flex gap="xs">
+              {isOwner && <Badge color="green">Propietario</Badge>}
+              {isTenant && <Badge color="blue">Inquilino</Badge>}
+            </Flex>
+          }
           breadcrumbs={[
             <Anchor component={Link} href={Routes.ClientsPage()} key="clients">
               Clientes
