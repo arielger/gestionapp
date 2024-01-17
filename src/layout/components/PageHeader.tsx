@@ -4,15 +4,23 @@ import { PropsWithChildren } from "react"
 export const PageHeader = ({
   title,
   breadcrumbs,
+  afterTitle,
   children,
-}: { title: string; breadcrumbs?: React.ReactElement[] } & PropsWithChildren) => {
+}: PropsWithChildren<{
+  title: string
+  breadcrumbs?: React.ReactElement[]
+  afterTitle?: React.ReactElement
+}>) => {
   return (
     <Flex justify="space-between" align="center" mb={16}>
       <Flex direction="column" gap="xs">
         {breadcrumbs && <Breadcrumbs separator="/">{breadcrumbs}</Breadcrumbs>}
-        <Title order={3} fw={"normal"}>
-          {title}
-        </Title>
+        <Flex align="center">
+          <Title order={3} fw={"normal"} mr="sm">
+            {title}
+          </Title>
+          {afterTitle}
+        </Flex>
       </Flex>
       {children}
     </Flex>

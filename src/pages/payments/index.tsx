@@ -139,4 +139,6 @@ const PaymentsPage = () => {
   )
 }
 
+PaymentsPage.authenticate = true
+
 export default PaymentsPage

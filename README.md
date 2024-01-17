@@ -1,8 +1,8 @@
-[![Blitz.js](https://raw.githubusercontent.com/blitz-js/art/master/github-cover-photo.png)](https://blitzjs.com)
+# gestion.app - Rent management web system
+
+-----
 
 This is a [Blitz.js](https://github.com/blitz-js/blitz) app.
-
-# Gestionprop
 
 ## Getting Started
 
@@ -23,10 +23,6 @@ DATABASE_URL=postgresql://<YOUR_DB_USERNAME>@localhost:5432/gestion-inmobiliaria
 ```
 
 Ensure the `.env.test.local` file has required environment variables:
-
-```
-DATABASE_URL=postgresql://<YOUR_DB_USERNAME>@localhost:5432/gestion-inmobiliaria_test
-```
 
 ## Tests
 

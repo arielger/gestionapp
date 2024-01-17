@@ -26,7 +26,15 @@ export default resolver.pipe(
                 client: true,
               },
             },
-            contracts: true,
+            contracts: {
+              include: {
+                tenants: {
+                  include: {
+                    client: true,
+                  },
+                },
+              },
+            },
           },
         }),
     })

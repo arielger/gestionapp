@@ -4,12 +4,23 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { useQuery, useMutation } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
-import { Anchor, Button, Flex, Paper, Badge, Center, Loader, Modal } from "@mantine/core"
+import { NotFoundError } from "blitz"
+import {
+  Anchor,
+  Button,
+  Flex,
+  Paper,
+  Badge,
+  Center,
+  Loader,
+  Modal,
+  Text,
+  Stack,
+} from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
-import { IconCheck } from "@tabler/icons-react"
+import { IconCheck, IconZoomExclamation } from "@tabler/icons-react"
 import { notifications } from "@mantine/notifications"
 
-import Layout from "src/core/layouts/Layout"
 import getProperty from "src/properties/queries/getProperty"
 import deleteProperty from "src/properties/mutations/deleteProperty"
 import { PageHeader } from "src/layout/components/PageHeader"
@@ -22,18 +33,22 @@ import { CreateContractFormSchema } from "src/contracts/schemas"
 import { ContractDetails } from "src/contracts/components/ContractDetails"
 import { personToSelectItem } from "src/clients/utils"
 import { ContractFeeType } from "@prisma/client"
+import { NotFound } from "src/core/components/NotFound"
 
 export const Property = () => {
   const router = useRouter()
   const propertyId = useParam("propertyId", "number")!
 
-  const [property, { isLoading: isLoadingProperty, refetch: refetchProperty }] = useQuery(
+  const [property, { isLoading: isLoadingProperty, refetch: refetchProperty, error }] = useQuery(
     getProperty,
     { id: propertyId },
     {
       suspense: false,
+      refetchOnWindowFocus: false,
     }
   )
+
+  const notFound = (error as NotFoundError)?.name === NotFoundError.name
 
   // TODO: should check date to know if it's rented
   const currentContract = property?.contracts?.[0]
@@ -46,6 +61,26 @@ export const Property = () => {
 
   const propertyOwnersClients = property?.owners.map((owner) => owner.client) ?? []
 
+  if (notFound) {
+    return (
+      <NotFound
+        title="Propiedad no encontrada"
+        description={
+          "No encontramos la propiedad que estás buscando.\n Por favor, verificá el ID ingresado"
+        }
+        goBackRoute={Routes.PropertiesPage()}
+      />
+    )
+  }
+
+  if (isLoadingProperty || !property) {
+    return (
+      <Center>
+        <Loader mt={160} />
+      </Center>
+    )
+  }
+
   return (
     <>
       <Head>
@@ -54,7 +89,7 @@ export const Property = () => {
 
       <div>
         <PageHeader
-          title={property?.address ?? "..."}
+          title={property.address}
           breadcrumbs={[
             <Anchor component={Link} href={Routes.PropertiesPage()} key="properties">
               Propiedades
@@ -95,51 +130,45 @@ export const Property = () => {
         <Flex gap="md">
           <Paper shadow="xs" p="xl" style={{ flex: 1 }}>
             {/* TODO: Prevent repeating elements with properties table - move to general file */}
-            {isLoadingProperty || !property ? (
-              <Center>
-                <Loader />
-              </Center>
-            ) : (
-              <DetailsList
-                details={[
-                  { title: "Dirección", value: property.address },
-                  {
-                    title: "Fecha de creación",
-                    value: property.createdAt.toLocaleDateString(),
-                  },
-                  {
-                    title: "Propietario/s",
-                    value: <PersonList list={propertyOwnersClients ?? []} />,
-                  },
-                  ...(currentContract
-                    ? [
-                        {
-                          title: "Estado",
-                          value: (
-                            <Badge
-                              leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
-                              variant="light"
-                              color="green"
-                              radius="xs"
-                            >
-                              Alquilada
-                            </Badge>
-                          ),
-                        },
-                      ]
-                    : [
-                        {
-                          title: "Estado",
-                          value: (
-                            <Badge opacity={0.5} variant="light" color="gray" radius="xs">
-                              No alquilada
-                            </Badge>
-                          ),
-                        },
-                      ]),
-                ]}
-              />
-            )}
+            <DetailsList
+              details={[
+                { title: "Dirección", value: property.address },
+                {
+                  title: "Fecha de creación",
+                  value: property.createdAt.toLocaleDateString(),
+                },
+                {
+                  title: "Propietario/s",
+                  value: <PersonList list={propertyOwnersClients ?? []} />,
+                },
+                ...(currentContract
+                  ? [
+                      {
+                        title: "Estado",
+                        value: (
+                          <Badge
+                            leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
+                            variant="light"
+                            color="green"
+                            radius="xs"
+                          >
+                            Alquilada
+                          </Badge>
+                        ),
+                      },
+                    ]
+                  : [
+                      {
+                        title: "Estado",
+                        value: (
+                          <Badge opacity={0.5} variant="light" color="gray" radius="xs">
+                            No alquilada
+                          </Badge>
+                        ),
+                      },
+                    ]),
+              ]}
+            />
           </Paper>
           {currentContract && <ContractDetails contract={currentContract} />}
         </Flex>
@@ -188,6 +217,5 @@ const ShowPropertyPage = () => {
 }
 
 ShowPropertyPage.authenticate = true
-ShowPropertyPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default ShowPropertyPage
