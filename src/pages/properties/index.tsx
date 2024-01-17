@@ -4,8 +4,18 @@ import Head from "next/head"
 import Link from "next/link"
 import { useMutation } from "@blitzjs/rpc"
 import { useRouter } from "next/router"
-import { ActionIcon, Button, Badge, TextInput, Group } from "@mantine/core"
-import { IconEdit, IconTrash, IconEye, IconCheck, IconSearch } from "@tabler/icons-react"
+import {
+  ActionIcon,
+  Button,
+  Badge,
+  TextInput,
+  Group,
+  Progress,
+  Stack,
+  Text,
+  Flex,
+} from "@mantine/core"
+import { IconEdit, IconTrash, IconEye, IconSearch } from "@tabler/icons-react"
 
 import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
@@ -14,6 +24,7 @@ import deleteProperty from "src/properties/mutations/deleteProperty"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { PersonList } from "src/clients/components/PersonList"
+import { getPorcentageProgressFromRange } from "src/core/dates/utils"
 
 export const PropertiesList = () => {
   const router = useRouter()
@@ -85,22 +96,43 @@ export const PropertiesList = () => {
           {
             accessor: "contract",
             title: "Estado",
-            render: (property) =>
-              // TODO: review that contract is current
-              property?.contracts?.length > 0 ? (
-                <Badge
-                  leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
-                  variant="light"
-                  color="green"
-                  radius="xs"
-                >
-                  Alquilada
-                </Badge>
-              ) : (
-                <Badge opacity={0.5} variant="light" color="gray" radius="xs">
-                  No alquilada
-                </Badge>
-              ),
+            width: 240,
+            render: (property) => {
+              const currentContract = property.contracts?.find(
+                (contract) => contract.endDate > new Date()
+              )
+
+              if (!currentContract)
+                return (
+                  <Badge opacity={0.5} variant="light" color="gray" radius="xs">
+                    No alquilada
+                  </Badge>
+                )
+
+              const progressPercentage = getPorcentageProgressFromRange(
+                currentContract.startDate,
+                currentContract.endDate
+              )
+
+              return (
+                <Stack gap={4}>
+                  <Flex justify="space-between">
+                    <Text size="sm">{currentContract.startDate.toLocaleDateString()}</Text>
+                    <Text size="sm">{currentContract.endDate.toLocaleDateString()}</Text>
+                  </Flex>
+                  <Flex align="center" gap="sm">
+                    <Progress
+                      value={progressPercentage}
+                      color="green"
+                      style={{
+                        flex: 1,
+                      }}
+                    />
+                    <Text size="sm">{`${Math.max(Math.ceil(progressPercentage), 0)}%`}</Text>
+                  </Flex>
+                </Stack>
+              )
+            },
           },
           {
             ...actionsColumnConfig,
