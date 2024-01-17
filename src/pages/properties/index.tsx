@@ -49,6 +49,13 @@ export const PropertiesList = () => {
     },
   })
 
+  const propertiesWithCurrentContract = items.map((property) => {
+    return {
+      ...property,
+      currentContract: property.contracts?.find((contract) => contract.endDate > new Date()),
+    }
+  })
+
   const [deletePropertyMutation] = useMutation(deleteProperty)
 
   const handleDelete = async (property: (typeof items)[number]) => {
@@ -94,15 +101,11 @@ export const PropertiesList = () => {
             ),
           },
           {
-            accessor: "contract",
+            accessor: "currentContract",
             title: "Estado",
             width: 240,
             render: (property) => {
-              const currentContract = property.contracts?.find(
-                (contract) => contract.endDate > new Date()
-              )
-
-              if (!currentContract)
+              if (!property.currentContract)
                 return (
                   <Badge opacity={0.5} variant="light" color="gray" radius="xs">
                     No alquilada
@@ -110,15 +113,15 @@ export const PropertiesList = () => {
                 )
 
               const progressPercentage = getPorcentageProgressFromRange(
-                currentContract.startDate,
-                currentContract.endDate
+                property.currentContract.startDate,
+                property.currentContract.endDate
               )
 
               return (
                 <Stack gap={4}>
                   <Flex justify="space-between">
-                    <Text size="sm">{currentContract.startDate.toLocaleDateString()}</Text>
-                    <Text size="sm">{currentContract.endDate.toLocaleDateString()}</Text>
+                    <Text size="sm">{property.currentContract.startDate.toLocaleDateString()}</Text>
+                    <Text size="sm">{property.currentContract.endDate.toLocaleDateString()}</Text>
                   </Flex>
                   <Flex align="center" gap="sm">
                     <Progress
@@ -133,6 +136,15 @@ export const PropertiesList = () => {
                 </Stack>
               )
             },
+          },
+          {
+            accessor: "currentContract.tenants",
+            title: "Inquilino/s",
+            render: (property) => (
+              <PersonList
+                list={property?.currentContract?.tenants.map((tenant) => tenant.client) ?? []}
+              />
+            ),
           },
           {
             ...actionsColumnConfig,
@@ -161,6 +173,7 @@ export const PropertiesList = () => {
           },
         ]}
         {...tableProps}
+        records={propertiesWithCurrentContract}
       />
     </>
   )
