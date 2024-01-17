@@ -1,3 +1,5 @@
+import { Contract } from "@prisma/client"
+
 export const getContractRentPaymentDates = (startDate: Date, endDate: Date): Date[] => {
   const monthsFirstDay: Date[] = []
   let currentDate = new Date(startDate)
@@ -9,4 +11,11 @@ export const getContractRentPaymentDates = (startDate: Date, endDate: Date): Dat
   }
 
   return monthsFirstDay
+}
+
+// get any contract that is not finished yet (might be not started or in progress)
+export const getCurrentContract = <CustomContract extends Contract>(
+  contracts: CustomContract[]
+) => {
+  return contracts?.find((contract) => contract.endDate > new Date())
 }
