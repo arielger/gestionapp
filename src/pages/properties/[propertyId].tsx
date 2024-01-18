@@ -172,7 +172,7 @@ export const Property = () => {
           </Paper>
           {currentContract && <ContractDetails contract={currentContract} />}
         </Flex>
-        {currentContract && <ActivitiesBalance contractId={currentContract.id} />}
+        {currentContract && <ActivitiesBalance contract={currentContract} />}
         <Modal
           opened={isCreateContractOpen}
           onClose={closeCreateContractModal}

@@ -21,6 +21,11 @@ export const getPropertyInclude = {
           client: true,
         },
       },
+      owners: {
+        include: {
+          client: true,
+        },
+      },
     },
   },
 }
