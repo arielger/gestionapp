@@ -5,20 +5,9 @@ import { useRouter } from "next/router"
 import { useQuery, useMutation } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
 import { NotFoundError } from "blitz"
-import {
-  Anchor,
-  Button,
-  Flex,
-  Paper,
-  Badge,
-  Center,
-  Loader,
-  Modal,
-  Text,
-  Stack,
-} from "@mantine/core"
+import { Anchor, Button, Flex, Paper, Badge, Center, Loader, Modal } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
-import { IconCheck, IconZoomExclamation } from "@tabler/icons-react"
+import { IconCheck } from "@tabler/icons-react"
 import { notifications } from "@mantine/notifications"
 
 import getProperty from "src/properties/queries/getProperty"
