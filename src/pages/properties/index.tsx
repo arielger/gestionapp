@@ -4,17 +4,7 @@ import Head from "next/head"
 import Link from "next/link"
 import { useMutation } from "@blitzjs/rpc"
 import { useRouter } from "next/router"
-import {
-  ActionIcon,
-  Button,
-  Badge,
-  TextInput,
-  Group,
-  Progress,
-  Stack,
-  Text,
-  Flex,
-} from "@mantine/core"
+import { ActionIcon, Button, Badge, TextInput, Group } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye, IconSearch } from "@tabler/icons-react"
 
 import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
@@ -24,7 +14,8 @@ import deleteProperty from "src/properties/mutations/deleteProperty"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { PersonList } from "src/clients/components/PersonList"
-import { getPorcentageProgressFromRange } from "src/core/dates/utils"
+import { ContractProgress } from "src/contracts/components/ContractProgress"
+import { getCurrentContract } from "src/contracts/utils/utils"
 
 export const PropertiesList = () => {
   const router = useRouter()
@@ -52,7 +43,7 @@ export const PropertiesList = () => {
   const propertiesWithCurrentContract = items.map((property) => {
     return {
       ...property,
-      currentContract: property.contracts?.find((contract) => contract.endDate > new Date()),
+      currentContract: getCurrentContract(property.contracts),
     }
   })
 
@@ -112,29 +103,7 @@ export const PropertiesList = () => {
                   </Badge>
                 )
 
-              const progressPercentage = getPorcentageProgressFromRange(
-                property.currentContract.startDate,
-                property.currentContract.endDate
-              )
-
-              return (
-                <Stack gap={4}>
-                  <Flex justify="space-between">
-                    <Text size="sm">{property.currentContract.startDate.toLocaleDateString()}</Text>
-                    <Text size="sm">{property.currentContract.endDate.toLocaleDateString()}</Text>
-                  </Flex>
-                  <Flex align="center" gap="sm">
-                    <Progress
-                      value={progressPercentage}
-                      color="green"
-                      style={{
-                        flex: 1,
-                      }}
-                    />
-                    <Text size="sm">{`${Math.max(Math.ceil(progressPercentage), 0)}%`}</Text>
-                  </Flex>
-                </Stack>
-              )
+              return <ContractProgress contract={property.currentContract} />
             },
           },
           {

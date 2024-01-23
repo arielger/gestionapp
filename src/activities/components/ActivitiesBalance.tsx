@@ -4,7 +4,7 @@ import { Text, Modal, Button, Paper, Title, Flex, ActionIcon, Group } from "@man
 import { useDisclosure } from "@mantine/hooks"
 import { notifications } from "@mantine/notifications"
 import { DataTable } from "mantine-datatable"
-import { Activity, ActivityPersonType, ActivityType, Prisma } from "@prisma/client"
+import { Activity, ActivityPersonType, ActivityType, Contract } from "@prisma/client"
 import { IconCheck, IconEdit, IconTrash } from "@tabler/icons-react"
 
 import { ActivityTransactionType } from "../config"
@@ -17,6 +17,7 @@ import updateActivity from "../mutations/updateActivity"
 import { actionsColumnConfig } from "src/core/components/DataTable"
 import { getActivityTitle } from "../utils"
 import { ActivityWithDetails } from "../types"
+import { SelectActivitiesTable } from "src/payments/components/PaymentForm/SelectActivitiesTable"
 
 const renderBalanceMovementCell = ({
   activity,
@@ -47,12 +48,12 @@ const renderBalanceMovementCell = ({
   )
 }
 
-export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
+export const ActivitiesBalance = ({ contract }: { contract: Contract }) => {
   const [activitiesData, { isLoading: isLoadingActivities, refetch: refetchActivities }] = useQuery(
     getActivities,
     {
       where: {
-        contractId,
+        contractId: contract.id,
       },
       include: {
         customDetails: true,
@@ -69,7 +70,7 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
     },
     {
       suspense: false,
-      enabled: !!contractId,
+      enabled: !!contract.id,
     }
   )
 
@@ -102,7 +103,8 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
     { rows: [], ownerBalance: 0, tenantBalance: 0 }
   )
 
-  const [opened, { open, close }] = useDisclosure(false)
+  const [editActivityOpened, { open: openEditActivity, close: closeEditActivity }] =
+    useDisclosure(false)
   const [selectedActivity, setSelectedActivity] = useState<
     (ActivityFormSchemaType & { id: number }) | null
   >(null)
@@ -130,7 +132,7 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
             type,
           }),
     })
-    open()
+    openEditActivity()
   }
 
   const [deleteActivityMutation] = useMutation(deleteActivity)
@@ -147,15 +149,20 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
     })
   }
 
+  const [addPaymentOpened, { open: openAddPayment, close: closeAddPayment }] = useDisclosure(false)
+
   return (
     <Paper shadow="xs" p="xl" mt="md">
       <Flex justify="space-between" align="center" mb="md">
         <Title order={2}>Balance</Title>
-        <Button onClick={open}>Crear nueva</Button>
+        <Flex gap="sm">
+          <Button onClick={openAddPayment}>Registrar pago</Button>
+          <Button onClick={openEditActivity}>Crear actividad</Button>
+        </Flex>
       </Flex>
       <Modal
-        opened={opened}
-        onClose={close}
+        opened={editActivityOpened}
+        onClose={closeEditActivity}
         title={selectedActivity ? "Editar actividad" : "Crear actividad"}
       >
         <ActivityForm
@@ -176,7 +183,7 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
 
             const isDebit = transactionType === ActivityTransactionType.DEBIT
 
-            const input = { ...activityData, isDebit, contractId }
+            const input = { ...activityData, isDebit, contractId: contract.id }
             if (selectedActivity) {
               await updateActivityMutation({
                 input: {
@@ -206,9 +213,18 @@ export const ActivitiesBalance = ({ contractId }: { contractId: number }) => {
 
             void refetchActivities()
 
-            close()
+            closeEditActivity()
           }}
           isLoading={isLoadingCreateActivity || isLoadingUpdateActivity}
+        />
+      </Modal>
+      <Modal size="lg" opened={addPaymentOpened} onClose={closeAddPayment} title="Registrar pago">
+        <SelectActivitiesTable
+          contract={contract}
+          onCreatePayment={() => {
+            closeAddPayment()
+            void refetchActivities()
+          }}
         />
       </Modal>
       <DataTable

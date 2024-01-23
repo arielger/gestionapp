@@ -1,15 +1,8 @@
 TODO:
 
-- [OK] When creating contract you don't need to set owner (get from property data)
-- [OK] Handle form errors (not handled anywhere)
-- [OK] Check currentDate filter when fetching activities => should be dynamic - right now is not showing the newly created activities
-- [OK] add owners search by fullname
-- [OK] add 404 page for property not found
-- [OK] When logging out in /properties it wont take you to the login page
-- [OK] Merge owners and tenants
+- [OK] Add related properties in client page (and roles)
 - [ ] Review select activities table texts
 - [ ] Add monitoring
-- [ ] Add related properties in client page (and roles)
 - [ ] Payments
 
   - [ ] You should be able to register a payment related to a tenant or owner
@@ -20,10 +13,10 @@ TODO:
 - [ ] Handle error when going to authenticated route
 - [ ] i18n for routes
 - [ ] Review responsive styles (Layout)
+- [] add owners search by fullname
 
 TECH DEBT:
 
-- [OK] Migrate mantine to v7
 - [] Add dead code check before commiting
 - [] Integrate testing into pipelines (commit hook / ci-cd)
 - [] Add eslint for unused variables

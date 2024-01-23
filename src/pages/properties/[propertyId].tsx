@@ -34,6 +34,7 @@ import { ContractDetails } from "src/contracts/components/ContractDetails"
 import { personToSelectItem } from "src/clients/utils"
 import { ContractFeeType } from "@prisma/client"
 import { NotFound } from "src/core/components/NotFound"
+import { getCurrentContract } from "src/contracts/utils/utils"
 
 export const Property = () => {
   const router = useRouter()
@@ -50,8 +51,7 @@ export const Property = () => {
 
   const notFound = (error as NotFoundError)?.name === NotFoundError.name
 
-  // TODO: should check date to know if it's rented
-  const currentContract = property?.contracts?.[0]
+  const currentContract = getCurrentContract(property?.contracts ?? [])
 
   const [deletePropertyMutation] = useMutation(deleteProperty)
 
@@ -172,7 +172,7 @@ export const Property = () => {
           </Paper>
           {currentContract && <ContractDetails contract={currentContract} />}
         </Flex>
-        {currentContract && <ActivitiesBalance contractId={currentContract.id} />}
+        {currentContract && <ActivitiesBalance contract={currentContract} />}
         <Modal
           opened={isCreateContractOpen}
           onClose={closeCreateContractModal}

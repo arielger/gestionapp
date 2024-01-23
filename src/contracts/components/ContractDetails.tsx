@@ -4,6 +4,7 @@ import { ContractFeeType, Prisma } from "@prisma/client"
 
 import { DetailsList } from "src/core/components/DetailsList"
 import { PersonList } from "src/clients/components/PersonList"
+import { ContractProgress } from "./ContractProgress"
 
 type ContractWithRelatedEntities = Prisma.ContractGetPayload<{
   include: {
@@ -27,7 +28,7 @@ export const ContractDetails = ({ contract }: { contract: ContractWithRelatedEnt
           },
           {
             title: "Periodo",
-            value: `${contract.startDate.toLocaleDateString()} - ${contract.endDate.toLocaleDateString()}`,
+            value: <ContractProgress contract={contract} />,
           },
           {
             title: "Monto",
