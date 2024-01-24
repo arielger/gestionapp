@@ -13,8 +13,8 @@ import { getPaymentAmount } from "src/payments/utils"
 import { getActivityTitle } from "src/activities/utils"
 import { Routes } from "@blitzjs/next"
 import { PaymentWithDetails, getPaymentsInclude } from "src/payments/types"
-import { PaymentDetailsModal } from "src/payments/components/PaymentDetailsModal"
 import { ExternalLink } from "src/core/components/ExternalLink"
+import router from "next/router"
 
 export const ClientsList = () => {
   const { tableProps } = usePaginatedTable({
@@ -23,8 +23,6 @@ export const ClientsList = () => {
       include: getPaymentsInclude,
     },
   })
-
-  const [paymentDetails, setPaymentDetails] = useState<PaymentWithDetails | undefined>(undefined)
 
   return (
     <>
@@ -78,7 +76,7 @@ export const ClientsList = () => {
             render: (row: PaymentWithDetails) =>
               row.items[0] ? (
                 <Flex style={{ whiteSpace: "nowrap" }}>
-                  <Text>{getActivityTitle(row.items[0])}</Text>
+                  <Text size="sm">{getActivityTitle(row.items[0])}</Text>
                   {row.items.length > 1 ? (
                     <Badge variant="light" radius="sm" color="gray">
                       +{row.items.length - 1}
@@ -99,7 +97,7 @@ export const ClientsList = () => {
               <Group gap={4} justify="right" wrap="nowrap">
                 <ActionIcon
                   onClick={() => {
-                    setPaymentDetails(row)
+                    void router.push(Routes.ShowPaymentPage({ paymentId: row.id }))
                   }}
                   size="sm"
                   variant="subtle"
@@ -110,12 +108,6 @@ export const ClientsList = () => {
             ),
           },
         ]}
-      />
-      <PaymentDetailsModal
-        payment={paymentDetails}
-        handleClose={() => {
-          setPaymentDetails(undefined)
-        }}
       />
     </>
   )

@@ -6,7 +6,7 @@ export const ContractProgress = ({ contract }: { contract: Contract }) => {
   const progressPercentage = getPorcentageProgressFromRange(contract.startDate, contract.endDate)
 
   return (
-    <Stack gap={4}>
+    <Stack gap={0}>
       <Flex justify="space-between">
         <Text size="sm">{contract.startDate.toLocaleDateString()}</Text>
         <Text size="sm">{contract.endDate.toLocaleDateString()}</Text>
