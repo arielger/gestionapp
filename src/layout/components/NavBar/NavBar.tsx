@@ -2,7 +2,6 @@ import { useRouter } from "next/router"
 import { Avatar, Flex, Text, UnstyledButton } from "@mantine/core"
 import { IconCreditCard, IconHome, IconLogout, IconUser } from "@tabler/icons-react"
 import { useMutation } from "@blitzjs/rpc"
-import { useRouterQuery } from "@blitzjs/next"
 import Link from "next/link"
 import { Routes } from "@blitzjs/next"
 
@@ -13,8 +12,7 @@ import { getInitials } from "src/core/strings/utils"
 
 const data = [
   { link: Routes.PropertiesPage(), label: "Propiedades", icon: IconHome },
-  { link: Routes.ClientsPage({ type: "owners" }), label: "Propietarios", icon: IconUser },
-  { link: Routes.ClientsPage({ type: "tenants" }), label: "Inquilinos", icon: IconUser },
+  { link: Routes.ClientsPage(), label: "Clientes", icon: IconUser },
   { link: Routes.PaymentsPage(), label: "Pagos", icon: IconCreditCard },
   { link: Routes.NewPaymentPage(), label: "Nuevo pago", icon: IconCreditCard },
 ] as const
@@ -25,14 +23,10 @@ export const NavBar = () => {
   const { asPath } = useRouter()
   const activePathname = new URL(asPath, location.href).pathname
 
-  const query = useRouterQuery()
-
   const [logoutMutation] = useMutation(logout)
 
   const links = data.map((item) => {
-    const isActive =
-      activePathname.startsWith(item.link.pathname) &&
-      (item.link.query as { type: string })?.type === query.type
+    const isActive = activePathname.startsWith(item.link.pathname)
 
     return (
       <Link
