@@ -1,20 +1,8 @@
 import { AuthenticationError, PromiseReturnType } from "blitz"
-import Link from "next/link"
 import login from "src/auth/mutations/login"
 import { Login } from "src/auth/schemas"
 import { useMutation } from "@blitzjs/rpc"
-import { Routes } from "@blitzjs/next"
-import {
-  TextInput,
-  PasswordInput,
-  Anchor,
-  Paper,
-  Title,
-  Text,
-  Container,
-  Button,
-  Alert,
-} from "@mantine/core"
+import { TextInput, PasswordInput, Paper, Title, Container, Button, Alert } from "@mantine/core"
 import { useForm, zodResolver } from "@mantine/form"
 
 type LoginFormProps = {

@@ -1,13 +1,4 @@
-import {
-  Flex,
-  NativeSelect,
-  NumberInput,
-  TextInput,
-  SegmentedControl,
-  Input,
-  Center,
-  Box,
-} from "@mantine/core"
+import { Flex, NumberInput, TextInput, SegmentedControl, Input, Center, Box } from "@mantine/core"
 import { ActivityPersonType, ActivityType } from "@prisma/client"
 import { IconTransferIn, IconTransferOut } from "@tabler/icons-react"
 import React from "react"
@@ -62,15 +53,6 @@ export function ActivityForm<S extends z.ZodType<any, any>>(props: FormProps<S>)
                 {...form.getInputProps("assignedTo")}
               />
             </Input.Wrapper>
-            {/* TODO: review - now we are only enabling to create custom activities */}
-            {/* <NativeSelect
-              label="Tipo"
-              data={activitiesWithCreationEnabled.map((activityType) => ({
-                value: activityType,
-                label: activityTypesLabels[activityType],
-              }))}
-              {...form.getInputProps("type")}
-            /> */}
             {form.values.type === ActivityType.CUSTOM && (
               <>
                 <TextInput label="Titulo" {...form.getInputProps("details.title")} />
