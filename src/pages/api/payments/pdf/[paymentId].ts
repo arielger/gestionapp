@@ -37,10 +37,10 @@ export default api(async (req: NextApiRequest, res: NextApiResponse, ctx: Ctx) =
   doc.text(`Número: ${payment.id}`)
   doc.text(`Fecha: ${payment.createdAt.toLocaleDateString()}`)
 
-  var columnGap = 36
-  var columns = 2
-  var fullWidth = doc.page.width - doc.page.margins.right
-  var columnWidth = (fullWidth - columnGap * (columns - 1)) / columns
+  const columnGap = 36
+  const columns = 2
+  const fullWidth = doc.page.width - doc.page.margins.right
+  const columnWidth = (fullWidth - columnGap * (columns - 1)) / columns
 
   doc.text(payment.organization.name, columnWidth, headerInfoY, {
     align: "right",
@@ -77,6 +77,8 @@ export default api(async (req: NextApiRequest, res: NextApiResponse, ctx: Ctx) =
 
   doc.end()
 
+  // TODO: Complete logic to send real email
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data, error } = await resend.emails.send({
     from: "Grupo Gestionar <grupogestionar@resend.dev>",
     to: ["arielgers@gmail.com"],

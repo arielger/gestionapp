@@ -9,7 +9,7 @@ export const CreatePropertyFormSchema = PropertyBaseSchema.extend({
     .array(
       z.string().refine(
         (v) => {
-          let n = Number(v)
+          const n = Number(v)
           return !isNaN(n) && v?.length > 0
         },
         { message: "Ingrese un número valido" }

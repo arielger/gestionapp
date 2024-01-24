@@ -10,7 +10,7 @@ const GetClient = z
   })
   .passthrough()
 
-interface GetClientInput extends Pick<Prisma.ClientFindFirstArgs, "include"> {}
+type GetClientInput = Pick<Prisma.ClientFindFirstArgs, "include">
 
 export default resolver.pipe(
   resolver.zod(GetClient),

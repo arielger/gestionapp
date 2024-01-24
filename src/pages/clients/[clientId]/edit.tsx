@@ -6,7 +6,6 @@ import { useRouter } from "next/router"
 import { useQuery, useMutation } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
 
-import Layout from "src/core/layouts/Layout"
 import { UpdateClientSchema } from "src/clients/schemas"
 import getClient from "src/clients/queries/getClient"
 import updateClient from "src/clients/mutations/updateClient"

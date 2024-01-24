@@ -1,4 +1,3 @@
-import { Routes } from "@blitzjs/next"
 import { Paper, Text } from "@mantine/core"
 import { ContractFeeType, Prisma } from "@prisma/client"
 

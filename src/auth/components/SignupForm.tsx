@@ -12,7 +12,7 @@ import {
 import { useMutation } from "@blitzjs/rpc"
 import { useForm, zodResolver } from "@mantine/form"
 
-import { FinalFormForm, FORM_ERROR } from "src/core/components/FinalFormForm"
+import { FORM_ERROR } from "src/core/components/FinalFormForm"
 import signup from "src/auth/mutations/signup"
 import { Signup } from "src/auth/schemas"
 import Link from "next/link"

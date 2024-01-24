@@ -8,7 +8,7 @@ type QueryType<T> = (...args) => Promise<{
   count: number
 }>
 
-export const usePaginatedTable = <T extends {}>({
+export const usePaginatedTable = <T extends Record<string, unknown>>({
   query,
   recordsPerPage = 50,
   queryParams = {},

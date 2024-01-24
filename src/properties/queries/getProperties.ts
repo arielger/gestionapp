@@ -2,8 +2,7 @@ import { paginate } from "blitz"
 import { resolver } from "@blitzjs/rpc"
 import db, { Prisma } from "db"
 
-interface GetPropertiesInput
-  extends Pick<Prisma.PropertyFindManyArgs, "where" | "orderBy" | "skip" | "take"> {}
+type GetPropertiesInput = Pick<Prisma.PropertyFindManyArgs, "where" | "orderBy" | "skip" | "take">
 
 export default resolver.pipe(
   resolver.authorize(),

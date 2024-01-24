@@ -1,4 +1,4 @@
-import { Suspense, useState } from "react"
+import { Suspense } from "react"
 import Head from "next/head"
 import { Group, ActionIcon, Badge, Flex, Text } from "@mantine/core"
 import { IconEye } from "@tabler/icons-react"

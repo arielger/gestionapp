@@ -6,6 +6,7 @@ import { notifications } from "@mantine/notifications"
 import { IconX } from "@tabler/icons-react"
 
 export interface FormProps<Schema extends z.ZodType<any, any>>
+  // eslint-disable-next-line no-undef
   extends Omit<PropsWithoutRef<JSX.IntrinsicElements["form"]>, "onSubmit" | "children"> {
   /** All your form fields */
   children?: (

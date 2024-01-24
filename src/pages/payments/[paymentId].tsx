@@ -1,7 +1,7 @@
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { useQuery, useMutation } from "@blitzjs/rpc"
+import { useQuery } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
 import { NotFoundError } from "blitz"
 import { Anchor, Button, Center, Loader, Paper, Flex } from "@mantine/core"

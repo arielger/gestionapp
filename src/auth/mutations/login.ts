@@ -21,6 +21,8 @@ export const authenticateUser = async (rawEmail: string, rawPassword: string) =>
     await db.user.update({ where: { id: user.id }, data: { hashedPassword: improvedHash } })
   }
 
+  // prevent sending password to the user
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { hashedPassword, ...rest } = user
   return rest
 }
@@ -29,11 +31,12 @@ export default resolver.pipe(resolver.zod(Login), async ({ email, password }, ct
   // This throws an error if credentials are invalid
   const user = await authenticateUser(email, password)
 
-  // Review - should user always have one membership?
   await ctx.session.$create({
     userId: user.id,
     role: user.role as Role,
-    orgId: user.memberships[0]?.organizationId!,
+    // Review - should user always have one membership?
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain, @typescript-eslint/no-non-null-assertion
+    orgId: user.memberships?.[0]?.organizationId!,
   })
 
   return user
