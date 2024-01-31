@@ -24,6 +24,7 @@ import { personToSelectItem } from "src/clients/utils"
 import { ContractFeeType } from "@prisma/client"
 import { NotFound } from "src/core/components/NotFound"
 import { getCurrentContract } from "src/contracts/utils/utils"
+import { getAddressString } from "src/properties/utils"
 
 export const Property = () => {
   const router = useRouter()
@@ -78,7 +79,7 @@ export const Property = () => {
 
       <div>
         <PageHeader
-          title={property.address}
+          title={getAddressString({ address: property.address })}
           breadcrumbs={[
             <Anchor component={Link} href={Routes.PropertiesPage()} key="properties">
               Propiedades
@@ -121,7 +122,13 @@ export const Property = () => {
             {/* TODO: Prevent repeating elements with properties table - move to general file */}
             <DetailsList
               details={[
-                { title: "Dirección", value: property.address },
+                {
+                  title: "Dirección",
+                  value: getAddressString({
+                    address: property.address,
+                    withCityDetails: true,
+                  }),
+                },
                 {
                   title: "Fecha de creación",
                   value: property.createdAt.toLocaleDateString(),

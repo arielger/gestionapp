@@ -12,11 +12,13 @@ import { PropertyForm } from "src/properties/components/PropertyForm"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { Center, Loader, Paper } from "@mantine/core"
 import { personToSelectItem } from "src/clients/utils"
+import { NotFound } from "src/core/components/NotFound"
+import { NotFoundError } from "blitz"
 
 export const EditProperty = () => {
   const router = useRouter()
   const propertyId = useParam("propertyId", "number")
-  const [property, { setQueryData, isLoading: isLoadingProperty }] = useQuery(
+  const [property, { setQueryData, isLoading: isLoadingProperty, error }] = useQuery(
     getProperty,
     { id: propertyId },
     {
@@ -27,11 +29,24 @@ export const EditProperty = () => {
   )
   const [updatePropertyMutation, { isLoading: isLoadingUpdate }] = useMutation(updateProperty)
 
+  const notFound = (error as NotFoundError)?.name === NotFoundError.name
+
+  if (notFound) {
+    return (
+      <NotFound
+        title="Propiedad no encontrada"
+        description={
+          "No encontramos la propiedad que estás buscando.\n Por favor, verificá el ID ingresado"
+        }
+        goBackRoute={Routes.PropertiesPage()}
+      />
+    )
+  }
+
   const propertyOwnersClients = property?.owners.map((owner) => owner.client) ?? []
 
   const initialValues = {
     ...property,
-    address: property?.address ?? "",
     owners: propertyOwnersClients?.map((client) => String(client.id)),
   }
 
@@ -39,7 +54,7 @@ export const EditProperty = () => {
   return (
     <>
       <Head>
-        <title>Editar Property {propertyId}</title>
+        <title>Editar propiedad {propertyId}</title>
       </Head>
 
       <div>
@@ -54,7 +69,16 @@ export const EditProperty = () => {
               submitText="Editar"
               schema={CreatePropertyFormSchema}
               initialValues={{
-                address: initialValues.address,
+                ...property,
+                // map address fields to prevent type errors when passing null (for optional fields)
+                address: {
+                  street: property.address.street,
+                  streetNumber: property.address.streetNumber,
+                  subpremise: property.address.subpremise ?? undefined,
+                  state: property.address.state,
+                  city: property.address.city,
+                  postalCode: property.address.postalCode ?? undefined,
+                },
                 owners: initialValues.owners,
               }}
               ownersInitialValues={propertyOwnersClients.map(personToSelectItem)}

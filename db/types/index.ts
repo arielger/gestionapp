@@ -26,6 +26,18 @@ export type ActivityCustomDetails = {
   activityId: number
   title: string
 }
+export type Address = {
+  id: Generated<number>
+  createdAt: Generated<Timestamp>
+  updatedAt: Timestamp
+  street: string
+  streetNumber: number
+  subpremise: string | null
+  state: string
+  city: string
+  postalCode: string | null
+  organizationId: number | null
+}
 export type Client = {
   organizationId: number
   createdAt: Generated<Timestamp>
@@ -34,6 +46,7 @@ export type Client = {
   firstName: string
   lastName: string
   email: string | null
+  addressId: number | null
 }
 export type Contract = {
   organizationId: number
@@ -70,7 +83,7 @@ export type Property = {
   createdAt: Generated<Timestamp>
   updatedAt: Timestamp
   id: Generated<number>
-  address: string
+  addressId: number
 }
 export type PropertyOwnerOnContract = {
   organizationId: number
@@ -127,6 +140,7 @@ export type User = {
 export type DB = {
   Activity: Activity
   ActivityCustomDetails: ActivityCustomDetails
+  Address: Address
   Client: Client
   Contract: Contract
   Membership: Membership

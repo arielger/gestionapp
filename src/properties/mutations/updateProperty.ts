@@ -6,7 +6,7 @@ import { getPropertyInclude } from "../queries/getProperty"
 export default resolver.pipe(
   resolver.zod(UpdatePropertyMutationSchema),
   resolver.authorize(),
-  async ({ id, ...data }, ctx) => {
+  async ({ id, address, ...data }, ctx) => {
     const property = await db.property.update({
       where: { id, organizationId: ctx.session.orgId },
       data: {
@@ -23,6 +23,12 @@ export default resolver.pipe(
           deleteMany: {
             propertyId: id,
             clientId: { notIn: data.owners },
+          },
+        },
+        address: {
+          upsert: {
+            create: address,
+            update: address,
           },
         },
       },

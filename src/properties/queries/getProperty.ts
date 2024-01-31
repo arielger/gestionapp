@@ -28,6 +28,7 @@ export const getPropertyInclude = {
       },
     },
   },
+  address: true,
 }
 
 export default resolver.pipe(

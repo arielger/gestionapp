@@ -34,6 +34,7 @@ export default resolver.pipe(
                 },
               },
             },
+            address: true,
           },
         }),
     })

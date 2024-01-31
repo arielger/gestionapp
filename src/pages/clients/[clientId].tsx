@@ -28,6 +28,7 @@ import { Prisma } from "db"
 import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
 import { PersonList } from "src/clients/components/PersonList"
 import { IconCheck, IconEdit, IconEye } from "@tabler/icons-react"
+import { getAddressString } from "src/properties/utils"
 
 const propertyInclude = {
   owners: {
@@ -36,6 +37,7 @@ const propertyInclude = {
     },
   },
   contracts: true,
+  address: true,
 }
 
 const clientWithPropertiesInclude = {
@@ -202,6 +204,7 @@ export const Client = () => {
             {
               accessor: "address",
               title: "Dirección",
+              render: (property) => getAddressString({ address: property.address }),
             },
             {
               accessor: "owners",

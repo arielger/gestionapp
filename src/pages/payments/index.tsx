@@ -15,6 +15,7 @@ import { Routes } from "@blitzjs/next"
 import { PaymentWithDetails, getPaymentsInclude } from "src/payments/types"
 import { ExternalLink } from "src/core/components/ExternalLink"
 import router from "next/router"
+import { getAddressString } from "src/properties/utils"
 
 export const ClientsList = () => {
   const { tableProps } = usePaginatedTable({
@@ -49,7 +50,7 @@ export const ClientsList = () => {
               <ExternalLink
                 href={Routes.ShowPropertyPage({ propertyId: row.contract.property.id })}
               >
-                {row.contract.property.address}
+                {getAddressString({ address: row.contract.property.address })}
               </ExternalLink>
             ),
           },

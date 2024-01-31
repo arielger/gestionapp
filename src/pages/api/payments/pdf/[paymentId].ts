@@ -9,6 +9,7 @@ import { Resend } from "resend"
 import getPayment from "src/payments/queries/getPayment"
 import { getPaymentAmount } from "src/payments/utils"
 import { PaymentReceiptEmail } from "src/payments/emails/PaymentReceiptEmail"
+import { getAddressString } from "src/properties/utils"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -61,7 +62,9 @@ export default api(async (req: NextApiRequest, res: NextApiResponse, ctx: Ctx) =
 
   doc.fontSize(14)
   const table = {
-    title: payment.contract.property.address,
+    title: getAddressString({
+      address: payment.contract.property.address,
+    }),
     headers: ["Detalle", "Periodo", "Monto"],
     rows: payment.items.map((item) => [
       getActivityTitle(item),

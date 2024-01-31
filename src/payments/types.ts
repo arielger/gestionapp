@@ -4,7 +4,11 @@ import { activityWithDetailsInclude } from "src/activities/types"
 export const getPaymentsInclude = {
   contract: {
     include: {
-      property: true,
+      property: {
+        include: {
+          address: true,
+        },
+      },
       owners: {
         include: {
           client: true,

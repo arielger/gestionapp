@@ -23,8 +23,17 @@ const NewPropertyPage = () => {
             submitText="Crear"
             schema={CreatePropertyFormSchema}
             initialValues={{
-              address: "",
               owners: [],
+              address: {
+                street: "",
+                // Pass string as initial value to prevent showing 0 when initializing the form
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                streetNumber: "" as any,
+                subpremise: "",
+                state: "",
+                city: "",
+                postalCode: "",
+              },
             }}
             onSubmit={async (values) => {
               const property = await createPropertyMutation({
