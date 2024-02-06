@@ -2,8 +2,10 @@ import { paginate } from "blitz"
 import { resolver } from "@blitzjs/rpc"
 import db, { Prisma } from "db"
 
-interface GetPaymentsInput
-  extends Pick<Prisma.PaymentFindManyArgs, "where" | "orderBy" | "skip" | "take" | "include"> {}
+type GetPaymentsInput = Pick<
+  Prisma.PaymentFindManyArgs,
+  "where" | "orderBy" | "skip" | "take" | "include"
+>
 
 export default resolver.pipe(
   resolver.authorize<GetPaymentsInput>(),

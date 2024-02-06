@@ -1,3 +1,4 @@
+import React from "react"
 import { Breadcrumbs, Flex, Title } from "@mantine/core"
 import { PropsWithChildren } from "react"
 

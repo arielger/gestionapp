@@ -37,6 +37,7 @@ model Organization {
   PropertyOwnerOnProperty PropertyOwnerOnProperty[]
   TenantOnContract        TenantOnContract[]
   PropertyOwnerOnContract PropertyOwnerOnContract[]
+  Address                 Address[]
 }
 
 model Membership {
@@ -111,7 +112,8 @@ model Property {
   updatedAt      DateTime     @updatedAt
 
   id        Int                       @id @default(autoincrement())
-  address   String
+  address   Address                   @relation(fields: [addressId], references: [id])
+  addressId Int                       @unique
   owners    PropertyOwnerOnProperty[]
   contracts Contract[]
 }
@@ -129,6 +131,8 @@ model Client {
   properties                 PropertyOwnerOnProperty[]
   tenantRentContracts        TenantOnContract[]
   propertyOwnerRentContracts PropertyOwnerOnContract[]
+  address                    Address?                  @relation(fields: [addressId], references: [id])
+  addressId                  Int?                      @unique
 }
 
 model PropertyOwnerOnProperty {
@@ -251,5 +255,25 @@ model Payment {
   contract       Contract     @relation(fields: [contractId], references: [id])
   contractId     Int
   organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId Int
+}
+
+model Address {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  street       String
+  streetNumber Int
+  // Subpremise -> distinguish individual units within a multi-unit building (piso y número del edificio)
+  subpremise   String?
+
+  state      String
+  city       String
+  postalCode String?
+
+  Client         Client[]
+  Property       Property[]
+  organization   Organization? @relation(fields: [organizationId], references: [id])
   organizationId Int
 }

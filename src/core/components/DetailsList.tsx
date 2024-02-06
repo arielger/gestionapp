@@ -1,3 +1,4 @@
+import React from "react"
 import { Flex, Text } from "@mantine/core"
 
 export const DetailsList = ({

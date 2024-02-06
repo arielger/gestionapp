@@ -1,3 +1,4 @@
+import React from "react"
 import { AppShell } from "@mantine/core"
 import { NavBar } from "./NavBar/NavBar"
 

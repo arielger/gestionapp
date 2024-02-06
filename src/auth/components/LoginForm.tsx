@@ -10,7 +10,7 @@ type LoginFormProps = {
 }
 
 export const LoginForm = (props: LoginFormProps) => {
-  const [loginMutation, { isLoading, error }] = useMutation(login)
+  const [loginMutation, { isLoading }] = useMutation(login)
 
   const form = useForm({
     initialValues: {

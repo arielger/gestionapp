@@ -5,6 +5,7 @@ import { ContractSearchForm } from "./ContractSearchForm"
 import { SelectActivitiesTable } from "./SelectActivitiesTable"
 import { ContractWithRelatedEntities } from "src/contracts/queries/getContracts"
 import { PersonList } from "src/clients/components/PersonList"
+import { getAddressString } from "src/addresses/utils"
 
 export function PaymentForm() {
   const [selectedContract, setSelectedContract] = useState<
@@ -33,7 +34,12 @@ export function PaymentForm() {
               Cambiar
             </Button>
           </Flex>
-          <Text>Dirección: {selectedContract?.property?.address}</Text>
+          <Text>
+            Dirección:{" "}
+            {getAddressString({
+              address: selectedContract?.property?.address,
+            })}
+          </Text>
           <Text>
             Propietario/s:{" "}
             <PersonList list={selectedContract.owners.map((owner) => owner.client)} />

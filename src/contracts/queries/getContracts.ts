@@ -19,7 +19,11 @@ const contractsInclude = {
       client: true,
     },
   },
-  property: true,
+  property: {
+    include: {
+      address: true,
+    },
+  },
 }
 
 export type ContractWithRelatedEntities = Prisma.ContractGetPayload<{
@@ -73,12 +77,15 @@ export default resolver.pipe(
                   },
                 }
               : {}),
+            // TODO: we need to improve the searching to handle street + number + subpremise search
             ...(searchBy === "address"
               ? {
                   property: {
                     address: {
-                      contains: searchText,
-                      mode: "insensitive",
+                      street: {
+                        contains: searchText,
+                        mode: "insensitive",
+                      },
                     },
                   },
                 }

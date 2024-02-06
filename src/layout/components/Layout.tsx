@@ -1,3 +1,4 @@
+import React from "react"
 import { DashboardLayout } from "src/layout/components/DashboardLayout"
 import { useSession } from "@blitzjs/auth"
 

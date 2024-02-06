@@ -3,25 +3,27 @@ import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
 import { useMutation } from "@blitzjs/rpc"
-import { ActionIcon, Button, Group, SegmentedControl, Flex, Text, Modal } from "@mantine/core"
+import { ActionIcon, Button, Group, SegmentedControl, Flex, Modal } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 import { z } from "zod"
 import { StringParam, withDefault, useQueryParams } from "use-query-params"
 import { IconCheck } from "@tabler/icons-react"
+import { notifications } from "@mantine/notifications"
+import { Client } from "@prisma/client"
 import { useRouter } from "next/router"
+import { useDisclosure } from "@mantine/hooks"
 
 import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
 import getClients from "src/clients/queries/getClients"
 import { usePaginatedTable } from "src/core/hooks/usePaginatedTable"
 import { PageHeader } from "src/layout/components/PageHeader"
-import { useDisclosure } from "@mantine/hooks"
 import { ClientForm } from "src/clients/components/ClientForm"
+import { clientFormEditInitialValues, clientFormInitialValues } from "src/clients/utils"
 import createClient from "src/clients/mutations/createClient"
 import { CreateClientSchema } from "src/clients/schemas"
-import { notifications } from "@mantine/notifications"
-import { Client } from "@prisma/client"
 import updateClient from "src/clients/mutations/updateClient"
+import { ClientWithOptionalAddress } from "src/clients/types"
 
 const listTypes = ["all", "owners", "tenants"] as const
 
@@ -95,7 +97,7 @@ const ClientsPage = () => {
     useDisclosure(false)
   const [createClientMutation, { isLoading }] = useMutation(createClient)
 
-  const [clientToEdit, setClientToEdit] = useState<Client | undefined>()
+  const [clientToEdit, setClientToEdit] = useState<ClientWithOptionalAddress | undefined>()
   const [updateClientMutation, { isLoading: isLoadingEdit }] = useMutation(updateClient)
 
   return (
@@ -132,15 +134,21 @@ const ClientsPage = () => {
           </Flex>
           <ClientsList
             type={query.type as (typeof listTypes)[number]}
-            openEditClient={(client: Client) => setClientToEdit(client)}
+            openEditClient={(client: ClientWithOptionalAddress) => setClientToEdit(client)}
           />
         </Suspense>
 
-        <Modal opened={isCreateClientOpen} onClose={closeCreateClientModal} title="Crear cliente">
+        <Modal
+          size="lg"
+          opened={isCreateClientOpen}
+          onClose={closeCreateClientModal}
+          title="Crear cliente"
+        >
           <ClientForm
             isLoading={isLoading}
             submitText="Crear"
             schema={CreateClientSchema}
+            initialValues={clientFormInitialValues}
             onSubmit={async (values) => {
               const client = await createClientMutation(values)
 
@@ -163,27 +171,30 @@ const ClientsPage = () => {
           onClose={() => setClientToEdit(undefined)}
           title={`Editar cliente ${clientToEdit?.id}`}
         >
-          <ClientForm
-            isLoading={isLoadingEdit}
-            submitText="Editar"
-            schema={CreateClientSchema}
-            initialValues={clientToEdit}
-            onSubmit={async (values) => {
-              const updated = await updateClientMutation({
-                id: clientToEdit!.id,
-                ...values,
-              })
-              setClientToEdit(undefined)
-              await router.push(Routes.ShowClientPage({ clientId: updated.id }))
+          {clientToEdit && (
+            <ClientForm
+              isLoading={isLoadingEdit}
+              submitText="Editar"
+              schema={CreateClientSchema}
+              initialValues={clientFormEditInitialValues(clientToEdit)}
+              onSubmit={async (values) => {
+                const updated = await updateClientMutation({
+                  id: clientToEdit.id,
+                  addressId: clientToEdit.addressId,
+                  ...values,
+                })
+                setClientToEdit(undefined)
+                await router.push(Routes.ShowClientPage({ clientId: updated.id }))
 
-              notifications.show({
-                title: "Cliente editado exitosamente",
-                message: "",
-                color: "green",
-                icon: <IconCheck />,
-              })
-            }}
-          />
+                notifications.show({
+                  title: "Cliente editado exitosamente",
+                  message: "",
+                  color: "green",
+                  icon: <IconCheck />,
+                })
+              }}
+            />
+          )}
         </Modal>
       </div>
     </Layout>

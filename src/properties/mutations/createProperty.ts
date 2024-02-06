@@ -5,16 +5,28 @@ import { CreatePropertyMutationSchema } from "../schemas"
 export default resolver.pipe(
   resolver.zod(CreatePropertyMutationSchema),
   resolver.authorize(),
-  async (input, ctx) => {
+  async ({ address, ...input }, ctx) => {
+    const organizationId = ctx.session.orgId
+
     const property = await db.property.create({
       data: {
         ...input,
-        organizationId: ctx.session.orgId,
+        organization: {
+          connect: { id: organizationId },
+        },
         owners: {
           create: input.owners?.map((owner) => ({
-            organizationId: ctx.session.orgId,
             clientId: owner,
+            organizationId,
           })),
+        },
+        address: {
+          create: {
+            ...address,
+            organization: {
+              connect: { id: organizationId },
+            },
+          },
         },
       },
     })

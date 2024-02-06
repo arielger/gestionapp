@@ -1,11 +1,11 @@
-import React, { useState } from "react"
+import React from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
 import { useMutation } from "@blitzjs/rpc"
 import { useRouter } from "next/router"
-import { ActionIcon, Button, Badge, TextInput, Group } from "@mantine/core"
-import { IconEdit, IconTrash, IconEye, IconSearch } from "@tabler/icons-react"
+import { ActionIcon, Button, Badge, Group } from "@mantine/core"
+import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 
 import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
@@ -16,28 +16,17 @@ import { PageHeader } from "src/layout/components/PageHeader"
 import { PersonList } from "src/clients/components/PersonList"
 import { ContractProgress } from "src/contracts/components/ContractProgress"
 import { getCurrentContract } from "src/contracts/utils/utils"
+import { getAddressString } from "src/addresses/utils"
 
 export const PropertiesList = () => {
   const router = useRouter()
 
-  const [filters, setFilters] = useState({
-    address: "",
-  })
+  // const [filters, setFilters] = useState({
+  //   address: "",
+  // })
 
   const { tableProps, items } = usePaginatedTable({
     query: getProperties,
-    queryParams: {
-      where: {
-        ...(filters.address
-          ? {
-              address: {
-                contains: filters.address,
-                mode: "insensitive",
-              },
-            }
-          : {}),
-      },
-    },
   })
 
   const propertiesWithCurrentContract = items.map((property) => {
@@ -67,22 +56,27 @@ export const PropertiesList = () => {
           {
             accessor: "address",
             title: "Dirección",
-            filter: (
-              <TextInput
-                label="Dirección"
-                description="Mostrar propiedades cuya dirección incluya el siguiente texto:"
-                placeholder="Buscar propiedades..."
-                leftSection={<IconSearch size={16} />}
-                value={filters.address}
-                onChange={(e) =>
-                  setFilters((filters) => ({
-                    ...filters,
-                    address: e.currentTarget.value,
-                  }))
-                }
-              />
-            ),
-            filtering: filters.address !== "",
+            render: (property) =>
+              getAddressString({
+                address: property.address,
+              }),
+            // TODO: add filtering with new address fields
+            // filter: (
+            //   <TextInput
+            //     label="Dirección"
+            //     description="Mostrar propiedades cuya dirección incluya el siguiente texto:"
+            //     placeholder="Buscar propiedades..."
+            //     leftSection={<IconSearch size={16} />}
+            //     value={filters.address}
+            //     onChange={(e) =>
+            //       setFilters((filters) => ({
+            //         ...filters,
+            //         address: e.currentTarget.value,
+            //       }))
+            //     }
+            //   />
+            // ),
+            // filtering: filters.address !== "",
           },
           {
             accessor: "owners",

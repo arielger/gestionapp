@@ -1,5 +1,5 @@
 import { resolver } from "@blitzjs/rpc"
-import db, { ActivityPersonType, ActivityType, ContractFeeType, Prisma } from "db"
+import db, { ActivityPersonType, ActivityType, ContractFeeType } from "db"
 import { CreatePaymentSchema } from "../schemas"
 
 export default resolver.pipe(

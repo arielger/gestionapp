@@ -18,7 +18,11 @@ export default resolver.pipe(
       include: {
         contract: {
           include: {
-            property: true,
+            property: {
+              include: {
+                address: true,
+              },
+            },
             owners: {
               include: {
                 client: true,

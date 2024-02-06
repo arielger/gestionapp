@@ -1,7 +1,7 @@
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { useQuery, useMutation } from "@blitzjs/rpc"
+import { useQuery } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
 import { NotFoundError } from "blitz"
 import { Anchor, Button, Center, Loader, Paper, Flex } from "@mantine/core"
@@ -18,6 +18,7 @@ import { getPaymentAmount } from "src/payments/utils"
 import { DetailsList } from "src/core/components/DetailsList"
 import { IconFileDescription } from "@tabler/icons-react"
 import { IconMail } from "@tabler/icons-react"
+import { getAddressString } from "src/addresses/utils"
 
 export const Payment = () => {
   const paymentId = useParam("paymentId", "number")!
@@ -53,6 +54,10 @@ export const Payment = () => {
     )
   }
 
+  const propertyAddress = getAddressString({
+    address: payment.contract.property.address,
+  })
+
   return (
     <>
       <Head>
@@ -61,7 +66,7 @@ export const Payment = () => {
 
       <div>
         <PageHeader
-          title={`Pago #${payment.id} - ${payment.contract.property.address}`}
+          title={`Pago #${payment.id} - ${propertyAddress}`}
           breadcrumbs={[
             <Anchor component={Link} href={Routes.PropertiesPage()} key="properties">
               Pagos
@@ -88,7 +93,7 @@ export const Payment = () => {
                   <ExternalLink
                     href={Routes.ShowPropertyPage({ propertyId: payment.contract.property.id })}
                   >
-                    {payment.contract.property.address}
+                    {propertyAddress}
                   </ExternalLink>
                 ),
               },

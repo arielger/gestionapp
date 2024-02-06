@@ -2,7 +2,7 @@ import { Contract } from "@prisma/client"
 
 export const getContractRentPaymentDates = (startDate: Date, endDate: Date): Date[] => {
   const monthsFirstDay: Date[] = []
-  let currentDate = new Date(startDate)
+  const currentDate = new Date(startDate)
 
   while (currentDate <= endDate) {
     monthsFirstDay.push(new Date(currentDate))

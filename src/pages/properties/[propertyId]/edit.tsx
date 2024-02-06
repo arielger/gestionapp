@@ -12,11 +12,14 @@ import { PropertyForm } from "src/properties/components/PropertyForm"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { Center, Loader, Paper } from "@mantine/core"
 import { personToSelectItem } from "src/clients/utils"
+import { NotFound } from "src/core/components/NotFound"
+import { NotFoundError } from "blitz"
+import { mapAddressToFormInitialValues } from "src/addresses/utils"
 
 export const EditProperty = () => {
   const router = useRouter()
   const propertyId = useParam("propertyId", "number")
-  const [property, { setQueryData, isLoading: isLoadingProperty }] = useQuery(
+  const [property, { isLoading: isLoadingProperty, error, setQueryData }] = useQuery(
     getProperty,
     { id: propertyId },
     {
@@ -27,19 +30,27 @@ export const EditProperty = () => {
   )
   const [updatePropertyMutation, { isLoading: isLoadingUpdate }] = useMutation(updateProperty)
 
-  const propertyOwnersClients = property?.owners.map((owner) => owner.client) ?? []
+  const notFound = (error as NotFoundError)?.name === NotFoundError.name
 
-  const initialValues = {
-    ...property,
-    address: property?.address ?? "",
-    owners: propertyOwnersClients?.map((client) => String(client.id)),
+  if (notFound) {
+    return (
+      <NotFound
+        title="Propiedad no encontrada"
+        description={
+          "No encontramos la propiedad que estás buscando.\n Por favor, verificá el ID ingresado"
+        }
+        goBackRoute={Routes.PropertiesPage()}
+      />
+    )
   }
+
+  const propertyOwnersClients = property?.owners.map((owner) => owner.client) ?? []
 
   // TODO: Fix property edit - form errors not working properly
   return (
     <>
       <Head>
-        <title>Editar Property {propertyId}</title>
+        <title>Editar propiedad {propertyId}</title>
       </Head>
 
       <div>
@@ -54,8 +65,9 @@ export const EditProperty = () => {
               submitText="Editar"
               schema={CreatePropertyFormSchema}
               initialValues={{
-                address: initialValues.address,
-                owners: initialValues.owners,
+                ...property,
+                address: mapAddressToFormInitialValues(property.address),
+                owners: propertyOwnersClients?.map((client) => String(client.id)),
               }}
               ownersInitialValues={propertyOwnersClients.map(personToSelectItem)}
               isLoading={isLoadingUpdate}

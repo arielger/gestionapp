@@ -5,6 +5,7 @@ import { validateZodSchema } from "blitz"
 export { FORM_ERROR } from "final-form"
 
 export interface FormProps<S extends z.ZodType<any, any>>
+  // eslint-disable-next-line no-undef
   extends Omit<PropsWithoutRef<JSX.IntrinsicElements["form"]>, "onSubmit"> {
   /** All your form fields */
   children?: ReactNode
