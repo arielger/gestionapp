@@ -5,13 +5,27 @@ import { CreateClientSchema } from "../schemas"
 export default resolver.pipe(
   resolver.zod(CreateClientSchema),
   resolver.authorize(),
-  async (input, ctx) => {
+  async ({ address, ...input }, ctx) => {
+    const organizationId = ctx.session.orgId
+
     const client = await db.client.create({
       data: {
         firstName: input.firstName,
         lastName: input.lastName,
         email: input.email,
-        organizationId: ctx.session.orgId,
+        organization: {
+          connect: { id: organizationId },
+        },
+        address: address
+          ? {
+              create: {
+                ...address,
+                organization: {
+                  connect: { id: organizationId },
+                },
+              },
+            }
+          : undefined,
       },
     })
 

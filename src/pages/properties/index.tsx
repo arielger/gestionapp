@@ -16,7 +16,7 @@ import { PageHeader } from "src/layout/components/PageHeader"
 import { PersonList } from "src/clients/components/PersonList"
 import { ContractProgress } from "src/contracts/components/ContractProgress"
 import { getCurrentContract } from "src/contracts/utils/utils"
-import { getAddressString } from "src/properties/utils"
+import { getAddressString } from "src/addresses/utils"
 
 export const PropertiesList = () => {
   const router = useRouter()

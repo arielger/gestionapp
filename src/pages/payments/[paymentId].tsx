@@ -18,7 +18,7 @@ import { getPaymentAmount } from "src/payments/utils"
 import { DetailsList } from "src/core/components/DetailsList"
 import { IconFileDescription } from "@tabler/icons-react"
 import { IconMail } from "@tabler/icons-react"
-import { getAddressString } from "src/properties/utils"
+import { getAddressString } from "src/addresses/utils"
 
 export const Payment = () => {
   const paymentId = useParam("paymentId", "number")!

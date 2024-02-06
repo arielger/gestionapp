@@ -5,7 +5,7 @@ import { ContractSearchForm } from "./ContractSearchForm"
 import { SelectActivitiesTable } from "./SelectActivitiesTable"
 import { ContractWithRelatedEntities } from "src/contracts/queries/getContracts"
 import { PersonList } from "src/clients/components/PersonList"
-import { getAddressString } from "src/properties/utils"
+import { getAddressString } from "src/addresses/utils"
 
 export function PaymentForm() {
   const [selectedContract, setSelectedContract] = useState<

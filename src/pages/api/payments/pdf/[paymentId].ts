@@ -9,7 +9,7 @@ import { Resend } from "resend"
 import getPayment from "src/payments/queries/getPayment"
 import { getPaymentAmount } from "src/payments/utils"
 import { PaymentReceiptEmail } from "src/payments/emails/PaymentReceiptEmail"
-import { getAddressString } from "src/properties/utils"
+import { getAddressString } from "src/addresses/utils"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 

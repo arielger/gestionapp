@@ -9,6 +9,7 @@ import { PropertyForm } from "src/properties/components/PropertyForm"
 import { Suspense } from "react"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { Paper } from "@mantine/core"
+import { addressFormInitialValue } from "src/addresses/utils"
 
 const NewPropertyPage = () => {
   const router = useRouter()
@@ -24,16 +25,7 @@ const NewPropertyPage = () => {
             schema={CreatePropertyFormSchema}
             initialValues={{
               owners: [],
-              address: {
-                street: "",
-                // Pass string as initial value to prevent showing 0 when initializing the form
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                streetNumber: "" as any,
-                subpremise: "",
-                state: "",
-                city: "",
-                postalCode: "",
-              },
+              address: addressFormInitialValue,
             }}
             onSubmit={async (values) => {
               const property = await createPropertyMutation({

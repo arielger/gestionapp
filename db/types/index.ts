@@ -36,7 +36,7 @@ export type Address = {
   state: string
   city: string
   postalCode: string | null
-  organizationId: number | null
+  organizationId: number
 }
 export type Client = {
   organizationId: number

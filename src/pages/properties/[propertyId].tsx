@@ -24,7 +24,7 @@ import { personToSelectItem } from "src/clients/utils"
 import { ContractFeeType } from "@prisma/client"
 import { NotFound } from "src/core/components/NotFound"
 import { getCurrentContract } from "src/contracts/utils/utils"
-import { getAddressString } from "src/properties/utils"
+import { getAddressString } from "src/addresses/utils"
 
 export const Property = () => {
   const router = useRouter()

@@ -132,7 +132,7 @@ model Client {
   tenantRentContracts        TenantOnContract[]
   propertyOwnerRentContracts PropertyOwnerOnContract[]
   address                    Address?                  @relation(fields: [addressId], references: [id])
-  addressId                  Int?
+  addressId                  Int?                      @unique
 }
 
 model PropertyOwnerOnProperty {
@@ -275,5 +275,5 @@ model Address {
   Client         Client[]
   Property       Property[]
   organization   Organization? @relation(fields: [organizationId], references: [id])
-  organizationId Int?
+  organizationId Int
 }

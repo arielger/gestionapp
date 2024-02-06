@@ -6,7 +6,7 @@ import Form from "src/core/components/Form"
 import { DataTable } from "src/core/components/DataTable"
 import getContracts, { ContractWithRelatedEntities } from "src/contracts/queries/getContracts"
 import { PersonList } from "src/clients/components/PersonList"
-import { getAddressString } from "src/properties/utils"
+import { getAddressString } from "src/addresses/utils"
 
 const selectSearchTypeValues = [
   { value: "owners", label: "Propietario" },

@@ -1,16 +1,9 @@
 import { z } from "zod"
 
+import { AddressSchema } from "src/addresses/schemas"
+
 export const PropertyBaseSchema = z.object({
-  address: z.object({
-    street: z.string(),
-    streetNumber: z.number(),
-    subpremise: z.string().optional(),
-
-    state: z.string(),
-    city: z.string(),
-
-    postalCode: z.string().optional(),
-  }),
+  address: AddressSchema,
 })
 
 export const CreatePropertyFormSchema = PropertyBaseSchema.extend({

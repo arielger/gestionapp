@@ -15,7 +15,7 @@ import { Routes } from "@blitzjs/next"
 import { PaymentWithDetails, getPaymentsInclude } from "src/payments/types"
 import { ExternalLink } from "src/core/components/ExternalLink"
 import router from "next/router"
-import { getAddressString } from "src/properties/utils"
+import { getAddressString } from "src/addresses/utils"
 
 export const ClientsList = () => {
   const { tableProps } = usePaginatedTable({

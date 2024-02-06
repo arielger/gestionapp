@@ -14,11 +14,12 @@ import { Center, Loader, Paper } from "@mantine/core"
 import { personToSelectItem } from "src/clients/utils"
 import { NotFound } from "src/core/components/NotFound"
 import { NotFoundError } from "blitz"
+import { mapAddressToFormInitialValues } from "src/addresses/utils"
 
 export const EditProperty = () => {
   const router = useRouter()
   const propertyId = useParam("propertyId", "number")
-  const [property, { setQueryData, isLoading: isLoadingProperty, error }] = useQuery(
+  const [property, { isLoading: isLoadingProperty, error, setQueryData }] = useQuery(
     getProperty,
     { id: propertyId },
     {
@@ -45,11 +46,6 @@ export const EditProperty = () => {
 
   const propertyOwnersClients = property?.owners.map((owner) => owner.client) ?? []
 
-  const initialValues = {
-    ...property,
-    owners: propertyOwnersClients?.map((client) => String(client.id)),
-  }
-
   // TODO: Fix property edit - form errors not working properly
   return (
     <>
@@ -70,16 +66,8 @@ export const EditProperty = () => {
               schema={CreatePropertyFormSchema}
               initialValues={{
                 ...property,
-                // map address fields to prevent type errors when passing null (for optional fields)
-                address: {
-                  street: property.address.street,
-                  streetNumber: property.address.streetNumber,
-                  subpremise: property.address.subpremise ?? undefined,
-                  state: property.address.state,
-                  city: property.address.city,
-                  postalCode: property.address.postalCode ?? undefined,
-                },
-                owners: initialValues.owners,
+                address: mapAddressToFormInitialValues(property.address),
+                owners: propertyOwnersClients?.map((client) => String(client.id)),
               }}
               ownersInitialValues={propertyOwnersClients.map(personToSelectItem)}
               isLoading={isLoadingUpdate}
