@@ -12,13 +12,10 @@ export const AddressSchema = z.object({
 })
 
 const emptyAddressToUndefined = (address: Record<string, unknown>) => {
-  console.log("preprocess")
   if (Object.values(address).every((value) => value === "" || value === undefined)) {
-    console.log("=> return undefined")
     return undefined
   }
 
-  console.log("=> return address")
   return address
 }
 

@@ -36,6 +36,7 @@ pids
 *.pid
 *.seed
 *.pid.lock
+db/seed-data.json
 
 # Testing
 .coverage
