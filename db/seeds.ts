@@ -1,4 +1,7 @@
+import { SecurePassword } from "@blitzjs/auth/secure-password"
+
 import db from "./index"
+import seedData from "./seed-data-example.json"
 
 /*
  * This seed function is executed when you run `blitz db seed`.
@@ -8,45 +11,29 @@ import db from "./index"
  */
 
 const seed = async () => {
-  const orgs = ["Grupo Gestionar", "3G Propiedades"]
-
   try {
-    const organizations = await db.$transaction(
-      orgs.map((org) => db.organization.create({ data: { name: org } }))
-    )
+    seedData.organizations.forEach(async (organizationData) => {
+      const orgUsersWithHashedPasswords = await Promise.all(
+        organizationData.users.map(async (user) => ({
+          name: user.name,
+          email: user.email,
+          hashedPassword: await SecurePassword.hash(user.password.trim()),
+        }))
+      )
 
-    if (!organizations[0] || !organizations[1]) {
-      throw Error("No organizations created")
-    }
-
-    await db.user.create({
-      data: {
-        email: "gustavo@gestionar.com",
-        name: "Gustavo Gestionar",
-        // password = test123456
-        hashedPassword:
-          "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJHRBTVZYYzBMWmlTRUh4WjY5bTAxQVEkcnJJVE45elJOcUxjbmVNc3hLUkU2eTZsVmYzbVlHT2dqbFNaMHJOVE1GVQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
-        memberships: {
-          create: {
-            organizationId: organizations[0].id,
+      const organization = await db.organization.create({
+        data: {
+          name: organizationData.name,
+          memberships: {
+            create: orgUsersWithHashedPasswords.map((user) => ({
+              user: {
+                create: user,
+              },
+            })),
           },
         },
-      },
-    })
-
-    await db.user.create({
-      data: {
-        email: "ariel@gestionar.com",
-        name: "Ariel Gestionar",
-        // password = test123456
-        hashedPassword:
-          "JGFyZ29uMmlkJHY9MTkkbT02NTUzNix0PTIscD0xJHRBTVZYYzBMWmlTRUh4WjY5bTAxQVEkcnJJVE45elJOcUxjbmVNc3hLUkU2eTZsVmYzbVlHT2dqbFNaMHJOVE1GVQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
-        memberships: {
-          create: {
-            organizationId: organizations[1].id,
-          },
-        },
-      },
+      })
+      console.log(`✅ Company ${organization.name} created with users successfully`)
     })
 
     console.log("Users created successfully")

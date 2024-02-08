@@ -1,0 +1,29 @@
+{
+  "organizations": [
+    {
+      "name": "Grupo Gestionar 1",
+      "users": [
+        {
+          "email": "gustavo@gestionar.com",
+          "name": "Gustavo Rodriguez",
+          "password": "test123456"
+        },
+        {
+          "email": "paulo@gestionar.com",
+          "name": "Paulo Perez",
+          "password": "test123456"
+        }
+      ]
+    },
+    {
+      "name": "Remax",
+      "users": [
+        {
+          "email": "jose@remax.com",
+          "name": "Jose Remax",
+          "password": "test123456"
+        }
+      ]
+    }
+  ]
+}
