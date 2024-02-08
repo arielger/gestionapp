@@ -1,7 +1,7 @@
 import { SecurePassword } from "@blitzjs/auth/secure-password"
 
 import db from "./index"
-import seedData from "./seed-data-example.json"
+import seedData from "./seed-data.json"
 
 /*
  * This seed function is executed when you run `blitz db seed`.
