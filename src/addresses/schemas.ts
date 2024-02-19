@@ -1,14 +1,14 @@
-import { z } from "zod"
+import { z } from "src/core/zod"
 
 export const AddressSchema = z.object({
-  street: z.string().min(1, { message: "Required" }),
+  street: z.string().min(1),
   streetNumber: z.number(),
-  subpremise: z.string().min(1, { message: "Required" }).optional(),
+  subpremise: z.string().min(1).optional(),
 
-  state: z.string().min(1, { message: "Required" }),
-  city: z.string().min(1, { message: "Required" }),
+  state: z.string().min(1),
+  city: z.string().min(1),
 
-  postalCode: z.string().min(1, { message: "Required" }).optional(),
+  postalCode: z.string().min(1).optional(),
 })
 
 const emptyAddressToUndefined = (address: Record<string, unknown>) => {

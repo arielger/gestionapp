@@ -1,5 +1,5 @@
 import { ActivityType } from "@prisma/client"
-import { z } from "zod"
+import { z } from "src/core/zod"
 
 export const CreatePaymentSchema = z.object({
   // template: __fieldName__: z.__zodType__(),

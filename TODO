@@ -2,17 +2,18 @@ TODO:
 
 - [OK] Add related properties in client page (and roles)
 - [OK] Improve initial loading screen (remove loading text)
-- [ ] review address validation in forms using zod + mantine
-      how to validate address only if any field of the address is completed? (not undefined, not empty string) - property create - property edit - client create - client edit
+- [OK] review address validation in forms using zod + mantine
+  how to validate address only if any field of the address is completed? (not undefined, not empty string) - property create - property edit - client create - client edit
+- [OK] i18n form validation to spanish
 - [ ] Review select activities table texts
+- [ ] Review activities table and relationships -> overusing originalActivity
 - [ ] Add monitoring
 - [ ] Payments
 
   - [ ] You should be able to register a payment related to a tenant or owner
 
-- [ ] Calculate initial and end month paymenlts values
+- [ ] Calculate initial and end month payments values
 - [ ] Change date format to dd-mm-yyyy (move to general variable)
-- [ ] i18n form validation to spanish
 - [ ] Handle error when going to authenticated route
 - [ ] i18n for routes
 - [ ] Review responsive styles (Layout)

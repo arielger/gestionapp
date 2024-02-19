@@ -3,7 +3,7 @@ import { resolver } from "@blitzjs/rpc"
 import db from "db"
 import { Role } from "types"
 import { Signup } from "../schemas"
-import { z } from "zod"
+import { z } from "src/core/zod"
 
 export default resolver.pipe(
   resolver.zod(

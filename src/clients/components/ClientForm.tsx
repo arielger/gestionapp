@@ -3,7 +3,7 @@ import React from "react"
 import { AddressFormFields } from "src/core/components/AddressFormFields"
 import { Form, FormProps } from "src/core/components/Form"
 
-import { z } from "zod"
+import { z } from "src/core/zod"
 
 export function ClientForm<S extends z.ZodType<any, any>>(props: FormProps<S>) {
   return (

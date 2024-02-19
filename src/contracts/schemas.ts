@@ -1,5 +1,5 @@
 import { ContractFeeType } from "@prisma/client"
-import { z } from "zod"
+import { z } from "src/core/zod"
 
 const CreateContractBaseSchema = z.object({
   // We need to use z.coerce because mantine Select only allows

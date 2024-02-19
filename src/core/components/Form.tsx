@@ -1,5 +1,5 @@
 import { ReactNode, PropsWithoutRef } from "react"
-import { z } from "zod"
+import { z } from "src/core/zod"
 import { useForm, zodResolver, UseFormReturnType, UseFormInput } from "@mantine/form"
 import { Button } from "@mantine/core"
 import { notifications } from "@mantine/notifications"

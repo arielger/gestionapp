@@ -1,7 +1,7 @@
 import React from "react"
 import { Form, FormProps } from "src/core/components/Form"
 
-import { z } from "zod"
+import { z } from "src/core/zod"
 
 export function __ModelName__Form<S extends z.ZodType<any, any>>(props: FormProps<S>) {
   return (

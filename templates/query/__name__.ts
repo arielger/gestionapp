@@ -1,6 +1,6 @@
 import { resolver } from "@blitzjs/rpc"
 import db from "__prismaFolder__"
-import { z } from "zod"
+import { z } from "src/core/zod"
 
 const __Name__ = z.object({
   id: z.number(),

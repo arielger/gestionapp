@@ -1,5 +1,5 @@
 import { ActivityPersonType, ActivityType } from "@prisma/client"
-import { z } from "zod"
+import { z } from "src/core/zod"
 import { ActivityTransactionType } from "./config"
 
 // TODO: review these types, there is a lot of repetition here

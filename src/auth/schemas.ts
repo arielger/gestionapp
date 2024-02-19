@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "src/core/zod"
 
 export const email = z
   .string()
