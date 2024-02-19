@@ -11,4 +11,9 @@ void i18next.init({
 })
 z.setErrorMap(zodI18nMap)
 
+export const zodNonEmptyStringValidation = z
+  .string()
+  .trim()
+  .min(1, esZodTranslation.errors.invalid_type_received_undefined)
+
 export { z }

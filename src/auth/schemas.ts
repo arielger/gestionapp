@@ -1,4 +1,4 @@
-import { z } from "src/core/zod"
+import { z, zodNonEmptyStringValidation } from "src/core/zod"
 
 export const email = z
   .string()
@@ -12,7 +12,7 @@ export const password = z
   .transform((str) => str.trim())
 
 export const Signup = z.object({
-  name: z.string().min(1),
+  name: zodNonEmptyStringValidation,
   email,
   password,
   // used to set org id in custom script
