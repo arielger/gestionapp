@@ -19,7 +19,7 @@ export const usePaginatedTable = <T extends Record<string, unknown>>({
 }) => {
   const router = useRouter()
   const page = Number(router.query.page) || 0
-  const [data, { isLoading, isFetching, isPreviousData, isError }] = usePaginatedQuery(
+  const [data, { isLoading, isFetching, isPreviousData, isError, refetch }] = usePaginatedQuery(
     query,
     {
       orderBy: { id: "asc" },
@@ -62,5 +62,6 @@ export const usePaginatedTable = <T extends Record<string, unknown>>({
   return {
     tableProps,
     items: data?.items ?? [],
+    refetch,
   }
 }

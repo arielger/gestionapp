@@ -3,12 +3,12 @@ import { z, zodNonEmptyStringValidation } from "src/core/zod"
 export const AddressSchema = z.object({
   street: zodNonEmptyStringValidation,
   streetNumber: z.number(),
-  subpremise: zodNonEmptyStringValidation.optional(),
+  subpremise: z.string().optional(),
 
   state: zodNonEmptyStringValidation,
   city: zodNonEmptyStringValidation,
 
-  postalCode: zodNonEmptyStringValidation.optional(),
+  postalCode: z.string().optional(),
 })
 
 const emptyAddressToUndefined = (address: Record<string, unknown>) => {

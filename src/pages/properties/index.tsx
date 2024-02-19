@@ -137,6 +137,7 @@ export const PropertiesList = () => {
         ]}
         {...tableProps}
         records={propertiesWithCurrentContract}
+        noRecordsText="No se encontraron propiedades"
       />
     </>
   )

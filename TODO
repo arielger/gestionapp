@@ -5,6 +5,7 @@ TODO:
 - [OK] review address validation in forms using zod + mantine
   how to validate address only if any field of the address is completed? (not undefined, not empty string) - property create - property edit - client create - client edit
 - [OK] i18n form validation to spanish
+- [OK] Delete client
 - [ ] Review select activities table texts
 - [ ] Review activities table and relationships -> overusing originalActivity
 - [ ] Add monitoring
