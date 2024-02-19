@@ -12,7 +12,6 @@ import { notifications } from "@mantine/notifications"
 import { Client } from "@prisma/client"
 import { useRouter } from "next/router"
 import { useDisclosure } from "@mantine/hooks"
-import { IconX } from "@tabler/icons-react"
 
 import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
 import Layout from "src/core/layouts/Layout"
@@ -25,8 +24,7 @@ import createClient from "src/clients/mutations/createClient"
 import { CreateClientSchema } from "src/clients/schemas"
 import updateClient from "src/clients/mutations/updateClient"
 import { ClientWithOptionalAddress } from "src/clients/types"
-import deleteClient from "src/clients/mutations/deleteClient"
-import { RelatedExistingEntitiesError } from "src/core/errors"
+import { useClientDelete } from "src/clients/hooks"
 
 const listTypes = ["all", "owners", "tenants"] as const
 
@@ -43,37 +41,9 @@ export const ClientsList = ({
     queryParams: { type },
   })
 
-  const [deleteClientMutation, { isLoading: isLoadingDelete, variables: deleteMutationVariables }] =
-    useMutation(deleteClient)
-  const deleteClientAction = async (clientId: number) => {
-    try {
-      await deleteClientMutation({ id: clientId })
-
-      notifications.show({
-        title: "Cliente eliminado exitosamente",
-        message: "",
-        color: "green",
-        icon: <IconCheck />,
-      })
-      void refetchClients()
-    } catch (error) {
-      const relatedEntitiesError = error instanceof RelatedExistingEntitiesError
-      notifications.show({
-        ...(relatedEntitiesError
-          ? {
-              title: "No se puede eliminar el cliente porque tiene entidades relacionadas",
-              message:
-                "Asegurate de eliminar las propiedades y contratos asociados para poder realizar esta acción",
-            }
-          : {
-              title: "Error al eliminar el cliente",
-              message: "",
-            }),
-        color: "red",
-        icon: <IconX />,
-      })
-    }
-  }
+  const { isLoadingDelete, deleteMutationVariables, deleteClient } = useClientDelete({
+    onSuccess: refetchClients,
+  })
 
   const actionsDisabled = isLoadingDelete
 
@@ -112,7 +82,7 @@ export const ClientsList = ({
                 loading={
                   isLoadingDelete && (deleteMutationVariables as { id: number })?.id === client.id
                 }
-                onClick={() => deleteClientAction(client.id)}
+                onClick={() => deleteClient(client.id)}
                 size="sm"
                 variant="subtle"
                 color="red"

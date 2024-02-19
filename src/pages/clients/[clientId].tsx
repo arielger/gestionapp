@@ -2,11 +2,10 @@ import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { useQuery, useMutation } from "@blitzjs/rpc"
+import { useQuery } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
 
 import getClient from "src/clients/queries/getClient"
-import deleteClient from "src/clients/mutations/deleteClient"
 import { PageHeader } from "src/layout/components/PageHeader"
 import {
   ActionIcon,
@@ -29,6 +28,7 @@ import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
 import { PersonList } from "src/clients/components/PersonList"
 import { IconCheck, IconEdit, IconEye } from "@tabler/icons-react"
 import { getAddressString } from "src/addresses/utils"
+import { useClientDelete } from "src/clients/hooks"
 
 const propertyInclude = {
   owners: {
@@ -71,7 +71,6 @@ export const Client = () => {
   const router = useRouter()
   const clientId = useParam("clientId", "number")
 
-  const [deleteClientMutation] = useMutation(deleteClient)
   const [client, { isLoading: isLoadingClient, error }] = useQuery<
     typeof getClient,
     ClientWithProperties
@@ -87,6 +86,12 @@ export const Client = () => {
     }
   )
 
+  const { isLoadingDelete, deleteClient } = useClientDelete({
+    onSuccess: () => {
+      void router.push(Routes.ClientsPage())
+    },
+  })
+
   const notFound = (error as NotFoundError)?.name === NotFoundError.name
 
   if (notFound) {
@@ -96,6 +101,16 @@ export const Client = () => {
         description={
           "No encontramos el cliente que estás buscando.\n Por favor, verificá el ID ingresado"
         }
+        goBackRoute={Routes.ClientsPage()}
+      />
+    )
+  }
+
+  if (!clientId) {
+    return (
+      <NotFound
+        title="ID de cliente erroneo"
+        description="Ingresa un ID númerico válido para buscar un cliente"
         goBackRoute={Routes.ClientsPage()}
       />
     )
@@ -162,12 +177,8 @@ export const Client = () => {
             <Button
               color="red"
               type="button"
-              onClick={async () => {
-                if (window.confirm("This will be deleted")) {
-                  await deleteClientMutation({ id: client.id })
-                  await router.push(Routes.ClientsPage())
-                }
-              }}
+              onClick={() => deleteClient(clientId)}
+              loading={isLoadingDelete}
             >
               Eliminar
             </Button>
