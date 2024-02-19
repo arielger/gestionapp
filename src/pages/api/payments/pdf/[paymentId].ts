@@ -21,6 +21,7 @@ export default api(async (req: NextApiRequest, res: NextApiResponse, ctx: Ctx) =
     ctx
   )
 
+  // TODO: Move all the doc formatting logic to separate fn
   const doc = new createPdfDocument()
 
   doc.info["Title"] = `Recibo de pago #${payment.id}`

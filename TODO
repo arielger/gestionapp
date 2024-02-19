@@ -1,7 +1,7 @@
 TODO:
 
 - [OK] Add related properties in client page (and roles)
-- [ ] Improve initial loading screen (remove loading text)
+- [OK] Improve initial loading screen (remove loading text)
 - [ ] review address validation in forms using zod + mantine
       how to validate address only if any field of the address is completed? (not undefined, not empty string) - property create - property edit - client create - client edit
 - [ ] Review select activities table texts
