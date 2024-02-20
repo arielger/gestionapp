@@ -85,15 +85,19 @@ export const Property = () => {
     )
   }
 
+  const addressString = getAddressString({ address: property.address })
+
   return (
     <>
       <Head>
-        <title>Propiedad {propertyId}</title>
+        <title>
+          Propiedad #{propertyId} - {addressString}
+        </title>
       </Head>
 
       <div>
         <PageHeader
-          title={getAddressString({ address: property.address })}
+          title={addressString}
           breadcrumbs={[
             <Anchor component={Link} href={Routes.PropertiesPage()} key="properties">
               Propiedades
@@ -121,9 +125,7 @@ export const Property = () => {
               Eliminar
             </Button>
 
-            {!property?.contracts?.length && (
-              <Button onClick={openCreateContractModal}>Crear contrato</Button>
-            )}
+            {!currentContract && <Button onClick={openCreateContractModal}>Crear contrato</Button>}
           </Flex>
         </PageHeader>
         <Flex gap="md">

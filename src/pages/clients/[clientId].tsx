@@ -143,7 +143,7 @@ export const Client = () => {
     <>
       <Head>
         <title>
-          Cliente #{client.id} {client ? `(${fullName})` : ""}
+          Cliente #{client.id} - {fullName}
         </title>
       </Head>
 
