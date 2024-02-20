@@ -11,7 +11,6 @@ import { IconCheck } from "@tabler/icons-react"
 import { notifications } from "@mantine/notifications"
 
 import getProperty from "src/properties/queries/getProperty"
-import deleteProperty from "src/properties/mutations/deleteProperty"
 import { PageHeader } from "src/layout/components/PageHeader"
 import { DetailsList } from "src/core/components/DetailsList"
 import { PersonList } from "src/clients/components/PersonList"
@@ -25,10 +24,11 @@ import { ContractFeeType } from "@prisma/client"
 import { NotFound } from "src/core/components/NotFound"
 import { getCurrentContract } from "src/contracts/utils/utils"
 import { getAddressString } from "src/addresses/utils"
+import { usePropertyDelete } from "src/properties/hooks"
 
 export const Property = () => {
   const router = useRouter()
-  const propertyId = useParam("propertyId", "number")!
+  const propertyId = useParam("propertyId", "number")
 
   const [property, { isLoading: isLoadingProperty, refetch: refetchProperty, error }] = useQuery(
     getProperty,
@@ -43,13 +43,17 @@ export const Property = () => {
 
   const currentContract = getCurrentContract(property?.contracts ?? [])
 
-  const [deletePropertyMutation] = useMutation(deleteProperty)
-
   const [createContractMutation, { isLoading }] = useMutation(createContract)
   const [isCreateContractOpen, { open: openCreateContractModal, close: closeCreateContractModal }] =
     useDisclosure(false)
 
   const propertyOwnersClients = property?.owners.map((owner) => owner.client) ?? []
+
+  const { isLoadingDelete, deleteProperty } = usePropertyDelete({
+    onSuccess: () => {
+      void router.push(Routes.PropertiesPage())
+    },
+  })
 
   if (notFound) {
     return (
@@ -58,6 +62,16 @@ export const Property = () => {
         description={
           "No encontramos la propiedad que estás buscando.\n Por favor, verificá el ID ingresado"
         }
+        goBackRoute={Routes.PropertiesPage()}
+      />
+    )
+  }
+
+  if (!propertyId) {
+    return (
+      <NotFound
+        title="ID de propiedad erroneo"
+        description="Ingresa un ID númerico válido para buscar una propiedad"
         goBackRoute={Routes.PropertiesPage()}
       />
     )
@@ -98,16 +112,11 @@ export const Property = () => {
               <Button>Editar</Button>
             </Link>
 
-            {/* TODO: review - not working */}
             <Button
               color="red"
               type="button"
-              onClick={async () => {
-                if (window.confirm("This will be deleted")) {
-                  await deletePropertyMutation({ id: propertyId })
-                  await router.push(Routes.PropertiesPage())
-                }
-              }}
+              onClick={() => deleteProperty(propertyId)}
+              loading={isLoadingDelete}
             >
               Eliminar
             </Button>
