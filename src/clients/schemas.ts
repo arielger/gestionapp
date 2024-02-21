@@ -1,10 +1,10 @@
-import { z } from "zod"
+import { z, zodNonEmptyStringValidation } from "src/core/zod"
 
 import { OptionalAddressSchema } from "src/addresses/schemas"
 
 export const CreateClientSchema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
+  firstName: zodNonEmptyStringValidation,
+  lastName: zodNonEmptyStringValidation,
   email: z.string().email().optional().nullable(),
   address: OptionalAddressSchema,
 })

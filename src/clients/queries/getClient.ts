@@ -1,7 +1,7 @@
 import { NotFoundError } from "blitz"
 import { resolver } from "@blitzjs/rpc"
 import db, { Prisma } from "db"
-import { z } from "zod"
+import { z } from "src/core/zod"
 
 const GetClient = z
   .object({

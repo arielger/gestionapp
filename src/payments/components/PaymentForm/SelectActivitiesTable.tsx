@@ -15,7 +15,7 @@ export function SelectActivitiesTable({
   onCreatePayment,
 }: {
   contract: Contract
-  onCreatePayment?: () => void
+  onCreatePayment?: (paymentId: number) => void
 }) {
   const [activitiesData, { isLoading: isLoadingActivities, refetch: refetchActivities }] = useQuery(
     getActivities,
@@ -33,6 +33,7 @@ export function SelectActivitiesTable({
     },
     {
       suspense: false,
+      // TODO: review => this is caching the data forever
       staleTime: Infinity, // prevent refetching
     }
   )
@@ -98,7 +99,7 @@ export function SelectActivitiesTable({
           loading={isLoading}
           disabled={noSelectedActivities}
           onClick={async () => {
-            await createPaymentMutation({
+            const payment = await createPaymentMutation({
               contractId: contract.id,
               items: selectedActivities.map((activity) => ({
                 id: activity.id,
@@ -115,7 +116,7 @@ export function SelectActivitiesTable({
             })
 
             void refetchActivities()
-            onCreatePayment?.()
+            onCreatePayment?.(payment.id)
           }}
         >
           Registrar pago

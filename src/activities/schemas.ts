@@ -1,5 +1,5 @@
 import { ActivityPersonType, ActivityType } from "@prisma/client"
-import { z } from "zod"
+import { z, zodNonEmptyStringValidation } from "src/core/zod"
 import { ActivityTransactionType } from "./config"
 
 // TODO: review these types, there is a lot of repetition here
@@ -24,7 +24,7 @@ const CreateActivityRentFeeSchema = {
 const CreateActivityCustomSchema = {
   type: z.literal(ActivityType.CUSTOM),
   details: z.object({
-    title: z.string().min(1),
+    title: zodNonEmptyStringValidation,
   }),
 }
 

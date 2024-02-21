@@ -1,6 +1,6 @@
 import React from "react"
 import { Flex, ComboboxItem } from "@mantine/core"
-import { z } from "zod"
+import { z } from "src/core/zod"
 
 import Form, { FormProps } from "src/core/components/Form"
 import { ClientsSelect } from "src/clients/components/ClientsSelect"

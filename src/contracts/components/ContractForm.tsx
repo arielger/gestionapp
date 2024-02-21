@@ -10,7 +10,7 @@ import {
   Text,
 } from "@mantine/core"
 import { DateInput } from "@mantine/dates"
-import { z } from "zod"
+import { z } from "src/core/zod"
 
 import { Form, FormProps } from "src/core/components/Form"
 import { getContractRentPaymentDates } from "../utils/utils"

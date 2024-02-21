@@ -4,7 +4,7 @@ import { IconTransferIn, IconTransferOut } from "@tabler/icons-react"
 import React from "react"
 import { Form, FormProps } from "src/core/components/Form"
 
-import { z } from "zod"
+import { z } from "src/core/zod"
 import { activityPersonLabels, ActivityTransactionType } from "../config"
 
 // TODO: review if we should be able to edit activities

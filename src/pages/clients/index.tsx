@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useMutation } from "@blitzjs/rpc"
 import { ActionIcon, Button, Group, SegmentedControl, Flex, Modal } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
-import { z } from "zod"
+import { z } from "src/core/zod"
 import { StringParam, withDefault, useQueryParams } from "use-query-params"
 import { IconCheck } from "@tabler/icons-react"
 import { notifications } from "@mantine/notifications"
@@ -24,6 +24,7 @@ import createClient from "src/clients/mutations/createClient"
 import { CreateClientSchema } from "src/clients/schemas"
 import updateClient from "src/clients/mutations/updateClient"
 import { ClientWithOptionalAddress } from "src/clients/types"
+import { useClientDelete } from "src/clients/hooks"
 
 const listTypes = ["all", "owners", "tenants"] as const
 
@@ -35,10 +36,16 @@ export const ClientsList = ({
   openEditClient: (client: Client) => void
 }) => {
   // TODO: add search by name
-  const { tableProps } = usePaginatedTable({
+  const { tableProps, refetch: refetchClients } = usePaginatedTable({
     query: getClients,
     queryParams: { type },
   })
+
+  const { isLoadingDelete, deleteMutationVariables, deleteClient } = useClientDelete({
+    onSuccess: refetchClients,
+  })
+
+  const actionsDisabled = isLoadingDelete
 
   return (
     <DataTable
@@ -58,14 +65,28 @@ export const ClientsList = ({
           render: (client) => (
             <Group gap={4} justify="right" wrap="nowrap">
               <Link href={Routes.ShowClientPage({ clientId: client.id })}>
-                <ActionIcon size="sm" variant="subtle">
+                <ActionIcon disabled={actionsDisabled} size="sm" variant="subtle">
                   <IconEye size="1rem" stroke={1.5} />
                 </ActionIcon>
               </Link>
-              <ActionIcon onClick={() => openEditClient(client)} size="sm" variant="subtle">
+              <ActionIcon
+                disabled={actionsDisabled}
+                onClick={() => openEditClient(client)}
+                size="sm"
+                variant="subtle"
+              >
                 <IconEdit size="1rem" stroke={1.5} />
               </ActionIcon>
-              <ActionIcon size="sm" variant="subtle" color="red">
+              <ActionIcon
+                disabled={actionsDisabled}
+                loading={
+                  isLoadingDelete && (deleteMutationVariables as { id: number })?.id === client.id
+                }
+                onClick={() => deleteClient(client.id)}
+                size="sm"
+                variant="subtle"
+                color="red"
+              >
                 <IconTrash size="1rem" stroke={1.5} />
               </ActionIcon>
             </Group>
@@ -86,6 +107,7 @@ const ClientsPage = () => {
     type: withDefault(StringParam, ""),
   })
 
+  // validate that client type is one of the allowed values, if not replace query with default value
   useEffect(() => {
     const queryWithValidation = ClientsRouterQuerySchema.safeParse(query)
     if (!queryWithValidation.success) {

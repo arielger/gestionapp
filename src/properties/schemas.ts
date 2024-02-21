@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "src/core/zod"
 
 import { AddressSchema } from "src/addresses/schemas"
 
