@@ -6,6 +6,7 @@ import { notifications } from "@mantine/notifications"
 import { DataTable } from "mantine-datatable"
 import { Activity, ActivityPersonType, ActivityType, Contract } from "@prisma/client"
 import { IconCheck, IconEdit, IconTrash } from "@tabler/icons-react"
+import { useRouter } from "next/router"
 
 import { ActivityTransactionType } from "../config"
 import createActivity from "../mutations/createActivity"
@@ -18,6 +19,7 @@ import { actionsColumnConfig } from "src/core/components/DataTable"
 import { getActivityTitle } from "../utils"
 import { ActivityWithDetails } from "../types"
 import { SelectActivitiesTable } from "src/payments/components/PaymentForm/SelectActivitiesTable"
+import { Routes } from "@blitzjs/next"
 
 const renderBalanceMovementCell = ({
   activity,
@@ -48,7 +50,11 @@ const renderBalanceMovementCell = ({
   )
 }
 
+// TODO: review this page logic - overly complex - move logic to modules
+
 export const ActivitiesBalance = ({ contract }: { contract: Contract }) => {
+  const router = useRouter()
+
   const [activitiesData, { isLoading: isLoadingActivities, refetch: refetchActivities }] = useQuery(
     getActivities,
     {
@@ -221,9 +227,10 @@ export const ActivitiesBalance = ({ contract }: { contract: Contract }) => {
       <Modal size="lg" opened={addPaymentOpened} onClose={closeAddPayment} title="Registrar pago">
         <SelectActivitiesTable
           contract={contract}
-          onCreatePayment={() => {
+          onCreatePayment={(paymentId) => {
             closeAddPayment()
             void refetchActivities()
+            void router.push(Routes.ShowPaymentPage({ paymentId }))
           }}
         />
       </Modal>

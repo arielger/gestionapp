@@ -61,14 +61,16 @@ export const Payment = () => {
   return (
     <>
       <Head>
-        <title>Propiedad {paymentId}</title>
+        <title>
+          Pago #{paymentId} - {propertyAddress}
+        </title>
       </Head>
 
       <div>
         <PageHeader
           title={`Pago #${payment.id} - ${propertyAddress}`}
           breadcrumbs={[
-            <Anchor component={Link} href={Routes.PropertiesPage()} key="properties">
+            <Anchor component={Link} href={Routes.PaymentsPage()} key="payments">
               Pagos
             </Anchor>,
             <Anchor
@@ -106,7 +108,7 @@ export const Payment = () => {
               {
                 title: "Inquilino/s",
                 value: (
-                  <PersonList list={payment.contract.owners.map((owner) => owner.client) ?? []} />
+                  <PersonList list={payment.contract.tenants.map((owner) => owner.client) ?? []} />
                 ),
               },
               {
