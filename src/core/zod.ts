@@ -11,6 +11,11 @@ void i18next.init({
 })
 z.setErrorMap(zodI18nMap)
 
+export const zodEmptyValueToUndefined = <T extends z.ZodTypeAny>(zodType: T) => {
+  return z.preprocess((val) => (val === "" || val === undefined ? undefined : val), zodType)
+}
+
+/** Check that string has any content */
 export const zodNonEmptyStringValidation = z
   .string()
   .trim()

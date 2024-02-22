@@ -47,6 +47,9 @@ export type Client = {
   lastName: string
   email: string | null
   addressId: number | null
+  phoneAreaCode: string | null
+  phoneNumber: string | null
+  identityDocNumber: number | null
 }
 export type Contract = {
   organizationId: number

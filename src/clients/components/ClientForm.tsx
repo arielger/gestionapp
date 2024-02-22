@@ -1,4 +1,4 @@
-import { Flex, TextInput } from "@mantine/core"
+import { Flex, Text, TextInput } from "@mantine/core"
 import React from "react"
 import { AddressFormFields } from "src/core/components/AddressFormFields"
 import { Form, FormProps } from "src/core/components/Form"
@@ -25,6 +25,11 @@ export function ClientForm<S extends z.ZodType<any, any>>(props: FormProps<S>) {
             />
           </Flex>
           <TextInput label="Email" {...form.getInputProps("email")} />
+          <TextInput
+            label="Teléfono (código de área + número)"
+            leftSection={<Text size="sm">+54</Text>}
+            {...form.getInputProps("phoneNumber")}
+          />
           <AddressFormFields form={form} />
         </Flex>
       )}
