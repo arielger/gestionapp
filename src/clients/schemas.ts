@@ -8,6 +8,13 @@ export const CreateClientSchema = z.object({
   firstName: zodNonEmptyStringValidation,
   lastName: zodNonEmptyStringValidation,
   email: zodEmptyValueToUndefined(z.string().email("Email inválido").optional()),
+  // check that id number has 7 or 8 digits (argentinian DNI validation)
+  identityDocNumber: zodEmptyValueToUndefined(
+    z
+      .number()
+      .gte(1000000, "El DNI debe tener 7 u 8 dígitos")
+      .lte(99999999, "El DNI debe tener 7 u 8 dígitos")
+  ),
   address: OptionalAddressSchema,
   phoneNumber: zodEmptyValueToUndefined(
     z

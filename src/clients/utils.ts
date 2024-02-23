@@ -23,4 +23,5 @@ export const clientFormEditInitialValues = (client: ClientWithOptionalAddress) =
   email: client.email ?? undefined,
   address: client.address ? mapAddressToFormInitialValues(client.address) : addressFormInitialValue,
   phoneNumber: client.phoneNumber ?? undefined,
+  identityDocNumber: client.identityDocNumber ?? undefined,
 })

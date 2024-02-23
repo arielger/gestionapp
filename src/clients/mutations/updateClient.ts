@@ -26,6 +26,7 @@ export default resolver.pipe(
               phoneAreaCode: null,
               phoneNumber: null,
             }),
+        identityDocNumber: input.identityDocNumber,
         address: address
           ? {
               upsert: {

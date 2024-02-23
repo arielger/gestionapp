@@ -208,6 +208,10 @@ export const Client = () => {
                 title: "Teléfono",
                 value: client.phoneNumber ? `${client.phoneAreaCode} ${client.phoneNumber}` : "-",
               },
+              {
+                title: "DNI",
+                value: client.identityDocNumber ?? "-",
+              },
             ]}
           />
         </Paper>
