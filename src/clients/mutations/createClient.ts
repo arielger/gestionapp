@@ -26,6 +26,10 @@ export default resolver.pipe(
               },
             }
           : undefined,
+        // We add the area code only if a phone number is defined
+        phoneAreaCode: input.phoneNumber ? "+54" : undefined,
+        phoneNumber: input.phoneNumber,
+        identityDocNumber: input.identityDocNumber,
       },
     })
 

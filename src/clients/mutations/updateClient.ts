@@ -5,7 +5,7 @@ import { UpdateClientSchema } from "../schemas"
 export default resolver.pipe(
   resolver.zod(UpdateClientSchema),
   resolver.authorize(),
-  async ({ id, address, addressId, ...input }, ctx) => {
+  async ({ id, address, addressId, phoneNumber, ...input }, ctx) => {
     const organizationId = ctx.session.orgId
 
     const client = await db.client.update({
@@ -17,6 +17,16 @@ export default resolver.pipe(
         organization: {
           connect: { id: organizationId },
         },
+        ...(phoneNumber
+          ? {
+              phoneAreaCode: "+54",
+              phoneNumber,
+            }
+          : {
+              phoneAreaCode: null,
+              phoneNumber: null,
+            }),
+        identityDocNumber: input.identityDocNumber,
         address: address
           ? {
               upsert: {

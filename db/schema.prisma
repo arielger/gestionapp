@@ -133,6 +133,9 @@ model Client {
   propertyOwnerRentContracts PropertyOwnerOnContract[]
   address                    Address?                  @relation(fields: [addressId], references: [id], onDelete: Cascade)
   addressId                  Int?                      @unique
+  phoneAreaCode              String?
+  phoneNumber                String?
+  identityDocNumber          Int?
 }
 
 model PropertyOwnerOnProperty {

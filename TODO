@@ -6,14 +6,17 @@ TODO:
   how to validate address only if any field of the address is completed? (not undefined, not empty string) - property create - property edit - client create - client edit
 - [OK] i18n form validation to spanish
 - [OK] Delete client
-- [ ] Review select activities table texts
+- [ ] Check if we use modals or pages to edit entities
+- [ ] Register payment -> debts are cached
+- [ ] do not show owner from clients tenant list when creating contract
+- [ ] Calculate initial and end month payments values
 - [ ] Review activities table and relationships -> overusing originalActivity
+- [ ] Review select activities table texts
 - [ ] Add monitoring
 - [ ] Payments
 
   - [ ] You should be able to register a payment related to a tenant or owner
 
-- [ ] Calculate initial and end month payments values
 - [ ] Change date format to dd-mm-yyyy (move to general variable)
 - [ ] Handle error when going to authenticated route
 - [ ] i18n for routes

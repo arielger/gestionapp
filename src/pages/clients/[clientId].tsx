@@ -29,6 +29,7 @@ import { PersonList } from "src/clients/components/PersonList"
 import { IconCheck, IconEdit, IconEye } from "@tabler/icons-react"
 import { getAddressString } from "src/addresses/utils"
 import { useClientDelete } from "src/clients/hooks"
+import { getCurrentContract } from "src/contracts/utils/utils"
 
 const propertyInclude = {
   owners: {
@@ -203,6 +204,14 @@ export const Client = () => {
                     })
                   : "-",
               },
+              {
+                title: "Teléfono",
+                value: client.phoneNumber ? `${client.phoneAreaCode} ${client.phoneNumber}` : "-",
+              },
+              {
+                title: "DNI",
+                value: client.identityDocNumber ?? "-",
+              },
             ]}
           />
         </Paper>
@@ -235,9 +244,10 @@ export const Client = () => {
             {
               accessor: "contract",
               title: "Estado",
-              render: (property) =>
-                // TODO: review that contract is current
-                property.contracts?.length > 0 ? (
+              render: (property) => {
+                const currentContract = getCurrentContract(property?.contracts ?? [])
+
+                return currentContract ? (
                   <Badge
                     leftSection={<IconCheck style={{ width: 10, height: 10 }} />}
                     variant="light"
@@ -250,7 +260,8 @@ export const Client = () => {
                   <Badge opacity={0.5} variant="light" color="gray" radius="xs">
                     No alquilada
                   </Badge>
-                ),
+                )
+              },
             },
             {
               accessor: "role",
