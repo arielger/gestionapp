@@ -2,8 +2,7 @@ import { ReactNode, PropsWithoutRef } from "react"
 import { z } from "src/core/zod"
 import { useForm, zodResolver, UseFormReturnType, UseFormInput } from "@mantine/form"
 import { Button } from "@mantine/core"
-import { notifications } from "@mantine/notifications"
-import { IconX } from "@tabler/icons-react"
+import { showErrorNotification } from "../notifications"
 
 export interface FormProps<Schema extends z.ZodType<any, any>>
   // eslint-disable-next-line no-undef
@@ -41,11 +40,9 @@ export function Form<S extends z.ZodType<any, any>>({
     try {
       await onSubmit(values)
     } catch (error) {
-      notifications.show({
+      showErrorNotification({
         title: "Hubo un error al realizar la acción",
         message: "",
-        color: "red",
-        icon: <IconX />,
       })
     }
   }

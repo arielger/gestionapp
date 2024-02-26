@@ -8,7 +8,6 @@ import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 import { z } from "src/core/zod"
 import { StringParam, withDefault, useQueryParams } from "use-query-params"
 import { IconCheck } from "@tabler/icons-react"
-import { notifications } from "@mantine/notifications"
 import { Client } from "@prisma/client"
 import { useRouter } from "next/router"
 import { useDisclosure } from "@mantine/hooks"
@@ -25,6 +24,7 @@ import { CreateClientSchema } from "src/clients/schemas"
 import updateClient from "src/clients/mutations/updateClient"
 import { ClientWithOptionalAddress } from "src/clients/types"
 import { useClientDelete } from "src/clients/hooks"
+import { showSuccessNotification } from "src/core/notifications"
 
 const listTypes = ["all", "owners", "tenants"] as const
 
@@ -176,11 +176,9 @@ const ClientsPage = () => {
 
               closeCreateClientModal()
 
-              notifications.show({
+              showSuccessNotification({
                 title: "Cliente creado exitosamente",
                 message: "",
-                color: "green",
-                icon: <IconCheck />,
               })
 
               void router.push(Routes.ShowClientPage({ clientId: client.id }))
@@ -208,7 +206,7 @@ const ClientsPage = () => {
                 setClientToEdit(undefined)
                 await router.push(Routes.ShowClientPage({ clientId: updated.id }))
 
-                notifications.show({
+                showSuccessNotification({
                   title: "Cliente editado exitosamente",
                   message: "",
                   color: "green",

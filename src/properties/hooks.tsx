@@ -1,9 +1,8 @@
-import { IconX, IconCheck } from "@tabler/icons-react"
 import { useMutation } from "@blitzjs/rpc"
-import { notifications } from "@mantine/notifications"
 
 import deletePropertyMutation from "src/properties/mutations/deleteProperty"
 import { RelatedExistingEntitiesError } from "src/core/errors"
+import { showErrorNotification, showSuccessNotification } from "src/core/notifications"
 
 export const usePropertyDelete = ({ onSuccess }: { onSuccess: () => void }) => {
   const [_deleteProperty, { isLoading: isLoadingDelete, variables: deleteMutationVariables }] =
@@ -13,16 +12,14 @@ export const usePropertyDelete = ({ onSuccess }: { onSuccess: () => void }) => {
     try {
       await _deleteProperty({ id: propertyId })
 
-      notifications.show({
+      showSuccessNotification({
         title: "Propiedad eliminada exitosamente",
         message: "",
-        color: "green",
-        icon: <IconCheck />,
       })
       onSuccess()
     } catch (error) {
       const relatedEntitiesError = error instanceof RelatedExistingEntitiesError
-      notifications.show({
+      showErrorNotification({
         ...(relatedEntitiesError
           ? {
               title: "No se puede eliminar la propiedad porque tiene entidades relacionadas",
@@ -32,8 +29,6 @@ export const usePropertyDelete = ({ onSuccess }: { onSuccess: () => void }) => {
               title: "Error al eliminar la propiedad",
               message: "",
             }),
-        color: "red",
-        icon: <IconX />,
       })
     }
   }
