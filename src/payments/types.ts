@@ -24,6 +24,7 @@ export const getPaymentsInclude = {
   items: {
     include: activityWithDetailsInclude,
   },
+  organization: true,
 }
 
 export type PaymentWithDetails = Prisma.PaymentGetPayload<{
