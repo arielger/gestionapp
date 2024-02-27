@@ -1,7 +1,7 @@
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { useQuery } from "@blitzjs/rpc"
+import { useMutation, useQuery } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
 import { NotFoundError } from "blitz"
 import { Anchor, Button, Center, Loader, Paper, Flex } from "@mantine/core"
@@ -19,6 +19,8 @@ import { DetailsList } from "src/core/components/DetailsList"
 import { IconFileDescription } from "@tabler/icons-react"
 import { IconMail } from "@tabler/icons-react"
 import { getAddressString } from "src/addresses/utils"
+import sendPaymentEmail from "./mutations/sendPaymentEmail"
+import { showErrorNotification, showSuccessNotification } from "src/core/notifications"
 
 export const Payment = () => {
   const paymentId = useParam("paymentId", "number")!
@@ -31,6 +33,18 @@ export const Payment = () => {
       refetchOnWindowFocus: false,
     }
   )
+
+  const [
+    sendPaymentEmailMutation,
+    { isLoading: isLoadingSendPaymentEmail, isSuccess: isSuccessSendPaymentEmail },
+  ] = useMutation(sendPaymentEmail, {
+    onError: () => {
+      showErrorNotification({
+        title: "Error al enviar el recibo al inquilino",
+        message: "",
+      })
+    },
+  })
 
   const notFound = (error as NotFoundError)?.name === NotFoundError.name
 
@@ -148,9 +162,18 @@ export const Payment = () => {
               Ver comprobante
             </Button>
             <Button
-              onClick={() => {
-                console.log("notify")
+              onClick={async () => {
+                await sendPaymentEmailMutation({
+                  paymentId,
+                })
+
+                showSuccessNotification({
+                  title: "Se envió el email con el recibo al inquilino",
+                  message: "",
+                })
               }}
+              disabled={isSuccessSendPaymentEmail}
+              loading={isLoadingSendPaymentEmail}
               leftSection={<IconMail size={14} />}
             >
               Notificar pago via email

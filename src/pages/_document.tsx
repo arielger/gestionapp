@@ -14,7 +14,7 @@ class MyDocument extends Document {
   // }
   render() {
     return (
-      <Html lang="en">
+      <Html lang="es">
         <Head>
           <ColorSchemeScript defaultColorScheme="auto" />
         </Head>

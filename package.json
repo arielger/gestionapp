@@ -11,7 +11,10 @@
     "test:watch": "vitest",
     "prepare": "husky install",
     "dev-env": "yarn run dotenv -e .env.development.local",
-    "prod-env": "yarn run dotenv -e .env.production.local"
+    "prod-env": "yarn run dotenv -e .env.production.local",
+    "emails:build": "email build",
+    "emails:dev": "email dev --dir='src/emails'",
+    "emails:export": "email export"
   },
   "prisma": {
     "schema": "db/schema.prisma",
@@ -67,7 +70,9 @@
     "secure-password": "4.0.0",
     "use-query-params": "2.2.1",
     "zod": "3.22.4",
-    "zod-i18n-map": "2.27.0"
+    "zod-i18n-map": "2.27.0",
+    "@react-email/components": "0.0.15",
+    "react-email": "2.1.0"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "12.0.8",

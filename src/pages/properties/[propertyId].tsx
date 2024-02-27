@@ -8,7 +8,6 @@ import { NotFoundError } from "blitz"
 import { Anchor, Button, Flex, Paper, Badge, Center, Loader, Modal } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { IconCheck } from "@tabler/icons-react"
-import { notifications } from "@mantine/notifications"
 
 import getProperty from "src/properties/queries/getProperty"
 import { PageHeader } from "src/layout/components/PageHeader"
@@ -25,6 +24,7 @@ import { NotFound } from "src/core/components/NotFound"
 import { getCurrentContract } from "src/contracts/utils/utils"
 import { getAddressString } from "src/addresses/utils"
 import { usePropertyDelete } from "src/properties/hooks"
+import { showSuccessNotification } from "src/core/notifications"
 
 export const Property = () => {
   const router = useRouter()
@@ -203,11 +203,9 @@ export const Property = () => {
 
               closeCreateContractModal()
 
-              notifications.show({
+              showSuccessNotification({
                 title: "Contrato creado exitosamente",
                 message: "",
-                color: "green",
-                icon: <IconCheck />,
               })
 
               void refetchProperty()

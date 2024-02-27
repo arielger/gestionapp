@@ -1,9 +1,8 @@
-import { IconX, IconCheck } from "@tabler/icons-react"
 import { useMutation } from "@blitzjs/rpc"
-import { notifications } from "@mantine/notifications"
 
 import deleteClientMutation from "src/clients/mutations/deleteClient"
 import { RelatedExistingEntitiesError } from "src/core/errors"
+import { showErrorNotification, showSuccessNotification } from "src/core/notifications"
 
 export const useClientDelete = ({ onSuccess }: { onSuccess: () => void }) => {
   const [_deleteClient, { isLoading: isLoadingDelete, variables: deleteMutationVariables }] =
@@ -13,16 +12,14 @@ export const useClientDelete = ({ onSuccess }: { onSuccess: () => void }) => {
     try {
       await _deleteClient({ id: clientId })
 
-      notifications.show({
+      showSuccessNotification({
         title: "Cliente eliminado exitosamente",
         message: "",
-        color: "green",
-        icon: <IconCheck />,
       })
       onSuccess()
     } catch (error) {
       const relatedEntitiesError = error instanceof RelatedExistingEntitiesError
-      notifications.show({
+      showErrorNotification({
         ...(relatedEntitiesError
           ? {
               title: "No se puede eliminar el cliente porque tiene entidades relacionadas",
@@ -33,8 +30,6 @@ export const useClientDelete = ({ onSuccess }: { onSuccess: () => void }) => {
               title: "Error al eliminar el cliente",
               message: "",
             }),
-        color: "red",
-        icon: <IconX />,
       })
     }
   }

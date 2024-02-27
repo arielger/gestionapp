@@ -5,10 +5,9 @@ import { useMutation, useQuery } from "@blitzjs/rpc"
 import getActivities from "src/activities/queries/getActivities"
 import { Activity, ActivityPersonType, Contract } from "@prisma/client"
 import { DataTable } from "src/core/components/DataTable"
-import { notifications } from "@mantine/notifications"
-import { IconCheck } from "@tabler/icons-react"
 import createPayment from "src/payments/mutations/createPayment"
 import { getActivityTitle } from "src/activities/utils"
+import { showSuccessNotification } from "src/core/notifications"
 
 export function SelectActivitiesTable({
   contract,
@@ -108,11 +107,9 @@ export function SelectActivitiesTable({
               })),
             })
 
-            notifications.show({
+            showSuccessNotification({
               title: "Pago registrado exitosamente",
               message: "",
-              color: "green",
-              icon: <IconCheck />,
             })
 
             void refetchActivities()

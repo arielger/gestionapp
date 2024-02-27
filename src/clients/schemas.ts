@@ -14,6 +14,7 @@ export const CreateClientSchema = z.object({
       .number()
       .gte(1000000, "El DNI debe tener 7 u 8 dígitos")
       .lte(99999999, "El DNI debe tener 7 u 8 dígitos")
+      .optional()
   ),
   address: OptionalAddressSchema,
   phoneNumber: zodEmptyValueToUndefined(

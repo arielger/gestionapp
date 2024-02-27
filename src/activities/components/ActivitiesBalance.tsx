@@ -2,10 +2,9 @@ import { useState } from "react"
 import { useMutation, useQuery } from "@blitzjs/rpc"
 import { Text, Modal, Button, Paper, Title, Flex, ActionIcon, Group } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
-import { notifications } from "@mantine/notifications"
 import { DataTable } from "mantine-datatable"
 import { Activity, ActivityPersonType, ActivityType, Contract } from "@prisma/client"
-import { IconCheck, IconEdit, IconTrash } from "@tabler/icons-react"
+import { IconEdit, IconTrash } from "@tabler/icons-react"
 import { useRouter } from "next/router"
 
 import { ActivityTransactionType } from "../config"
@@ -20,6 +19,7 @@ import { getActivityTitle } from "../utils"
 import { ActivityWithDetails } from "../types"
 import { SelectActivitiesTable } from "src/payments/components/PaymentForm/SelectActivitiesTable"
 import { Routes } from "@blitzjs/next"
+import { showSuccessNotification } from "src/core/notifications"
 
 const renderBalanceMovementCell = ({
   activity,
@@ -147,11 +147,9 @@ export const ActivitiesBalance = ({ contract }: { contract: Contract }) => {
 
     void refetchActivities()
 
-    notifications.show({
+    showSuccessNotification({
       title: "Actividad eliminada exitosamente",
       message: "",
-      color: "green",
-      icon: <IconCheck />,
     })
   }
 
@@ -198,22 +196,18 @@ export const ActivitiesBalance = ({ contract }: { contract: Contract }) => {
                 },
               })
 
-              notifications.show({
+              showSuccessNotification({
                 title: "Actividad modificada exitosamente",
                 message: "Ya podes ver los cambios en el balance",
-                color: "green",
-                icon: <IconCheck />,
               })
             } else {
               await createActivityMutation({
                 input,
               })
 
-              notifications.show({
+              showSuccessNotification({
                 title: "Actividad creada exitosamente",
                 message: "Ya podes ver la nueva actividad en el balance",
-                color: "green",
-                icon: <IconCheck />,
               })
             }
 
