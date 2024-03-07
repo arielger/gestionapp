@@ -17,14 +17,26 @@ export type Activity = {
   type: ActivityType
   contractId: number
   assignedTo: ActivityPersonType
-  customDetailsId: number | null
   paymentId: number | null
-  originActivityId: number | null
 }
 export type ActivityCustomDetails = {
+  organizationId: number
   id: Generated<number>
   activityId: number
   title: string
+}
+export type ActivityRentOwnerCredit = {
+  organizationId: number
+  id: Generated<number>
+  activityId: number
+  rentDebtId: number
+  rentPaymentId: number
+}
+export type ActivityRentPaymentDetails = {
+  organizationId: number
+  id: Generated<number>
+  activityId: number
+  rentDebtId: number
 }
 export type Address = {
   id: Generated<number>
@@ -143,6 +155,8 @@ export type User = {
 export type DB = {
   Activity: Activity
   ActivityCustomDetails: ActivityCustomDetails
+  ActivityRentOwnerCredit: ActivityRentOwnerCredit
+  ActivityRentPaymentDetails: ActivityRentPaymentDetails
   Address: Address
   Client: Client
   Contract: Contract

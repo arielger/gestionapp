@@ -31,7 +31,7 @@ export default resolver.pipe(
               amount: input.rentAmount,
               assignedTo: ActivityPersonType.TENANT,
               isDebit: true,
-              type: ActivityType.RENT,
+              type: ActivityType.RENT_DEBT,
               organizationId: ctx.session.orgId,
               date: rentDate,
             })),

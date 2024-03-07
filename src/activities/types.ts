@@ -2,14 +2,21 @@ import { Prisma } from "db"
 
 export const activityWithDetailsInclude = {
   customDetails: true,
-  // todo: review this nesting - code smell
-  originActivity: {
+
+  // RENT_DEBT
+  rentPaymentDebtPaidByActivity: true,
+
+  // RENT_PAYMENT
+  rentPaymentDetails: {
     include: {
-      originActivity: {
-        include: {
-          originActivity: true,
-        },
-      },
+      rentDebtActivity: true,
+    },
+  },
+
+  // RENT_OWNER_CREDIT
+  rentOwnerCreditDetails: {
+    include: {
+      rentDebtActivity: true,
     },
   },
 }

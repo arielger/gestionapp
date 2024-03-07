@@ -24,20 +24,23 @@ generator kysely {
 // --------------------------------------
 
 model Organization {
-  id                      Int                       @id @default(autoincrement())
-  createdAt               DateTime                  @default(now())
-  updatedAt               DateTime                  @updatedAt
-  name                    String
-  memberships             Membership[]
-  Property                Property[]
-  Contract                Contract[]
-  Activity                Activity[]
-  Payment                 Payment[]
-  Client                  Client[]
-  PropertyOwnerOnProperty PropertyOwnerOnProperty[]
-  TenantOnContract        TenantOnContract[]
-  PropertyOwnerOnContract PropertyOwnerOnContract[]
-  Address                 Address[]
+  id                         Int                          @id @default(autoincrement())
+  createdAt                  DateTime                     @default(now())
+  updatedAt                  DateTime                     @updatedAt
+  name                       String
+  memberships                Membership[]
+  Property                   Property[]
+  Contract                   Contract[]
+  Activity                   Activity[]
+  ActivityCustomDetails      ActivityCustomDetails[]
+  ActivityRentPaymentDetails ActivityRentPaymentDetails[]
+  ActivityRentOwnerCredit    ActivityRentOwnerCredit[]
+  Payment                    Payment[]
+  Client                     Client[]
+  PropertyOwnerOnProperty    PropertyOwnerOnProperty[]
+  TenantOnContract           TenantOnContract[]
+  PropertyOwnerOnContract    PropertyOwnerOnContract[]
+  Address                    Address[]
 }
 
 model Membership {
@@ -206,8 +209,11 @@ model PropertyOwnerOnContract {
 }
 
 enum ActivityType {
-  RENT
-  RENT_FEE
+  // rent activities
+  RENT_DEBT
+  RENT_PAYMENT
+  RENT_OWNER_CREDIT
+
   // used for activities with custom title / information
   CUSTOM
 }
@@ -218,36 +224,68 @@ enum ActivityPersonType {
 }
 
 model Activity {
-  id              Int                    @id @default(autoincrement())
-  createdAt       DateTime               @default(now())
-  updatedAt       DateTime               @updatedAt
-  date            DateTime               @default(now())
-  organization    Organization           @relation(fields: [organizationId], references: [id])
-  organizationId  Int
-  amount          Float
-  isDebit         Boolean
-  type            ActivityType
-  contract        Contract               @relation(fields: [contractId], references: [id])
-  contractId      Int
-  assignedTo      ActivityPersonType
-  customDetailsId Int?                   @unique
-  customDetails   ActivityCustomDetails?
-  payment         Payment?               @relation(fields: [paymentId], references: [id])
-  paymentId       Int?
+  id             Int                @id @default(autoincrement())
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  date           DateTime           @default(now())
+  organization   Organization       @relation(fields: [organizationId], references: [id])
+  organizationId Int
+  amount         Float
+  isDebit        Boolean
+  type           ActivityType
+  contract       Contract           @relation(fields: [contractId], references: [id])
+  contractId     Int
+  assignedTo     ActivityPersonType
+  payment        Payment?           @relation(fields: [paymentId], references: [id])
+  paymentId      Int?
 
-  // Used to link to original activity
-  // For payments it will link to the paid activity
-  // For fees it will link to the activity that generated the fee
-  originActivity    Activity?  @relation("RelatedActivity", fields: [originActivityId], references: [id])
-  originActivityId  Int?
-  relatedActivities Activity[] @relation("RelatedActivity")
+  // Relations to activity details rows + relations included in those details
+
+  // CUSTOM
+  customDetails ActivityCustomDetails?
+
+  // RENT_PAYMENT
+  rentPaymentDetails            ActivityRentPaymentDetails?
+  rentPaymentDebtPaidByActivity ActivityRentPaymentDetails? @relation("RentPaymentDebtActivity")
+
+  // RENT_OWNER_CREDIT
+  rentOwnerCreditDetails         ActivityRentOwnerCredit?
+  rentOwnerCreditDebtActivity    ActivityRentOwnerCredit? @relation("RentOwnerCreditDebtActivity")
+  rentOwnerCreditPaymentActivity ActivityRentOwnerCredit? @relation("RentOwnerCreditPaymentActivity")
 }
 
 model ActivityCustomDetails {
-  id         Int      @id @default(autoincrement())
-  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  activityId Int      @unique
-  title      String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId Int
+  id             Int          @id @default(autoincrement())
+  activity       Activity     @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId     Int          @unique
+  title          String
+}
+
+model ActivityRentPaymentDetails {
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId Int
+  id             Int          @id @default(autoincrement())
+  activity       Activity     @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId     Int          @unique
+
+  rentDebtActivity Activity @relation("RentPaymentDebtActivity", fields: [rentDebtId], references: [id])
+  rentDebtId       Int      @unique
+}
+
+model ActivityRentOwnerCredit {
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  organizationId Int
+  id             Int          @id @default(autoincrement())
+  activity       Activity     @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId     Int          @unique
+
+  rentDebtActivity Activity @relation("RentOwnerCreditDebtActivity", fields: [rentDebtId], references: [id])
+  rentDebtId       Int      @unique
+
+  rentPaymentActivity Activity @relation("RentOwnerCreditPaymentActivity", fields: [rentPaymentId], references: [id])
+  rentPaymentId       Int      @unique
 }
 
 model Payment {

@@ -8,8 +8,9 @@ export const ContractFeeType = {
 } as const
 export type ContractFeeType = (typeof ContractFeeType)[keyof typeof ContractFeeType]
 export const ActivityType = {
-  RENT: "RENT",
-  RENT_FEE: "RENT_FEE",
+  RENT_DEBT: "RENT_DEBT",
+  RENT_PAYMENT: "RENT_PAYMENT",
+  RENT_OWNER_CREDIT: "RENT_OWNER_CREDIT",
   CUSTOM: "CUSTOM",
 } as const
 export type ActivityType = (typeof ActivityType)[keyof typeof ActivityType]

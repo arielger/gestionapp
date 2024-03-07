@@ -1,5 +1,5 @@
 import { resolver } from "@blitzjs/rpc"
-import db, { ActivityPersonType, ActivityType, ContractFeeType } from "db"
+import db, { ActivityPersonType, ActivityType, ContractFeeType, Prisma } from "db"
 import { CreatePaymentSchema } from "../schemas"
 
 export default resolver.pipe(
@@ -14,50 +14,79 @@ export default resolver.pipe(
       throw new Error("Contract not found")
     }
 
-    const payment = await db.payment.create({
-      data: {
-        contractId: input.contractId,
-        organizationId: ctx.session.orgId,
-        items: {
-          create: input.items.map((activity) => ({
-            organizationId: ctx.session.orgId,
+    const orgConnection = {
+      organization: {
+        connect: { id: ctx.session.orgId },
+      },
+    }
+
+    const contractConnection = {
+      contract: {
+        connect: { id: input.contractId },
+      },
+    }
+
+    const paymentActivities: Prisma.PaymentCreateInput["items"] = {
+      create: input.items.map((activity) => {
+        if (activity.type === ActivityType.RENT_DEBT) {
+          return {
+            // Register payment and add current debt activity id to the details
+            ...orgConnection,
+            ...contractConnection,
             amount: activity.amount,
             isDebit: false,
-            type: activity.type,
-            contractId: input.contractId,
+            type: ActivityType.RENT_PAYMENT,
             assignedTo: ActivityPersonType.TENANT,
-            originActivityId: activity.id,
+            rentPaymentDetails: {
+              create: {
+                organization: {
+                  connect: { id: ctx.session.orgId },
+                },
+                rentDebtActivity: {
+                  connect: { id: activity.id },
+                },
+              },
+            },
 
-            // Create owner credit and fee activities
-            ...(activity.type === ActivityType.RENT
-              ? {
-                  relatedActivities: {
-                    create: {
-                      organizationId: ctx.session.orgId,
-                      amount: activity.amount,
-                      isDebit: false,
-                      type: ActivityType.RENT,
-                      contractId: input.contractId,
-                      assignedTo: ActivityPersonType.OWNER,
-                      relatedActivities: {
-                        create: {
-                          organizationId: ctx.session.orgId,
-                          amount:
-                            contract.feeType === ContractFeeType.FIXED
-                              ? contract.fee
-                              : activity.amount * contract.fee,
-                          isDebit: true,
-                          type: ActivityType.RENT_FEE,
-                          contractId: input.contractId,
-                          assignedTo: ActivityPersonType.OWNER,
-                        },
-                      },
-                    },
+            // Create credit activity for the owner (minus commissions)
+            rentOwnerCreditPaymentActivity: {
+              create: {
+                ...orgConnection,
+                activity: {
+                  create: {
+                    ...contractConnection,
+                    ...orgConnection,
+                    amount:
+                      activity.amount -
+                      (contract.feeType === ContractFeeType.FIXED
+                        ? contract.fee
+                        : activity.amount * contract.fee),
+                    isDebit: false,
+                    type: ActivityType.RENT_OWNER_CREDIT,
+                    assignedTo: ActivityPersonType.OWNER,
+
+                    // TODO: add commission
                   },
-                }
-              : {}),
-          })),
-        },
+                },
+                rentDebtActivity: {
+                  connect: { id: activity.id },
+                },
+              },
+            },
+          }
+        }
+
+        // TODO: handle custom activities payment
+
+        throw new Error("Debt activity paid not handled correctly")
+      }),
+    }
+
+    const payment = await db.payment.create({
+      data: {
+        ...orgConnection,
+        ...contractConnection,
+        items: paymentActivities,
       },
     })
 

@@ -1,6 +1,7 @@
 import { paginate } from "blitz"
 import { resolver } from "@blitzjs/rpc"
 import db, { Prisma } from "db"
+import { activityWithDetailsInclude } from "../types"
 
 interface GetActivitiesInput
   extends Pick<Prisma.ActivityFindManyArgs, "where" | "orderBy" | "skip" | "take" | "include"> {
@@ -10,14 +11,7 @@ interface GetActivitiesInput
 export default resolver.pipe(
   resolver.authorize(),
   async (
-    {
-      where,
-      orderBy,
-      skip = 0,
-      take = 100,
-      include,
-      includeFutureActivities = false,
-    }: GetActivitiesInput,
+    { where, orderBy, skip = 0, take = 100, includeFutureActivities = false }: GetActivitiesInput,
     ctx
   ) => {
     const { items, hasMore, nextPage, count } = await paginate({
@@ -39,7 +33,7 @@ export default resolver.pipe(
                   },
                 }),
           },
-          include,
+          include: activityWithDetailsInclude,
           orderBy,
         }),
     })

@@ -11,15 +11,25 @@ const CreateActivityBaseSchema = z.object({
   assignedTo: z.nativeEnum(ActivityPersonType),
 })
 
-const CreateActivityRentSchema = {
-  type: z.literal(ActivityType.RENT),
-  details: z.undefined(),
-}
+// const CreateActivityRentDebtSchema = {
+//   type: z.literal(ActivityType.RENT_DEBT),
+//   details: z.undefined(),
+// }
 
-const CreateActivityRentFeeSchema = {
-  type: z.literal(ActivityType.RENT_FEE),
-  details: z.undefined(),
-}
+// const CreateActivityRentPaymentSchema = {
+//   type: z.literal(ActivityType.RENT_PAYMENT),
+//   details: z.object({
+//     rentDebtId: z.number(),
+//   }),
+// }
+
+// const CreateActivityRentOwnerCreditSchema = {
+//   type: z.literal(ActivityType.RENT_OWNER_CREDIT),
+//   details: z.object({
+//     rentDebtId: z.number(),
+//     rentPaymentId: z.number(),
+//   }),
+// }
 
 const CreateActivityCustomSchema = {
   type: z.literal(ActivityType.CUSTOM),
@@ -35,8 +45,9 @@ const CreateActivityBaseFormSchema = CreateActivityBaseSchema.extend({
 })
 
 export const CreateActivityFormSchema = z.discriminatedUnion("type", [
-  CreateActivityBaseFormSchema.extend(CreateActivityRentSchema),
-  CreateActivityBaseFormSchema.extend(CreateActivityRentFeeSchema),
+  // CreateActivityBaseFormSchema.extend(CreateActivityRentDebtSchema),
+  // CreateActivityBaseFormSchema.extend(CreateActivityRentPaymentSchema),
+  // CreateActivityBaseFormSchema.extend(CreateActivityRentOwnerCreditSchema),
   CreateActivityBaseFormSchema.extend(CreateActivityCustomSchema),
 ])
 
@@ -46,12 +57,13 @@ export type ActivityFormSchemaType = z.infer<typeof CreateActivityFormSchema>
 
 const CreateActivityBaseMutationSchema = CreateActivityBaseSchema.extend({
   contractId: z.number(),
-  isDebit: z.boolean(),
+  isDebit: z.boolean(), // transform from form "transactionType" value
 })
 
 const mutationSchemas = z.discriminatedUnion("type", [
-  CreateActivityBaseMutationSchema.extend(CreateActivityRentSchema),
-  CreateActivityBaseMutationSchema.extend(CreateActivityRentFeeSchema),
+  // CreateActivityBaseMutationSchema.extend(CreateActivityRentDebtSchema),
+  // CreateActivityBaseMutationSchema.extend(CreateActivityRentPaymentSchema),
+  // CreateActivityBaseMutationSchema.extend(CreateActivityRentOwnerCreditSchema),
   CreateActivityBaseMutationSchema.extend(CreateActivityCustomSchema),
 ])
 
