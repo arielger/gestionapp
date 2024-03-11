@@ -14,8 +14,9 @@ import { z } from "src/core/zod"
 
 import { Form, FormProps } from "src/core/components/Form"
 import { getContractRentPaymentDates } from "../utils/utils"
-import { ContractFeeType } from "@prisma/client"
+import { ContractFeeType, ContractUpdateType } from "@prisma/client"
 import { ClientsSelect } from "src/clients/components/ClientsSelect"
+import { updateAmountFrequency } from "../config"
 
 export function ContractForm<S extends z.ZodType<any, any>>({
   ownersInitialValue = [],
@@ -26,6 +27,8 @@ export function ContractForm<S extends z.ZodType<any, any>>({
       initialValues={{
         feeType: ContractFeeType.PERCENTAGE,
         fee: 10,
+        updateAmountType: undefined,
+        updateAmountFrequency: undefined,
       }}
       {...props}
     >
@@ -64,6 +67,52 @@ export function ContractForm<S extends z.ZodType<any, any>>({
               />
             </Flex>
             <NumberInput label="Monto" hideControls {...form.getInputProps("rentAmount")} />
+
+            <Text>Actualización</Text>
+            <Flex direction="row" gap="md">
+              <Select
+                style={{ flex: 1 }}
+                label="Tipo"
+                data={[
+                  { value: "NONE", label: "Sin actualización" },
+                  { value: ContractUpdateType.INDEX_IPC, label: "Indice IPC" },
+                ]}
+                {...form.getInputProps("updateAmountType")}
+                // transform value from "NONE" string to undefined for mantine select to work
+                value={form.getInputProps("updateAmountType").value ?? "NONE"}
+                onChange={(newValue) => {
+                  form
+                    .getInputProps("updateAmountType")
+                    .onChange(newValue === "NONE" ? undefined : newValue)
+
+                  // reset frequency if type is set to NONE
+                  if (!!form.values.updateAmountType && newValue === "NONE") {
+                    return form.getInputProps("updateAmountFrequency").onChange(undefined)
+                  }
+
+                  // set default frequency if setting update type
+                  if (!form.values.updateAmountType && newValue !== "NONE") {
+                    return form.getInputProps("updateAmountFrequency").onChange(6)
+                  }
+                }}
+              />
+              {!!form.values.updateAmountType && (
+                <Select
+                  label="Periodicidad (en meses)"
+                  data={updateAmountFrequency.map((n) => `${n}`)}
+                  allowDeselect={false}
+                  {...form.getInputProps("updateAmountFrequency")}
+                  // transform value from number to string for mantine select to work
+                  value={form.getInputProps("updateAmountFrequency").value?.toString()}
+                  onChange={(value) => {
+                    form
+                      .getInputProps("updateAmountFrequency")
+                      .onChange(value ? Number(value) : undefined)
+                  }}
+                  checkIconPosition="right"
+                />
+              )}
+            </Flex>
 
             <Text>Comisión</Text>
             <Flex direction="row" gap="md">
