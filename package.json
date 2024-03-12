@@ -43,6 +43,7 @@
     "@mantine/next": "6.0.21",
     "@mantine/notifications": "7.3.0",
     "@prisma/client": "5",
+    "@react-email/components": "0.0.15",
     "@react-hook/throttle": "2.2.0",
     "@tabler/icons-react": "2.32.0",
     "@types/lodash": "4.14.202",
@@ -64,15 +65,14 @@
     "prisma-kysely": "1.7.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-email": "2.1.0",
     "react-final-form": "6.5.9",
     "react-places-autocomplete": "7.3.0",
     "resend": "2.1.0",
     "secure-password": "4.0.0",
     "use-query-params": "2.2.1",
     "zod": "3.22.4",
-    "zod-i18n-map": "2.27.0",
-    "@react-email/components": "0.0.15",
-    "react-email": "2.1.0"
+    "zod-i18n-map": "2.27.0"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "12.0.8",

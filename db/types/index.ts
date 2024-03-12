@@ -8,6 +8,7 @@ import type {
   TokenType,
   ContractFeeType,
   ContractUpdateType,
+  ContractAmountUpdateStatus,
   ActivityType,
   ActivityPersonType,
 } from "./enums"
@@ -82,6 +83,18 @@ export type Contract = {
   updateAmountFrequency: number | null
   fee: number
   feeType: ContractFeeType
+}
+export type ContractAmountUpdate = {
+  createdAt: Generated<Timestamp>
+  updatedAt: Timestamp
+  id: Generated<number>
+  contractId: number
+  status: ContractAmountUpdateStatus
+  updateDate: Timestamp
+  executedAt: Timestamp | null
+  percentageVariation: number | null
+  previousRentAmount: number | null
+  newRentAmount: number | null
 }
 export type Membership = {
   id: Generated<number>
@@ -168,6 +181,7 @@ export type DB = {
   Address: Address
   Client: Client
   Contract: Contract
+  ContractAmountUpdate: ContractAmountUpdate
   Membership: Membership
   Organization: Organization
   Payment: Payment

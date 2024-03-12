@@ -10,8 +10,8 @@ import {
   Text,
 } from "@mantine/core"
 import { DateInput } from "@mantine/dates"
-import { z } from "src/core/zod"
 
+import { z } from "src/core/zod"
 import { Form, FormProps } from "src/core/components/Form"
 import { getContractRentPaymentDates } from "../utils/utils"
 import { ContractFeeType, ContractUpdateType } from "@prisma/client"
@@ -66,7 +66,12 @@ export function ContractForm<S extends z.ZodType<any, any>>({
                 {...form.getInputProps("endDate")}
               />
             </Flex>
-            <NumberInput label="Monto" hideControls {...form.getInputProps("rentAmount")} />
+            <NumberInput
+              label="Monto"
+              hideControls
+              allowNegative={false}
+              {...form.getInputProps("rentAmount")}
+            />
 
             <Text>Actualización</Text>
             <Flex direction="row" gap="md">
@@ -114,33 +119,6 @@ export function ContractForm<S extends z.ZodType<any, any>>({
               )}
             </Flex>
 
-            <Text>Comisión</Text>
-            <Flex direction="row" gap="md">
-              <Select
-                label="Tipo"
-                data={[
-                  { value: ContractFeeType.PERCENTAGE, label: "Porcentaje" },
-                  { value: ContractFeeType.FIXED, label: "Fijo" },
-                ]}
-                {...form.getInputProps("feeType")}
-              />
-              <NumberInput
-                label="Valor"
-                min={0}
-                hideControls
-                allowNegative={false}
-                {...form.getInputProps("fee")}
-                {...(form.values.feeType === ContractFeeType.PERCENTAGE
-                  ? {
-                      suffix: "%",
-                      max: 100,
-                    }
-                  : {
-                      prefix: "$",
-                    })}
-              />
-            </Flex>
-
             {!!form.values.startDate && !!form.values.startDate && !!form.values.rentAmount && (
               <Accordion defaultValue="rent" variant="contained">
                 <Accordion.Item value="rent">
@@ -169,6 +147,33 @@ export function ContractForm<S extends z.ZodType<any, any>>({
                 </Accordion.Item>
               </Accordion>
             )}
+
+            <Text>Comisión</Text>
+            <Flex direction="row" gap="md">
+              <Select
+                label="Tipo"
+                data={[
+                  { value: ContractFeeType.PERCENTAGE, label: "Porcentaje" },
+                  { value: ContractFeeType.FIXED, label: "Fijo" },
+                ]}
+                {...form.getInputProps("feeType")}
+              />
+              <NumberInput
+                label="Valor"
+                min={0}
+                hideControls
+                allowNegative={false}
+                {...form.getInputProps("fee")}
+                {...(form.values.feeType === ContractFeeType.PERCENTAGE
+                  ? {
+                      suffix: "%",
+                      max: 100,
+                    }
+                  : {
+                      prefix: "$",
+                    })}
+              />
+            </Flex>
           </Flex>
         )
       }}

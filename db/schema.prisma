@@ -184,6 +184,31 @@ model Contract {
   payments              Payment[]
   fee                   Float
   feeType               ContractFeeType
+  amountUpdates         ContractAmountUpdate[]
+}
+
+enum ContractAmountUpdateStatus {
+  INITIAL
+  EXECUTED
+}
+
+model ContractAmountUpdate {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+
+  contract   Contract @relation(fields: [contractId], references: [id])
+  contractId Int
+
+  status     ContractAmountUpdateStatus
+  // we update all rent debt activities which date are after this updateDate
+  updateDate DateTime
+
+  // When status is EXECUTED the following fields should be completed
+  executedAt          DateTime?
+  percentageVariation Float?
+  previousRentAmount  Float?
+  newRentAmount       Float?
 }
 
 model TenantOnContract {
