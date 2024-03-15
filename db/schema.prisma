@@ -189,6 +189,9 @@ model Contract {
 
 enum ContractAmountUpdateStatus {
   INITIAL
+  // Used when we update the rents with the previous IPC value
+  // (since we don't have yet the IPC value of the current month -> it's published at the middle of the month)
+  EXECUTED_WITH_PROVISIONAL_INDEX
   EXECUTED
 }
 

@@ -18,7 +18,10 @@
     "jsx": "preserve",
     "incremental": true,
     "tsBuildInfoFile": ".tsbuildinfo",
-    "types": ["@types/google.maps"]
+    "types": ["@types/google.maps"],
+    "paths": {
+      "react": ["./node_modules/@types/react"]
+    }
   },
   "exclude": ["node_modules", "**/*.e2e.ts", "cypress", "templates"],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "types"]

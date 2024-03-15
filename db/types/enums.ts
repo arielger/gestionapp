@@ -13,6 +13,7 @@ export const ContractUpdateType = {
 export type ContractUpdateType = (typeof ContractUpdateType)[keyof typeof ContractUpdateType]
 export const ContractAmountUpdateStatus = {
   INITIAL: "INITIAL",
+  EXECUTED_WITH_PROVISIONAL_INDEX: "EXECUTED_WITH_PROVISIONAL_INDEX",
   EXECUTED: "EXECUTED",
 } as const
 export type ContractAmountUpdateStatus =
