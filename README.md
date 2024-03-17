@@ -6,20 +6,28 @@ This is a [Blitz.js](https://github.com/blitz-js/blitz) app.
 
 ## Getting Started
 
+Install the dependencies
+
+```
+yarn install
+```
+
 Run your app in the development mode.
 
 ```
-blitz dev
+yarn run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Environment Variables
 
-Ensure the `.env.local` file has required environment variables:
+Ensure the `.env.development.local` file has required environment variables:
 
 ```
-DATABASE_URL=postgresql://<YOUR_DB_USERNAME>@localhost:5432/gestion-inmobiliaria
+DATABASE_URL="postgresql://<YOUR_DB_USERNAME>@localhost:5432/gestion-inmobiliaria"
+RESEND_API_KEY="****"
+CRON_SECRET="****"
 ```
 
 Ensure the `.env.test.local` file has required environment variables:
