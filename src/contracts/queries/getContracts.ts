@@ -31,7 +31,7 @@ export type ContractWithRelatedEntities = Prisma.ContractGetPayload<{
 }>
 
 export default resolver.pipe(
-  resolver.authorize(),
+  resolver.authorize<GetContractsInput>(),
   async (
     { where, orderBy, skip = 0, take = 100, searchBy, searchText }: GetContractsInput,
     ctx

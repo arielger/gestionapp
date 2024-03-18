@@ -189,10 +189,14 @@ model Contract {
 
 enum ContractAmountUpdateStatus {
   INITIAL
+  EXECUTED
+}
+
+enum ContractAmountUpdateType {
   // Used when we update the rents with the previous IPC value
   // (since we don't have yet the IPC value of the current month -> it's published at the middle of the month)
-  EXECUTED_WITH_PROVISIONAL_INDEX
-  EXECUTED
+  PROVISIONAL
+  FINAL
 }
 
 model ContractAmountUpdate {
@@ -203,8 +207,9 @@ model ContractAmountUpdate {
   contract   Contract @relation(fields: [contractId], references: [id])
   contractId Int
 
+  type       ContractAmountUpdateType
   status     ContractAmountUpdateStatus
-  // we update all rent debt activities which date are after this updateDate
+  // updates should be executed if current date is greater than their updateDate
   updateDate DateTime
 
   // When status is EXECUTED the following fields should be completed

@@ -9,7 +9,7 @@ interface GetActivitiesInput
 }
 
 export default resolver.pipe(
-  resolver.authorize(),
+  resolver.authorize<GetActivitiesInput>(),
   async (
     { where, orderBy, skip = 0, take = 100, includeFutureActivities = false }: GetActivitiesInput,
     ctx

@@ -8,6 +8,7 @@ TODO:
 - [OK] Delete client
 - [OK] Review activities table and relationships -> overusing originalActivity
 - [WIP] Rent amount updates by index
+- [] Review how to handle timezones in the database
 - [] Add non null check for activities FK
 
 -- ALTER TABLE "Comment"

@@ -9,6 +9,7 @@ import type {
   ContractFeeType,
   ContractUpdateType,
   ContractAmountUpdateStatus,
+  ContractAmountUpdateType,
   ActivityType,
   ActivityPersonType,
 } from "./enums"
@@ -89,6 +90,7 @@ export type ContractAmountUpdate = {
   updatedAt: Timestamp
   id: Generated<number>
   contractId: number
+  type: ContractAmountUpdateType
   status: ContractAmountUpdateStatus
   updateDate: Timestamp
   executedAt: Timestamp | null

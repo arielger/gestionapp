@@ -1,7 +1,12 @@
 import { resolver } from "@blitzjs/rpc"
 import chunk from "lodash/chunk"
 
-import db, { ActivityPersonType, ActivityType, ContractAmountUpdateStatus } from "db"
+import db, {
+  ActivityPersonType,
+  ActivityType,
+  ContractAmountUpdateStatus,
+  ContractAmountUpdateType,
+} from "db"
 import { CreateContractMutationSchema } from "../schemas"
 import { getContractRentPaymentDates } from "../utils/utils"
 
@@ -53,6 +58,7 @@ export default resolver.pipe(
                   // all period chunks will have at least one date
                   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                   updateDate: periodRentDays[0]!,
+                  type: ContractAmountUpdateType.PROVISIONAL,
                 })),
               },
             }
