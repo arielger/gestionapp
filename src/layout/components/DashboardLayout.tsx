@@ -1,22 +1,45 @@
-import React from "react"
-import { AppShell } from "@mantine/core"
+import React, { useCallback } from "react"
+import { AppShell, Burger, Group, useMantineTheme } from "@mantine/core"
 import { NavBar } from "./NavBar/NavBar"
-import HeaderMobile from "./HeaderMobile/HeaderMobile"
-import { useMediaQuery } from "@mantine/hooks"
+import { useDisclosure, useMediaQuery } from "@mantine/hooks"
+import { NavBarHeader } from "./NavBar/NavBarHeader"
 
 export const DashboardLayout = ({ children }: { children: React.ReactElement }) => {
-  const isDesktop = useMediaQuery(`(min-width: 768px)`)
+  const [mobileOpened, { toggle: toggleMobile }] = useDisclosure()
+  const theme = useMantineTheme()
+  const isDesktop = useMediaQuery(`(min-width: ${theme.breakpoints.lg})`)
+  const showCompanyHeader = !isDesktop
+
+  const handleLinkClick = useCallback(() => {
+    if (!isDesktop) {
+      toggleMobile()
+    }
+  }, [isDesktop, toggleMobile])
+
   return (
     <AppShell
+      header={{
+        collapsed: isDesktop,
+        height: 60,
+      }}
       padding="lg"
-      navbar={{ width: 300, breakpoint: "sm" }}
+      navbar={{
+        width: 300,
+        breakpoint: "lg",
+        collapsed: { mobile: !mobileOpened, desktop: false },
+      }}
       styles={(theme) => ({
         main: { backgroundColor: theme.colors.gray[0] },
       })}
     >
-      {!isDesktop && <HeaderMobile />}
+      <AppShell.Header>
+        <Group h="100%" px="md">
+          <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="lg" size="sm" />
+          <NavBarHeader />
+        </Group>
+      </AppShell.Header>
       <AppShell.Navbar>
-        <NavBar />
+        <NavBar handleLinkClick={handleLinkClick} showCompanyHeader={showCompanyHeader} />
       </AppShell.Navbar>
       <AppShell.Main>{children}</AppShell.Main>
     </AppShell>
