@@ -54,7 +54,7 @@ export default api(async (req: NextApiRequest, res: NextApiResponse, ctx: Ctx) =
       include: typeof contractAmountUpdatesInclude
     }>[]
 
-    amountUpdates.forEach(async (amountUpdate) => {
+    for (const amountUpdate of amountUpdates) {
       const ipcRate = getIpcRate({
         ipcValues,
         updateDate: amountUpdate.updateDate,
@@ -65,14 +65,29 @@ export default api(async (req: NextApiRequest, res: NextApiResponse, ctx: Ctx) =
       // TODO: add error handling
       if (!ipcRate) return
 
+      const firstUpdatedActivity = await db.activity.findFirst({
+        select: {
+          amount: true,
+        },
+        where: {
+          contract: {
+            id: amountUpdate.contractId,
+          },
+          type: ActivityType.RENT_DEBT,
+          date: {
+            gte: amountUpdate.updateDate,
+          },
+        },
+      })
+      const newRentAmount = firstUpdatedActivity!.amount * ipcRate
+
       await db.contractAmountUpdate.update({
         data: {
           executedAt: new Date(),
           percentageVariation: ipcRate,
           status: ContractAmountUpdateStatus.EXECUTED,
-          // TODO: complete with real numbers
-          previousRentAmount: 1,
-          newRentAmount: 1,
+          previousRentAmount: firstUpdatedActivity!.amount,
+          newRentAmount: newRentAmount,
 
           contract: {
             update: {
@@ -85,9 +100,7 @@ export default api(async (req: NextApiRequest, res: NextApiResponse, ctx: Ctx) =
                     },
                   },
                   data: {
-                    amount: {
-                      multiply: ipcRate,
-                    },
+                    amount: newRentAmount,
                   },
                 },
               },
@@ -98,9 +111,9 @@ export default api(async (req: NextApiRequest, res: NextApiResponse, ctx: Ctx) =
           id: amountUpdate.id,
         },
       })
-    })
+    }
 
-    res.send(amountUpdates)
+    res.send("SUCCESS")
   } catch (error) {
     console.log("ERROR", JSON.stringify(error, null, 2))
     res.send(error)

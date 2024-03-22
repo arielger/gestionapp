@@ -269,6 +269,8 @@ model Activity {
   date           DateTime           @default(now())
   organization   Organization       @relation(fields: [organizationId], references: [id])
   organizationId Int
+  // TO REVIEW: is Float the best type to store the amounts?
+  // check PostgreSQL specific types
   amount         Float
   isDebit        Boolean
   type           ActivityType

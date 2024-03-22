@@ -50,6 +50,7 @@ export const ActivitiesBalance = ({ contract }: { contract: Contract }) => {
       where: {
         contractId: contract.id,
       },
+      filterFutureActivities: true,
     },
     {
       suspense: false,

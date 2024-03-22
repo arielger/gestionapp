@@ -19,6 +19,7 @@ export function SelectActivitiesTable({
   const [activitiesData, { isLoading: isLoadingActivities, refetch: refetchActivities }] = useQuery(
     getActivities,
     {
+      filterFutureActivities: true,
       where: {
         contractId: contract.id,
         isDebit: true,
