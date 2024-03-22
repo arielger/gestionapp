@@ -7,17 +7,20 @@ export const PageHeader = ({
   breadcrumbs,
   afterTitle,
   children,
+  isDetailsPage = true,
 }: PropsWithChildren<{
   title: string
   breadcrumbs?: React.ReactElement[]
   afterTitle?: React.ReactElement
+  isDetailsPage?: boolean
 }>) => {
   return (
     <Flex
       justify="space-between"
-      align={{ base: "normal", xs: "center" }}
+      align={isDetailsPage ? { base: "normal", xs: "center" } : { base: "center" }}
       mb={16}
-      direction={{ base: "column", xs: "row" }}
+      direction={isDetailsPage ? { base: "column", xs: "row" } : { base: "row" }}
+      // direction={{ base: "column", xs: "row" }}
     >
       <Flex direction="column" gap="xs">
         {breadcrumbs && <Breadcrumbs separator="/">{breadcrumbs}</Breadcrumbs>}

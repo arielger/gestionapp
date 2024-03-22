@@ -30,6 +30,7 @@ import { IconCheck, IconEdit, IconEye } from "@tabler/icons-react"
 import { getAddressString } from "src/addresses/utils"
 import { useClientDelete } from "src/clients/hooks"
 import { getCurrentContract } from "src/contracts/utils/utils"
+import classes from "../properties/Properties.module.css"
 
 const propertyInclude = {
   owners: {
@@ -170,9 +171,9 @@ export const Client = () => {
             </Anchor>,
           ]}
         >
-          <Flex gap="sm">
+          <Flex gap="sm" mt="md" direction={{ base: "column", xs: "row" }}>
             <Link href={Routes.EditClientPage({ clientId: client.id })}>
-              <Button>Editar</Button>
+              <Button className={classes.btnProperties}>Editar</Button>
             </Link>
 
             <Button

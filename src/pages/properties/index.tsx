@@ -159,7 +159,7 @@ const PropertiesPage = () => {
       </Head>
 
       <div>
-        <PageHeader title="Propiedades">
+        <PageHeader title="Propiedades" isDetailsPage={false}>
           <Button
             variant="filled"
             component={Link}

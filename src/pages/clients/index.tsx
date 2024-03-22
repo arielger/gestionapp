@@ -129,7 +129,7 @@ const ClientsPage = () => {
       </Head>
 
       <div>
-        <PageHeader title="Clientes">
+        <PageHeader title="Clientes" isDetailsPage={false}>
           <Button variant="filled" onClick={openCreateClientModal} size="md">
             Crear
           </Button>
