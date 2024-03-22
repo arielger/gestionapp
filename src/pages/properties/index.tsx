@@ -2,7 +2,7 @@ import React from "react"
 import { Routes } from "@blitzjs/next"
 import Head from "next/head"
 import Link from "next/link"
-import { ActionIcon, Button, Badge, Group } from "@mantine/core"
+import { ActionIcon, Button, Badge, Group, useMantineTheme } from "@mantine/core"
 import { IconEdit, IconTrash, IconEye } from "@tabler/icons-react"
 
 import { DataTable, actionsColumnConfig } from "src/core/components/DataTable"
@@ -15,8 +15,12 @@ import { ContractProgress } from "src/contracts/components/ContractProgress"
 import { getCurrentContract } from "src/contracts/utils/utils"
 import { getAddressString } from "src/addresses/utils"
 import { usePropertyDelete } from "src/properties/hooks"
+import { useMediaQuery } from "@mantine/hooks"
 
 export const PropertiesList = () => {
+  const theme = useMantineTheme()
+  const isDesktop = useMediaQuery(`(min-width: ${theme.breakpoints.xs})`)
+
   // const [filters, setFilters] = useState({
   //   address: "",
   // })
@@ -50,7 +54,7 @@ export const PropertiesList = () => {
             accessor: "id",
             title: "#",
             textAlign: "right",
-            width: 60,
+            width: isDesktop ? 60 : "auto",
           },
           {
             accessor: "address",
@@ -156,7 +160,13 @@ const PropertiesPage = () => {
 
       <div>
         <PageHeader title="Propiedades">
-          <Button variant="filled" component={Link} href={Routes.NewPropertyPage()} size="md">
+          <Button
+            variant="filled"
+            component={Link}
+            href={Routes.NewPropertyPage()}
+            size="md"
+            mt="md"
+          >
             Crear
           </Button>
         </PageHeader>

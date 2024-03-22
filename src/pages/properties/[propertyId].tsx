@@ -25,6 +25,8 @@ import { getCurrentContract } from "src/contracts/utils/utils"
 import { getAddressString } from "src/addresses/utils"
 import { usePropertyDelete } from "src/properties/hooks"
 import { showSuccessNotification } from "src/core/notifications"
+import { SimpleGrid } from "@mantine/core"
+import classes from "./Properties.module.css"
 
 export const Property = () => {
   const router = useRouter()
@@ -111,9 +113,9 @@ export const Property = () => {
             </Anchor>,
           ]}
         >
-          <Flex gap="sm">
+          <Flex gap="sm" mt="md" direction={{ base: "column", xs: "row" }}>
             <Link href={Routes.EditPropertyPage({ propertyId: propertyId })}>
-              <Button>Editar</Button>
+              <Button className={classes.btnProperties}>Editar</Button>
             </Link>
 
             <Button
@@ -121,6 +123,7 @@ export const Property = () => {
               type="button"
               onClick={() => deleteProperty(propertyId)}
               loading={isLoadingDelete}
+              w={{ base: "fullWidth", xs: "auto" }}
             >
               Eliminar
             </Button>
@@ -128,7 +131,7 @@ export const Property = () => {
             {!currentContract && <Button onClick={openCreateContractModal}>Crear contrato</Button>}
           </Flex>
         </PageHeader>
-        <Flex gap="md">
+        <SimpleGrid cols={{ base: 1, md: 2 }}>
           <Paper shadow="xs" p="xl" style={{ flex: 1 }}>
             {/* TODO: Prevent repeating elements with properties table - move to general file */}
             <DetailsList
@@ -178,8 +181,9 @@ export const Property = () => {
             />
           </Paper>
           {currentContract && <ContractDetails contract={currentContract} />}
-        </Flex>
+        </SimpleGrid>
         {currentContract && <ActivitiesBalance contract={currentContract} />}
+
         <Modal
           opened={isCreateContractOpen}
           onClose={closeCreateContractModal}

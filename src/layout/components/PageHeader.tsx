@@ -13,7 +13,12 @@ export const PageHeader = ({
   afterTitle?: React.ReactElement
 }>) => {
   return (
-    <Flex justify="space-between" align="center" mb={16}>
+    <Flex
+      justify="space-between"
+      align={{ base: "normal", xs: "center" }}
+      mb={16}
+      direction={{ base: "column", xs: "row" }}
+    >
       <Flex direction="column" gap="xs">
         {breadcrumbs && <Breadcrumbs separator="/">{breadcrumbs}</Breadcrumbs>}
         <Flex align="center">

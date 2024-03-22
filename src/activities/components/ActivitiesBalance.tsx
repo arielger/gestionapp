@@ -106,12 +106,24 @@ export const ActivitiesBalance = ({ contract }: { contract: Contract }) => {
 
   return (
     <>
-      <Paper shadow="xs" p="xl" mt="md">
-        <Flex justify="space-between" align="center" mb="md">
-          <Title order={2}>Balance</Title>
-          <Flex gap="sm">
-            <Button onClick={openAddPayment}>Registrar pago</Button>
-            <Button onClick={() => setActivityFormModalState({ type: "NEW" })}>
+      <Paper shadow="xs" p={{ base: "md", sm: "xl" }} mt="md">
+        <Flex
+          justify="space-between"
+          align={{ base: "normal", xs: "center" }}
+          mb="md"
+          direction={{ base: "column", xs: "row" }}
+        >
+          <Title order={2} mb="md">
+            Balance
+          </Title>
+          <Flex gap="sm" direction={{ base: "column", xs: "row" }}>
+            <Button onClick={openAddPayment} w={{ base: "fullWidth", xs: "auto" }}>
+              Registrar pago
+            </Button>
+            <Button
+              onClick={() => setActivityFormModalState({ type: "NEW" })}
+              w={{ base: "fullWidth", xs: "auto" }}
+            >
               Crear actividad
             </Button>
           </Flex>

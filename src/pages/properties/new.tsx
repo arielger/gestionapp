@@ -19,7 +19,7 @@ const NewPropertyPage = () => {
     <Layout title={"Nueva propiedad"}>
       <PageHeader title="Crear nueva propiedad" />
       <Suspense fallback={<div>Loading...</div>}>
-        <Paper shadow="xs" p="xl">
+        <Paper shadow="xs" p={{ base: "md", sm: "xl" }}>
           <PropertyForm
             submitText="Crear"
             schema={CreatePropertyFormSchema}
