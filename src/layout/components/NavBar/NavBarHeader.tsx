@@ -7,7 +7,7 @@ export const NavBarHeader = () => {
   const orgName = currentUser?.memberships?.[0]?.organization.name
 
   return (
-    <Flex align="center" mb="lg" mt={5}>
+    <Flex align="center" mb={{ base: "auto", lg: "lg" }} mt={5}>
       <Avatar src={"./logo.jpeg"} color="cyan" radius="sm" mr={"sm"}>
         {getInitials(orgName ?? "", true)}
       </Avatar>
