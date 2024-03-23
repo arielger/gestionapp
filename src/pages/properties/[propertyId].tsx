@@ -25,6 +25,7 @@ import { getCurrentContract } from "src/contracts/utils/utils"
 import { getAddressString } from "src/addresses/utils"
 import { usePropertyDelete } from "src/properties/hooks"
 import { showSuccessNotification } from "src/core/notifications"
+import getActivities from "src/activities/queries/getActivities"
 
 export const Property = () => {
   const router = useRouter()
@@ -42,6 +43,25 @@ export const Property = () => {
   const notFound = (error as NotFoundError)?.name === NotFoundError.name
 
   const currentContract = getCurrentContract(property?.contracts ?? [])
+
+  const [activitiesData, { isLoading: isLoadingActivities, refetch: refetchActivities }] = useQuery(
+    getActivities,
+    {
+      where: {
+        contractId: currentContract?.id,
+      },
+      filterFutureActivities: true,
+    },
+    {
+      suspense: false,
+      enabled: !!currentContract?.id,
+    }
+  )
+
+  // get the last activity amount
+  const updatedContractAmount = activitiesData?.items
+    ?.sort((a, b) => (a.date.getTime() > b.date.getTime() ? -1 : 1))
+    .at(0)?.amount
 
   const [createContractMutation, { isLoading }] = useMutation(createContract)
   const [isCreateContractOpen, { open: openCreateContractModal, close: closeCreateContractModal }] =
@@ -177,9 +197,18 @@ export const Property = () => {
               ]}
             />
           </Paper>
-          {currentContract && <ContractDetails contract={currentContract} />}
+          {currentContract && (
+            <ContractDetails contract={currentContract} updatedAmount={updatedContractAmount} />
+          )}
         </Flex>
-        {currentContract && <ActivitiesBalance contract={currentContract} />}
+        {currentContract && (
+          <ActivitiesBalance
+            contract={currentContract}
+            activities={activitiesData?.items}
+            isLoadingActivities={isLoadingActivities}
+            refetchActivities={refetchActivities}
+          />
+        )}
         <Modal
           opened={isCreateContractOpen}
           onClose={closeCreateContractModal}

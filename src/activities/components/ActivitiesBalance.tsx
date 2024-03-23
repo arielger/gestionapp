@@ -1,16 +1,15 @@
-import { useQuery } from "@blitzjs/rpc"
 import { Text, Modal, Button, Paper, Title, Flex, Badge } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { DataTable } from "mantine-datatable"
 import { Activity, ActivityPersonType, Contract } from "@prisma/client"
 import { useRouter } from "next/router"
 
-import getActivities from "../queries/getActivities"
 import { getActivityTitle } from "../utils"
 import { SelectActivitiesTable } from "src/payments/components/PaymentForm/SelectActivitiesTable"
 import { Routes } from "@blitzjs/next"
 import { ActivityFormModal, ActivityFormModalState } from "./ActivityFormModal"
 import { useState } from "react"
+import { ActivityWithDetails } from "../types"
 
 const renderBalanceMovementCell = ({
   activity,
@@ -41,24 +40,18 @@ const renderBalanceMovementCell = ({
   )
 }
 
-export const ActivitiesBalance = ({ contract }: { contract: Contract }) => {
+export const ActivitiesBalance = ({
+  contract,
+  activities,
+  isLoadingActivities,
+  refetchActivities,
+}: {
+  contract: Contract
+  activities?: ActivityWithDetails[]
+  isLoadingActivities: boolean
+  refetchActivities: () => void
+}) => {
   const router = useRouter()
-
-  const [activitiesData, { isLoading: isLoadingActivities, refetch: refetchActivities }] = useQuery(
-    getActivities,
-    {
-      where: {
-        contractId: contract.id,
-      },
-      filterFutureActivities: true,
-    },
-    {
-      suspense: false,
-      enabled: !!contract.id,
-    }
-  )
-
-  const activities = activitiesData?.items ?? []
 
   const activitiesWithMovements = activities?.reduce(
     (acc, activity) => {
