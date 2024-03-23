@@ -90,9 +90,9 @@ export type ContractAmountUpdate = {
   updatedAt: Timestamp
   id: Generated<number>
   contractId: number
-  type: ContractAmountUpdateType
   status: ContractAmountUpdateStatus
   updateDate: Timestamp
+  indexType: ContractAmountUpdateType | null
   executedAt: Timestamp | null
   percentageVariation: number | null
   previousRentAmount: number | null

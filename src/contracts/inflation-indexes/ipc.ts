@@ -1,3 +1,4 @@
+import { ContractAmountUpdateType } from "@prisma/client"
 import axios from "axios"
 import { format as formatDate, subMonths } from "date-fns"
 
@@ -34,6 +35,9 @@ export const getIpcRate = ({
   rangeMonths: number
 }) => {
   const previousMonthIpc = getIpcValueByMonth(ipcValues, subMonths(updateDate, 1))
+  const indexType = !!previousMonthIpc
+    ? ContractAmountUpdateType.FINAL
+    : ContractAmountUpdateType.PROVISIONAL
 
   let ipcStartValue: number | undefined
   let ipcEndValue: number | undefined
@@ -58,5 +62,8 @@ export const getIpcRate = ({
     throw new Error(`Index (IPC) value not found for last item of range: ${ipcEndValue}`)
   }
 
-  return ipcEndValue / ipcStartValue
+  return {
+    ipcRate: ipcEndValue / ipcStartValue,
+    indexType,
+  }
 }

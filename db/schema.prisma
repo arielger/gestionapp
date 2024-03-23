@@ -207,12 +207,12 @@ model ContractAmountUpdate {
   contract   Contract @relation(fields: [contractId], references: [id])
   contractId Int
 
-  type       ContractAmountUpdateType
   status     ContractAmountUpdateStatus
   // updates should be executed if current date is greater than their updateDate
   updateDate DateTime
 
   // When status is EXECUTED the following fields should be completed
+  indexType           ContractAmountUpdateType?
   executedAt          DateTime?
   percentageVariation Float?
   previousRentAmount  Float?

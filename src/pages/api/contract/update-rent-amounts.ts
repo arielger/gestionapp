@@ -55,7 +55,7 @@ export default api(async (req: NextApiRequest, res: NextApiResponse, ctx: Ctx) =
     }>[]
 
     for (const amountUpdate of amountUpdates) {
-      const ipcRate = getIpcRate({
+      const { ipcRate, indexType } = getIpcRate({
         ipcValues,
         updateDate: amountUpdate.updateDate,
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -88,6 +88,7 @@ export default api(async (req: NextApiRequest, res: NextApiResponse, ctx: Ctx) =
           status: ContractAmountUpdateStatus.EXECUTED,
           previousRentAmount: firstUpdatedActivity!.amount,
           newRentAmount: newRentAmount,
+          indexType,
 
           contract: {
             update: {
