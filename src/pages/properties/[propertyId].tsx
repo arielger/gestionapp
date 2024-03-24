@@ -5,7 +5,7 @@ import { useRouter } from "next/router"
 import { useQuery, useMutation } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
 import { NotFoundError } from "blitz"
-import { Anchor, Button, Flex, Paper, Badge, Center, Loader, Modal } from "@mantine/core"
+import { Anchor, Button, Flex, Badge, Center, Loader, Modal } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { IconCheck } from "@tabler/icons-react"
 
@@ -25,6 +25,8 @@ import { getCurrentContract } from "src/contracts/utils/utils"
 import { getAddressString } from "src/addresses/utils"
 import { usePropertyDelete } from "src/properties/hooks"
 import { showSuccessNotification } from "src/core/notifications"
+import { SimpleGrid } from "@mantine/core"
+import ResponsivePaper from "src/core/components/ResponsivePaper"
 
 export const Property = () => {
   const router = useRouter()
@@ -111,16 +113,17 @@ export const Property = () => {
             </Anchor>,
           ]}
         >
-          <Flex gap="sm">
-            <Link href={Routes.EditPropertyPage({ propertyId: propertyId })}>
-              <Button>Editar</Button>
-            </Link>
+          <Flex gap="sm" direction={{ base: "column", xs: "row" }}>
+            <Button component={Link} href={Routes.EditPropertyPage({ propertyId: propertyId })}>
+              Editar
+            </Button>
 
             <Button
               color="red"
               type="button"
               onClick={() => deleteProperty(propertyId)}
               loading={isLoadingDelete}
+              w={{ base: "fullWidth", xs: "auto" }}
             >
               Eliminar
             </Button>
@@ -128,8 +131,8 @@ export const Property = () => {
             {!currentContract && <Button onClick={openCreateContractModal}>Crear contrato</Button>}
           </Flex>
         </PageHeader>
-        <Flex gap="md">
-          <Paper shadow="xs" p="xl" style={{ flex: 1 }}>
+        <SimpleGrid cols={{ base: 1, md: 2 }}>
+          <ResponsivePaper shadow="xs" style={{ flex: 1 }}>
             {/* TODO: Prevent repeating elements with properties table - move to general file */}
             <DetailsList
               details={[
@@ -176,10 +179,11 @@ export const Property = () => {
                     ]),
               ]}
             />
-          </Paper>
+          </ResponsivePaper>
           {currentContract && <ContractDetails contract={currentContract} />}
-        </Flex>
+        </SimpleGrid>
         {currentContract && <ActivitiesBalance contract={currentContract} />}
+
         <Modal
           opened={isCreateContractOpen}
           onClose={closeCreateContractModal}

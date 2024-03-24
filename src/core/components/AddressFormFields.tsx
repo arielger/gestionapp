@@ -4,7 +4,7 @@ import { UseFormReturnType } from "@mantine/form"
 export const AddressFormFields = ({ form }: { form: UseFormReturnType<unknown> }) => {
   return (
     <Fieldset legend="Dirección">
-      <Flex gap="md">
+      <Flex gap="md" direction={{ base: "column", xs: "row" }}>
         <TextInput
           withAsterisk
           style={{ flex: 2 }}
@@ -25,7 +25,7 @@ export const AddressFormFields = ({ form }: { form: UseFormReturnType<unknown> }
           {...form.getInputProps("address.subpremise")}
         />
       </Flex>
-      <Flex gap="md">
+      <Flex gap="md" direction={{ base: "column", xs: "row" }}>
         <TextInput
           withAsterisk
           style={{ flex: 1 }}

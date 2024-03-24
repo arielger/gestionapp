@@ -50,7 +50,6 @@ export const PropertiesList = () => {
             accessor: "id",
             title: "#",
             textAlign: "right",
-            width: 60,
           },
           {
             accessor: "address",
@@ -155,7 +154,7 @@ const PropertiesPage = () => {
       </Head>
 
       <div>
-        <PageHeader title="Propiedades">
+        <PageHeader title="Propiedades" wrapRightSectionInMobile={false}>
           <Button variant="filled" component={Link} href={Routes.NewPropertyPage()} size="md">
             Crear
           </Button>

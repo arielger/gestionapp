@@ -55,7 +55,6 @@ export const ClientsList = ({
           accessor: "id",
           title: "#",
           textAlign: "right" as const,
-          width: 60,
         },
         { accessor: "firstName", title: "Nombre", width: 200 },
         { accessor: "lastName", title: "Apellido", width: 200 },
@@ -129,7 +128,7 @@ const ClientsPage = () => {
       </Head>
 
       <div>
-        <PageHeader title="Clientes">
+        <PageHeader title="Clientes" wrapRightSectionInMobile={false}>
           <Button variant="filled" onClick={openCreateClientModal} size="md">
             Crear
           </Button>

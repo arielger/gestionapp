@@ -8,8 +8,8 @@ import createProperty from "src/properties/mutations/createProperty"
 import { PropertyForm } from "src/properties/components/PropertyForm"
 import { Suspense } from "react"
 import { PageHeader } from "src/layout/components/PageHeader"
-import { Paper } from "@mantine/core"
 import { addressFormInitialValue } from "src/addresses/utils"
+import ResponsivePaper from "src/core/components/ResponsivePaper"
 
 const NewPropertyPage = () => {
   const router = useRouter()
@@ -19,7 +19,7 @@ const NewPropertyPage = () => {
     <Layout title={"Nueva propiedad"}>
       <PageHeader title="Crear nueva propiedad" />
       <Suspense fallback={<div>Loading...</div>}>
-        <Paper shadow="xs" p="xl">
+        <ResponsivePaper shadow="xs">
           <PropertyForm
             submitText="Crear"
             schema={CreatePropertyFormSchema}
@@ -36,7 +36,7 @@ const NewPropertyPage = () => {
             }}
             isLoading={isLoading}
           />
-        </Paper>
+        </ResponsivePaper>
       </Suspense>
       <p>
         <Link href={Routes.PropertiesPage()}>Volver</Link>

@@ -6,14 +6,23 @@ export const PageHeader = ({
   title,
   breadcrumbs,
   afterTitle,
-  children,
+  rightSection,
+  wrapRightSectionInMobile = true,
 }: PropsWithChildren<{
   title: string
+  rightSection?: React.ReactElement
   breadcrumbs?: React.ReactElement[]
   afterTitle?: React.ReactElement
+  wrapRightSectionInMobile?: boolean // If true, the elements on the right are placed below the title
 }>) => {
   return (
-    <Flex justify="space-between" align="center" mb={16}>
+    <Flex
+      justify="space-between"
+      align={wrapRightSectionInMobile ? { base: "normal", xs: "center" } : { base: "center" }}
+      mb={16}
+      direction={wrapRightSectionInMobile ? { base: "column", xs: "row" } : { base: "row" }}
+      gap={"sm"}
+    >
       <Flex direction="column" gap="xs">
         {breadcrumbs && <Breadcrumbs separator="/">{breadcrumbs}</Breadcrumbs>}
         <Flex align="center">
@@ -23,7 +32,7 @@ export const PageHeader = ({
           {afterTitle}
         </Flex>
       </Flex>
-      {children}
+      {rightSection}
     </Flex>
   )
 }

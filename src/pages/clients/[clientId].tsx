@@ -16,7 +16,6 @@ import {
   Flex,
   Group,
   Loader,
-  Paper,
   Title,
 } from "@mantine/core"
 import { DetailsList } from "src/core/components/DetailsList"
@@ -30,6 +29,7 @@ import { IconCheck, IconEdit, IconEye } from "@tabler/icons-react"
 import { getAddressString } from "src/addresses/utils"
 import { useClientDelete } from "src/clients/hooks"
 import { getCurrentContract } from "src/contracts/utils/utils"
+import ResponsivePaper from "src/core/components/ResponsivePaper"
 
 const propertyInclude = {
   owners: {
@@ -170,10 +170,10 @@ export const Client = () => {
             </Anchor>,
           ]}
         >
-          <Flex gap="sm">
-            <Link href={Routes.EditClientPage({ clientId: client.id })}>
-              <Button>Editar</Button>
-            </Link>
+          <Flex gap="sm" direction={{ base: "column", xs: "row" }}>
+            <Button component={Link} href={Routes.EditClientPage({ clientId: client.id })}>
+              Editar
+            </Button>
 
             <Button
               color="red"
@@ -185,7 +185,7 @@ export const Client = () => {
             </Button>
           </Flex>
         </PageHeader>
-        <Paper shadow="xs" p="lg" mb="lg">
+        <ResponsivePaper shadow="xs" mb="lg">
           <DetailsList
             details={[
               {
@@ -214,7 +214,7 @@ export const Client = () => {
               },
             ]}
           />
-        </Paper>
+        </ResponsivePaper>
 
         <Title order={5} fw={"normal"} mb="sm">
           Propiedades relacionadas
@@ -227,7 +227,6 @@ export const Client = () => {
               accessor: "id",
               title: "#",
               textAlign: "right",
-              width: 60,
             },
             {
               accessor: "address",
