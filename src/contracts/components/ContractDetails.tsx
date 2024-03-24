@@ -1,9 +1,10 @@
-import { Paper, Text } from "@mantine/core"
+import { Text } from "@mantine/core"
 import { ContractFeeType, Prisma } from "@prisma/client"
 
 import { DetailsList } from "src/core/components/DetailsList"
 import { PersonList } from "src/clients/components/PersonList"
 import { ContractProgress } from "./ContractProgress"
+import ResponsivePaper from "src/core/components/ResponsivePaper"
 
 type ContractWithRelatedEntities = Prisma.ContractGetPayload<{
   include: {
@@ -17,7 +18,7 @@ type ContractWithRelatedEntities = Prisma.ContractGetPayload<{
 
 export const ContractDetails = ({ contract }: { contract: ContractWithRelatedEntities }) => {
   return (
-    <Paper shadow="xs" p="xl" style={{ flex: 1 }}>
+    <ResponsivePaper shadow="xs" style={{ flex: 1 }}>
       <Text>Detalles del contrato</Text>
       <DetailsList
         details={[
@@ -43,6 +44,6 @@ export const ContractDetails = ({ contract }: { contract: ContractWithRelatedEnt
           },
         ]}
       />
-    </Paper>
+    </ResponsivePaper>
   )
 }

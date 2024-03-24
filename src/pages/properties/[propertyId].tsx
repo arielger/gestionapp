@@ -5,7 +5,7 @@ import { useRouter } from "next/router"
 import { useQuery, useMutation } from "@blitzjs/rpc"
 import { useParam } from "@blitzjs/next"
 import { NotFoundError } from "blitz"
-import { Anchor, Button, Flex, Paper, Badge, Center, Loader, Modal } from "@mantine/core"
+import { Anchor, Button, Flex, Badge, Center, Loader, Modal } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { IconCheck } from "@tabler/icons-react"
 
@@ -26,7 +26,7 @@ import { getAddressString } from "src/addresses/utils"
 import { usePropertyDelete } from "src/properties/hooks"
 import { showSuccessNotification } from "src/core/notifications"
 import { SimpleGrid } from "@mantine/core"
-import classes from "./Properties.module.css"
+import ResponsivePaper from "src/core/components/ResponsivePaper"
 
 export const Property = () => {
   const router = useRouter()
@@ -113,10 +113,10 @@ export const Property = () => {
             </Anchor>,
           ]}
         >
-          <Flex gap="sm" mt="md" direction={{ base: "column", xs: "row" }}>
-            <Link href={Routes.EditPropertyPage({ propertyId: propertyId })}>
-              <Button className={classes.btnProperties}>Editar</Button>
-            </Link>
+          <Flex gap="sm" direction={{ base: "column", xs: "row" }}>
+            <Button component={Link} href={Routes.EditPropertyPage({ propertyId: propertyId })}>
+              Editar
+            </Button>
 
             <Button
               color="red"
@@ -132,7 +132,7 @@ export const Property = () => {
           </Flex>
         </PageHeader>
         <SimpleGrid cols={{ base: 1, md: 2 }}>
-          <Paper shadow="xs" p="xl" style={{ flex: 1 }}>
+          <ResponsivePaper shadow="xs" style={{ flex: 1 }}>
             {/* TODO: Prevent repeating elements with properties table - move to general file */}
             <DetailsList
               details={[
@@ -179,7 +179,7 @@ export const Property = () => {
                     ]),
               ]}
             />
-          </Paper>
+          </ResponsivePaper>
           {currentContract && <ContractDetails contract={currentContract} />}
         </SimpleGrid>
         {currentContract && <ActivitiesBalance contract={currentContract} />}

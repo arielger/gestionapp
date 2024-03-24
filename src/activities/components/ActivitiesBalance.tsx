@@ -1,5 +1,5 @@
 import { useQuery } from "@blitzjs/rpc"
-import { Text, Modal, Button, Paper, Title, Flex, Badge } from "@mantine/core"
+import { Text, Modal, Button, Title, Flex, Badge } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks"
 import { DataTable } from "mantine-datatable"
 import { Activity, ActivityPersonType, Contract } from "@prisma/client"
@@ -11,6 +11,7 @@ import { SelectActivitiesTable } from "src/payments/components/PaymentForm/Selec
 import { Routes } from "@blitzjs/next"
 import { ActivityFormModal, ActivityFormModalState } from "./ActivityFormModal"
 import { useState } from "react"
+import ResponsivePaper from "src/core/components/ResponsivePaper"
 
 const renderBalanceMovementCell = ({
   activity,
@@ -106,7 +107,7 @@ export const ActivitiesBalance = ({ contract }: { contract: Contract }) => {
 
   return (
     <>
-      <Paper shadow="xs" p={{ base: "md", sm: "xl" }} mt="md">
+      <ResponsivePaper shadow="xs" mt="md">
         <Flex
           justify="space-between"
           align={{ base: "normal", xs: "center" }}
@@ -279,7 +280,7 @@ export const ActivitiesBalance = ({ contract }: { contract: Contract }) => {
           ]}
           records={activitiesWithMovements?.rows}
         />
-      </Paper>
+      </ResponsivePaper>
       <ActivityFormModal
         state={activityFormModalState}
         contractId={contract.id}
