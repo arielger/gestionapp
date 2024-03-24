@@ -11,7 +11,7 @@ interface GetClientsInput extends Pick<Prisma.ClientFindManyArgs, "skip" | "take
 }
 
 export default resolver.pipe(
-  resolver.authorize(),
+  resolver.authorize<GetClientsInput>(),
   async ({ skip = 0, take = 100, type, fullNameSearch }: GetClientsInput, ctx) => {
     const query = kyselyDb
       .selectFrom("Client")

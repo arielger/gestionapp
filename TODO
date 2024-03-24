@@ -7,10 +7,12 @@ TODO:
 - [OK] i18n form validation to spanish
 - [OK] Delete client
 - [OK] Review activities table and relationships -> overusing originalActivity
+- [WIP] Rent amount updates by index
+- [] Review how to handle timezones in the database
 - [] Add non null check for activities FK
 
-ALTER TABLE "Comment"
-ADD CONSTRAINT check_if_only_one_is_not_null CHECK (num_nonnulls("photoId", "articleId") = 1);
+-- ALTER TABLE "Comment"
+-- ADD CONSTRAINT check_if_only_one_is_not_null CHECK (num_nonnulls("photoId", "articleId") = 1);
 
 - [ ] Check if we use modals or pages to edit entities
 - [ ] Register payment -> debts are cached
@@ -30,6 +32,7 @@ ADD CONSTRAINT check_if_only_one_is_not_null CHECK (num_nonnulls("photoId", "art
 
 TECH DEBT:
 
+- [] run db migrations in ci/cd
 - [] Add dead code check before commiting
 - [] Integrate testing into pipelines (commit hook / ci-cd)
 - [] Add eslint for unused variables

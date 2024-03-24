@@ -7,6 +7,22 @@ export const ContractFeeType = {
   FIXED: "FIXED",
 } as const
 export type ContractFeeType = (typeof ContractFeeType)[keyof typeof ContractFeeType]
+export const ContractUpdateType = {
+  INDEX_IPC: "INDEX_IPC",
+} as const
+export type ContractUpdateType = (typeof ContractUpdateType)[keyof typeof ContractUpdateType]
+export const ContractAmountUpdateStatus = {
+  INITIAL: "INITIAL",
+  EXECUTED: "EXECUTED",
+} as const
+export type ContractAmountUpdateStatus =
+  (typeof ContractAmountUpdateStatus)[keyof typeof ContractAmountUpdateStatus]
+export const ContractAmountUpdateType = {
+  PROVISIONAL: "PROVISIONAL",
+  FINAL: "FINAL",
+} as const
+export type ContractAmountUpdateType =
+  (typeof ContractAmountUpdateType)[keyof typeof ContractAmountUpdateType]
 export const ActivityType = {
   RENT_DEBT: "RENT_DEBT",
   RENT_PAYMENT: "RENT_PAYMENT",

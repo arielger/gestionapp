@@ -4,7 +4,15 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   : ColumnType<T, T | undefined, T>
 export type Timestamp = ColumnType<Date, Date | string, Date | string>
 
-import type { TokenType, ContractFeeType, ActivityType, ActivityPersonType } from "./enums"
+import type {
+  TokenType,
+  ContractFeeType,
+  ContractUpdateType,
+  ContractAmountUpdateStatus,
+  ContractAmountUpdateType,
+  ActivityType,
+  ActivityPersonType,
+} from "./enums"
 
 export type Activity = {
   id: Generated<number>
@@ -72,8 +80,23 @@ export type Contract = {
   startDate: Timestamp
   endDate: Timestamp
   rentAmount: number
+  updateAmountType: ContractUpdateType | null
+  updateAmountFrequency: number | null
   fee: number
   feeType: ContractFeeType
+}
+export type ContractAmountUpdate = {
+  createdAt: Generated<Timestamp>
+  updatedAt: Timestamp
+  id: Generated<number>
+  contractId: number
+  status: ContractAmountUpdateStatus
+  updateDate: Timestamp
+  indexType: ContractAmountUpdateType | null
+  executedAt: Timestamp | null
+  percentageVariation: number | null
+  previousRentAmount: number | null
+  newRentAmount: number | null
 }
 export type Membership = {
   id: Generated<number>
@@ -160,6 +183,7 @@ export type DB = {
   Address: Address
   Client: Client
   Contract: Contract
+  ContractAmountUpdate: ContractAmountUpdate
   Membership: Membership
   Organization: Organization
   Payment: Payment

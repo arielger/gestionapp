@@ -160,24 +160,63 @@ enum ContractFeeType {
   FIXED
 }
 
+enum ContractUpdateType {
+  INDEX_IPC
+}
+
 model Contract {
   organization   Organization @relation(fields: [organizationId], references: [id])
   organizationId Int
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
-  id         Int                       @id @default(autoincrement())
-  owners     PropertyOwnerOnContract[]
-  tenants    TenantOnContract[]
-  property   Property                  @relation(fields: [propertyId], references: [id])
-  propertyId Int
-  startDate  DateTime
-  endDate    DateTime
-  rentAmount Float
-  activities Activity[]
-  payments   Payment[]
-  fee        Float
-  feeType    ContractFeeType
+  id                    Int                       @id @default(autoincrement())
+  owners                PropertyOwnerOnContract[]
+  tenants               TenantOnContract[]
+  property              Property                  @relation(fields: [propertyId], references: [id])
+  propertyId            Int
+  startDate             DateTime
+  endDate               DateTime
+  rentAmount            Float
+  updateAmountType      ContractUpdateType?
+  updateAmountFrequency Int?
+  activities            Activity[]
+  payments              Payment[]
+  fee                   Float
+  feeType               ContractFeeType
+  amountUpdates         ContractAmountUpdate[]
+}
+
+enum ContractAmountUpdateStatus {
+  INITIAL
+  EXECUTED
+}
+
+enum ContractAmountUpdateType {
+  // Used when we update the rents with the previous IPC value
+  // (since we don't have yet the IPC value of the current month -> it's published at the middle of the month)
+  PROVISIONAL
+  FINAL
+}
+
+model ContractAmountUpdate {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+
+  contract   Contract @relation(fields: [contractId], references: [id])
+  contractId Int
+
+  status     ContractAmountUpdateStatus
+  // updates should be executed if current date is greater than their updateDate
+  updateDate DateTime
+
+  // When status is EXECUTED the following fields should be completed
+  indexType           ContractAmountUpdateType?
+  executedAt          DateTime?
+  percentageVariation Float?
+  previousRentAmount  Float?
+  newRentAmount       Float?
 }
 
 model TenantOnContract {
@@ -230,6 +269,8 @@ model Activity {
   date           DateTime           @default(now())
   organization   Organization       @relation(fields: [organizationId], references: [id])
   organizationId Int
+  // TO REVIEW: is Float the best type to store the amounts?
+  // check PostgreSQL specific types
   amount         Float
   isDebit        Boolean
   type           ActivityType

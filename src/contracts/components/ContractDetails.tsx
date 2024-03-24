@@ -4,6 +4,7 @@ import { ContractFeeType, Prisma } from "@prisma/client"
 import { DetailsList } from "src/core/components/DetailsList"
 import { PersonList } from "src/clients/components/PersonList"
 import { ContractProgress } from "./ContractProgress"
+import { indexUpdateFrequencyToString, updateIndexToString } from "../config"
 
 type ContractWithRelatedEntities = Prisma.ContractGetPayload<{
   include: {
@@ -15,7 +16,13 @@ type ContractWithRelatedEntities = Prisma.ContractGetPayload<{
   }
 }>
 
-export const ContractDetails = ({ contract }: { contract: ContractWithRelatedEntities }) => {
+export const ContractDetails = ({
+  contract,
+  updatedAmount,
+}: {
+  contract: ContractWithRelatedEntities
+  updatedAmount?: number
+}) => {
   return (
     <Paper shadow="xs" p="xl" style={{ flex: 1 }}>
       <Text>Detalles del contrato</Text>
@@ -30,8 +37,21 @@ export const ContractDetails = ({ contract }: { contract: ContractWithRelatedEnt
             value: <ContractProgress contract={contract} />,
           },
           {
-            title: "Monto",
+            title: "Monto actualizado",
+            value: updatedAmount ? new Intl.NumberFormat().format(updatedAmount) : "-",
+          },
+          {
+            title: "Monto inicial",
             value: new Intl.NumberFormat().format(contract.rentAmount),
+          },
+          {
+            title: "Actualización",
+            value:
+              contract.updateAmountType && contract.updateAmountFrequency
+                ? `${updateIndexToString[contract.updateAmountType]} - ${
+                    indexUpdateFrequencyToString[contract.updateAmountFrequency]
+                  }`
+                : "Sin actualización",
           },
           {
             title: "Comisión",

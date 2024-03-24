@@ -1,10 +1,11 @@
 import { paginate } from "blitz"
 import { resolver } from "@blitzjs/rpc"
 import db, { Prisma } from "db"
+import { GetContractsSearchBy } from "../types"
 
 interface GetContractsInput
   extends Pick<Prisma.ContractFindManyArgs, "where" | "orderBy" | "skip" | "take"> {
-  searchBy: "owners" | "tenants" | "address"
+  searchBy: GetContractsSearchBy
   searchText: string
 }
 
@@ -31,7 +32,7 @@ export type ContractWithRelatedEntities = Prisma.ContractGetPayload<{
 }>
 
 export default resolver.pipe(
-  resolver.authorize(),
+  resolver.authorize<GetContractsInput>(),
   async (
     { where, orderBy, skip = 0, take = 100, searchBy, searchText }: GetContractsInput,
     ctx
@@ -53,7 +54,8 @@ export default resolver.pipe(
           where: {
             ...where,
             organizationId: ctx.session.orgId,
-            ...(searchBy === "owners" || searchBy === "tenants"
+            ...(searchBy === GetContractsSearchBy.OWNERS ||
+            searchBy === GetContractsSearchBy.TENANTS
               ? {
                   [searchBy]: {
                     some: {
@@ -78,7 +80,7 @@ export default resolver.pipe(
                 }
               : {}),
             // TODO: we need to improve the searching to handle street + number + subpremise search
-            ...(searchBy === "address"
+            ...(searchBy === GetContractsSearchBy.ADDRESS
               ? {
                   property: {
                     address: {
