@@ -17,6 +17,7 @@ import { getContractRentPaymentDates } from "../utils/utils"
 import { ContractFeeType, ContractUpdateType } from "@prisma/client"
 import { ClientsSelect } from "src/clients/components/ClientsSelect"
 import { updateAmountFrequency } from "../config"
+import chunk from "lodash/chunk"
 
 export function ContractForm<S extends z.ZodType<any, any>>({
   ownersInitialValue = [],
@@ -127,20 +128,32 @@ export function ContractForm<S extends z.ZodType<any, any>>({
                     <Table>
                       <Table.Thead>
                         <Table.Tr>
-                          <Table.Th>Fecha</Table.Th>
+                          <Table.Th>Periodo</Table.Th>
                           <Table.Th>Monto</Table.Th>
                         </Table.Tr>
                       </Table.Thead>
                       <Table.Tbody>
-                        {getContractRentPaymentDates(
-                          form.values.startDate,
-                          form.values.endDate
-                        ).map((date) => (
-                          <Table.Tr key={date.toLocaleDateString()}>
-                            <Table.Td>{date.toLocaleDateString()}</Table.Td>
-                            <Table.Td>{form.values.rentAmount}</Table.Td>
-                          </Table.Tr>
-                        ))}
+                        {chunk(
+                          getContractRentPaymentDates(form.values.startDate, form.values.endDate),
+                          form.values.updateAmountFrequency ?? Infinity
+                        ).map((contractAmountPeriodDates, i) => {
+                          const period = [
+                            contractAmountPeriodDates[0],
+                            contractAmountPeriodDates.at(-1),
+                          ]
+                            .filter(Boolean)
+                            .map((d) => d?.toLocaleDateString())
+                            .join(" - ")
+
+                          return (
+                            <Table.Tr key={contractAmountPeriodDates[0]?.getTime()}>
+                              <Table.Td>{period}</Table.Td>
+                              <Table.Td>{`${form.values.rentAmount} ${
+                                i === 0 ? "- Monto inicial" : `* IPC Periodo ${i}`
+                              }`}</Table.Td>
+                            </Table.Tr>
+                          )
+                        })}
                       </Table.Tbody>
                     </Table>
                   </Accordion.Panel>
