@@ -1,1 +1,8 @@
-{}
+{
+  "crons": [
+    {
+      "path": "/api/contract/update-rent-amounts",
+      "schedule": "0 6 * * *"
+    }
+  ]
+}
