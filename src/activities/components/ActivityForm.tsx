@@ -6,6 +6,36 @@ import { Form, FormProps } from "src/core/components/Form"
 
 import { z } from "src/core/zod"
 import { activityPersonLabels, ActivityTransactionType } from "../config"
+import { ActivityWithDetails } from "../types"
+import { CreateActivityFormSchema } from "../schemas"
+
+export const transformActivityEntityToForm = (activity: ActivityWithDetails) => {
+  const { isDebit, type, customDetails, ...activityData } = activity
+
+  return {
+    ...activityData,
+    transactionType: isDebit ? ActivityTransactionType.DEBIT : ActivityTransactionType.CREDIT,
+    ...(type === ActivityType.CUSTOM
+      ? {
+          type: ActivityType.CUSTOM,
+          details: {
+            title: customDetails?.title ?? "",
+          },
+        }
+      : {
+          type,
+          details: undefined,
+        }),
+  }
+}
+
+export const transformActivityFormToEntity = (
+  activity: z.infer<typeof CreateActivityFormSchema>
+) => {
+  const { transactionType, ...activityData } = activity
+  const isDebit = transactionType === ActivityTransactionType.DEBIT
+  return { ...activityData, isDebit }
+}
 
 // TODO: review if we should be able to edit activities
 export function ActivityForm<S extends z.ZodType<any, any>>(props: FormProps<S>) {

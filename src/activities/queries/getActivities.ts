@@ -1,23 +1,17 @@
 import { paginate } from "blitz"
 import { resolver } from "@blitzjs/rpc"
 import db, { Prisma } from "db"
+import { activityWithDetailsInclude } from "../types"
 
 interface GetActivitiesInput
   extends Pick<Prisma.ActivityFindManyArgs, "where" | "orderBy" | "skip" | "take" | "include"> {
-  includeFutureActivities: boolean
+  filterFutureActivities?: boolean
 }
 
 export default resolver.pipe(
-  resolver.authorize(),
+  resolver.authorize<GetActivitiesInput>(),
   async (
-    {
-      where,
-      orderBy,
-      skip = 0,
-      take = 100,
-      include,
-      includeFutureActivities = false,
-    }: GetActivitiesInput,
+    { where, orderBy, skip = 0, take = 100, filterFutureActivities = false }: GetActivitiesInput,
     ctx
   ) => {
     const { items, hasMore, nextPage, count } = await paginate({
@@ -31,15 +25,15 @@ export default resolver.pipe(
             ...where,
             organizationId: ctx.session.orgId,
             // by default remove future activities from search
-            ...(includeFutureActivities
-              ? {}
-              : {
+            ...(filterFutureActivities
+              ? {
                   date: {
                     lte: new Date(),
                   },
-                }),
+                }
+              : {}),
           },
-          include,
+          include: activityWithDetailsInclude,
           orderBy,
         }),
     })

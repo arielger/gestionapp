@@ -19,14 +19,15 @@ export function SelectActivitiesTable({
   const [activitiesData, { isLoading: isLoadingActivities, refetch: refetchActivities }] = useQuery(
     getActivities,
     {
+      filterFutureActivities: true,
       where: {
         contractId: contract.id,
         isDebit: true,
         assignedTo: ActivityPersonType.TENANT,
-        // Filter activities that aren't paid
-        // TODO: Handle partial payment
-        relatedActivities: {
-          none: {},
+        // ActivityType.RENT_DEBT =>
+        // filter already paid activities
+        rentPaymentDebtPaidByActivity: {
+          is: null,
         },
       },
     },

@@ -6,16 +6,28 @@ export default resolver.pipe(
   resolver.zod(CreateActivityMutationSchema),
   resolver.authorize(),
   async ({ input }, ctx) => {
-    const { details, ...activityData } = input
+    const { details, contractId, ...activityData } = input
+
+    const detailsWithOrg = {
+      organization: {
+        connect: { id: ctx.session.orgId },
+      },
+      ...details,
+    }
 
     const activity = await db.activity.create({
       data: {
         ...activityData,
-        organizationId: ctx.session.orgId,
+        organization: {
+          connect: { id: ctx.session.orgId },
+        },
+        contract: {
+          connect: { id: contractId },
+        },
         ...(input.type === ActivityType.CUSTOM
           ? {
               customDetails: {
-                create: details,
+                create: detailsWithOrg,
               },
             }
           : {}),

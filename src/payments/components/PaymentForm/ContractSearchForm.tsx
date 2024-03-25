@@ -7,12 +7,18 @@ import { DataTable } from "src/core/components/DataTable"
 import getContracts, { ContractWithRelatedEntities } from "src/contracts/queries/getContracts"
 import { PersonList } from "src/clients/components/PersonList"
 import { getAddressString } from "src/addresses/utils"
+import { GetContractsSearchBy } from "src/contracts/types"
 
 const selectSearchTypeValues = [
-  { value: "owners", label: "Propietario" },
-  { value: "tenants", label: "Inquilino" },
-  { value: "address", label: "Dirección" },
+  { value: GetContractsSearchBy.OWNERS, label: "Propietario" },
+  { value: GetContractsSearchBy.TENANTS, label: "Inquilino" },
+  { value: GetContractsSearchBy.ADDRESS, label: "Dirección" },
 ]
+
+const initialFormData = {
+  searchBy: GetContractsSearchBy.OWNERS,
+  searchText: "",
+}
 
 export function ContractSearchForm({
   onSelectContract,
@@ -22,14 +28,14 @@ export function ContractSearchForm({
   const [formValues, setFormValues] = useState<{
     searchBy: (typeof selectSearchTypeValues)[number]["value"]
     searchText: string
-  }>()
+  }>(initialFormData)
 
   const [contractsData, { isFetching: isFetchingContracts, refetch: refetchContracts }] = useQuery(
     getContracts,
     {
       // TODO: add full name search
-      searchText: formValues?.searchText,
-      searchBy: formValues?.searchBy,
+      searchText: formValues.searchText,
+      searchBy: formValues.searchBy,
     },
     {
       enabled: false,
@@ -43,10 +49,7 @@ export function ContractSearchForm({
   return (
     <>
       <Form
-        initialValues={{
-          searchBy: "owners",
-          searchText: "",
-        }}
+        initialValues={initialFormData}
         onSubmit={() => refetchContracts({})}
         formHookProps={{
           onValuesChange: (values) => {
