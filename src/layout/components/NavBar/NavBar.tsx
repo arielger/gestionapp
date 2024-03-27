@@ -1,6 +1,6 @@
 import { useRouter } from "next/router"
 import { UnstyledButton } from "@mantine/core"
-import { IconCreditCard, IconHome, IconLogout, IconUser } from "@tabler/icons-react"
+import { IconCreditCard, IconHome, IconLogout, IconSettings, IconUser } from "@tabler/icons-react"
 import { useMutation } from "@blitzjs/rpc"
 import Link from "next/link"
 import { Routes } from "@blitzjs/next"
@@ -49,6 +49,10 @@ export const NavBar = ({ handleLinkClick, showCompanyHeader }: INavBarProps) => 
         {!showCompanyHeader && <NavBarHeader />}
         {links}
       </div>
+      <Link className={classes.link} href={Routes.ConfigurationPage()} onClick={handleLinkClick}>
+        <IconSettings className={classes.linkIcon} stroke={1.5} />
+        <span>Configuración</span>
+      </Link>
       <div className={classes.footer}>
         <UnstyledButton className={classes.link} onClick={() => logoutMutation()}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />
